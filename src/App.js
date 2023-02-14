@@ -10,6 +10,9 @@ import EditUser from './features/users/EditUser'
 import NewUserForm from './features/users/NewUserForm'
 import EditNote from './features/notes/EditNote'
 import NewNote from './features/notes/NewNote'
+import PackageesList from './features/packagees/PackageesList'
+import EditPackagee from './features/packagees/EditPackagee'
+import NewPackagee from './features/packagees/NewPackagee'
 import Prefetch from './features/auth/Prefetch'
 import PersistLogin from './features/auth/PersistLogin'
 import RequireAuth from './features/auth/RequireAuth'
@@ -46,6 +49,12 @@ function App() {
                   <Route index element={<NotesList />} />
                   <Route path=":id" element={<EditNote />} />
                   <Route path="new" element={<NewNote />} />
+                </Route>
+
+                <Route path="packagees">
+                  <Route index element={<PackageesList />} />
+                  <Route path=":id" element={<EditPackagee />} />
+                  <Route path="new" element={<NewPackagee />} />
                 </Route>
 
               </Route>{/* End Dash */}

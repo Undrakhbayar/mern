@@ -13,8 +13,14 @@ import { useSendLogoutMutation } from '../features/auth/authApiSlice'
 
 import useAuth from '../hooks/useAuth'
 
+import * as FaIcons from "react-icons/fa"
+import * as AiIcons from "react-icons/ai"
+import { SidebarData } from './SidebarData'
+import { useState } from 'react'
+
 const DASH_REGEX = /^\/dash(\/)?$/
 const NOTES_REGEX = /^\/dash\/notes(\/)?$/
+const PACKAGEES_REGEX = /^\/dash\/packagees(\/)?$/
 const USERS_REGEX = /^\/dash\/users(\/)?$/
 
 const DashHeader = () => {
@@ -124,6 +130,9 @@ const DashHeader = () => {
             </>
         )
     }
+    const [sidebar, setSidebar] = useState(false);
+
+    const showSidebar = () => setSidebar(!sidebar);
 
     const content = (
         <>
@@ -131,6 +140,28 @@ const DashHeader = () => {
 
             <header className="dash-header">
                 <div className={`dash-header__container ${dashClass}`}>
+{/*                     <Link to="#" className='menu-bars'>
+                        <FaIcons.FaBars onClick={showSidebar}/>
+                    </Link>
+                    <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
+                        <ul className='nav-menu-items'>
+                            <li className='navbar-toggle'>
+                                <Link to="#" className='menu-bars'>
+                                    <AiIcons.AiOutlineClose />
+                                </Link>
+                            </li>
+                            {SidebarData.map((item, index) => {
+                                return (
+                                    <li key={index} className={item.cName}>
+                                    <Link to={item.path}>
+                                        {item.icon}
+                                        <span>{item.title}</span>
+                                    </Link>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </nav> */}
                     <Link to="/dash">
                         <h1 className="dash-header__title">techNotes</h1>
                     </Link>
