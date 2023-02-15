@@ -13,13 +13,13 @@ import SaveIcon from "@mui/icons-material/Save";
 import Stack from "@mui/material/Stack";
 import MenuItem from "@mui/material/MenuItem";
 import InputAdornment from "@mui/material/InputAdornment";
+import Alert from "@mui/material/Alert";
 
 const NewPackageeForm = ({ users }) => {
   const [addNewPackagee, { isLoading, isSuccess, isError, error }] =
     useAddNewPackageeMutation();
 
   const navigate = useNavigate();
-
   const [houseSeq, setHouseSeq] = useState("");
   const [mailId, setMailId] = useState("");
   const [blNo, setBlNo] = useState("");
@@ -110,15 +110,6 @@ const NewPackageeForm = ({ users }) => {
     }
   };
 
-  const options = users.map((user) => {
-    return (
-      <option key={user.id} value={user.id}>
-        {" "}
-        {user.username}
-      </option>
-    );
-  });
-
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
@@ -126,6 +117,8 @@ const NewPackageeForm = ({ users }) => {
     textAlign: "center",
     color: theme.palette.text.secondary,
   }));
+
+  const errClass = isError ? "errmsg" : "offscreen";
 
   const content = (
     <Box
@@ -148,10 +141,10 @@ const NewPackageeForm = ({ users }) => {
       <Grid container spacing={1} columns={16} sx={{ boxShadow: 3 }}>
         <Grid item>
           <div>
+            {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
             <TextField
-              required
               //error={houseSeq.length != 3}
-              //helperText={!houseSeq.length ? "name is required" : ""}
+              //helperText={!houseSeq.length ? "name is " : ""}
               value={houseSeq}
               label="№"
               size="small"
@@ -161,7 +154,6 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              required
               value={mailId}
               label="Илгээмжийн дугаар"
               size="small"
@@ -170,7 +162,6 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              required
               value={blNo}
               label="Тээврийн баримтын дугаар"
               size="small"
@@ -196,7 +187,6 @@ const NewPackageeForm = ({ users }) => {
             </TextField>
             <TextField
               value={riskType}
-              required
               label="Эрсдлийн төлөв /үнэлгээ/ "
               size="small"
               onChange={(e) => {
@@ -205,7 +195,6 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Цэвэр жин"
-              required
               id="outlined-start-adornment"
               size="small"
               value={netWgt}
@@ -220,7 +209,6 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Бохир жин"
-              required
               id="outlined-start-adornment"
               size="small"
               value={wgt}
@@ -235,7 +223,6 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Баглаа боодлын тоо"
-              required
               size="small"
               value={qty}
               onChange={(e) => {
@@ -244,7 +231,6 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Баглаа боодлын нэгж"
-              required
               size="small"
               value={qtyUnit}
               onChange={(e) => {
@@ -261,7 +247,6 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Тээврийн зардал үнэ"
-              required
               size="small"
               value={transFare}
               onChange={(e) => {
@@ -270,17 +255,14 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Тээврийн зардал валют"
-              required
               size="small"
               defaultValue={"USD"}
-              value={transFareCurr}
               onChange={(e) => {
                 setTransFareCurr(e.target.value);
               }}
             />
             <TextField
               label="Үнэ 1"
-              required
               size="small"
               value={price1}
               onChange={(e) => {
@@ -289,10 +271,8 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 1 валют"
-              required
               size="small"
               defaultValue={"USD"}
-              value={price1Curr}
               onChange={(e) => {
                 setPrice1Curr(e.target.value);
               }}
@@ -309,7 +289,6 @@ const NewPackageeForm = ({ users }) => {
               label="Үнэ 2 валют"
               size="small"
               defaultValue={"USD"}
-              value={price2Curr}
               onChange={(e) => {
                 setPrice2Curr(e.target.value);
               }}
@@ -326,7 +305,6 @@ const NewPackageeForm = ({ users }) => {
               label="Үнэ 3 валют"
               size="small"
               defaultValue={"USD"}
-              value={price3Curr}
               onChange={(e) => {
                 setPrice3Curr(e.target.value);
               }}
@@ -343,7 +321,6 @@ const NewPackageeForm = ({ users }) => {
               label="Үнэ 4 валют"
               size="small"
               defaultValue={"USD"}
-              value={price4Curr}
               onChange={(e) => {
                 setPrice4Curr(e.target.value);
               }}
@@ -360,7 +337,6 @@ const NewPackageeForm = ({ users }) => {
               label="Үнэ 5 валют"
               size="small"
               defaultValue={"USD"}
-              value={price5Curr}
               onChange={(e) => {
                 setPrice5Curr(e.target.value);
               }}
@@ -378,7 +354,6 @@ const NewPackageeForm = ({ users }) => {
               label="Дипломат эсэх"
               size="small"
               defaultValue={"N"}
-              value={isDiplomat}
               onChange={(e) => {
                 setIsDiplomat(e.target.value);
               }}

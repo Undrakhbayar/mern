@@ -82,18 +82,9 @@ const PackageesList = () => {
   }, [isSuccess, isDelSuccess, navigate]);
 
   const onDeletePackageesClicked = async () => {
-    await deletePackagee({ id: selected[0]._id });
+    await deletePackagee({ id: selection });
   };
   let rows = [];
-  let selected;
-  /*   const onRowsSelectionHandler = (ids) => {
-    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
-    console.log(selectedRowsData);
-    if (selectedRowsData) {
-      selected = selectedRowsData[0]._id;
-    }
-    console.log(selected)
-  }; */
 
   const [selection, setSelection] = useState([]);
 
@@ -109,13 +100,7 @@ const PackageesList = () => {
       );
     }
   }
-  /*   const { packagee } = useGetPackageesQuery("packagee", {
-    selectFromResult: ({ data }) => ({
-      packagee: selectionModel
-    }),
-  });
 
-  console.log(packagee); */
   const onSendPackageesClicked = async () => {
     const selectedRowsData = selection.map((id) =>
       rows.find((row) => row.id === id)
@@ -125,8 +110,57 @@ const PackageesList = () => {
 
     for (let i = 0; i < selectedRowsData.length; i++) {
       let obj = new Object();
-      obj.houseSeq = selectedRowsData[i].id;
-      obj.mailId = selectedRowsData[i].mailId;
+      obj.HOUSE_SEQ = selectedRowsData[i].houseSeq;
+      obj.MAIL_ID = selectedRowsData[i].mailId;
+      obj.MAIL_BAG_NUMBER = selectedRowsData[i].mailBagNumber;
+      obj.BL_NO = selectedRowsData[i].blNo;
+      obj.REPORT_TYPE = selectedRowsData[i].reportType;
+      obj.RISK_TYPE = selectedRowsData[i].riskType;
+      obj.NET_WGT = selectedRowsData[i].netWgt;
+      obj.WGT = selectedRowsData[i].wgt;
+      obj.WGT_UNIT = selectedRowsData[i].wgtUnit;
+      obj.QTY = selectedRowsData[i].qty;
+      obj.QTY_UNIT = selectedRowsData[i].qtyUnit;
+      obj.DANG_GOODS_CODE = selectedRowsData[i].dangGoodsCode;
+      obj.TRANS_FARE = selectedRowsData[i].transFare;
+      obj.TRANS_FARE_CURR = selectedRowsData[i].transFareCurr;
+      obj.PRICE1 = selectedRowsData[i].price1;
+      obj.PRICE_CURR1 = selectedRowsData[i].priceCurr1;
+      obj.PRICE2 = selectedRowsData[i].price2;
+      obj.PRICE_CURR2 = selectedRowsData[i].priceCurr2;
+      obj.PRICE3 = selectedRowsData[i].price3;
+      obj.PRICE_CURR3 = selectedRowsData[i].priceCurr3;
+      obj.PRICE4 = selectedRowsData[i].price4;
+      obj.PRICE_CURR4 = selectedRowsData[i].priceCurr4;
+      obj.PRICE5 = selectedRowsData[i].price5;
+      obj.PRICE_CURR5 = selectedRowsData[i].priceCurr5;
+      obj.TRANSPORT_TYPE = selectedRowsData[i].transportType;
+      obj.IS_DIPLOMAT = selectedRowsData[i].isDiplomat;
+      obj.HSCODE = selectedRowsData[i].hsCode;
+      obj.GOODS_NM = selectedRowsData[i].goodsNm;
+      obj.SHIPPER_CNTRY_CD = selectedRowsData[i].shipperCntryCd;
+      obj.SHIPPER_CNTRY_NM = selectedRowsData[i].shipperCntryNm;
+      obj.SHIPPER_NATINALITY = selectedRowsData[i].shipperNatinality;
+      obj.SHIPPER_NM = selectedRowsData[i].shipperNm;
+      obj.SHIPPER_REG = selectedRowsData[i].shipperReg;
+      obj.SHIPPER_ADDR = selectedRowsData[i].shipperAddr;
+      obj.SHIPPER_TEL = selectedRowsData[i].shipperTel;
+      obj.CONSIGNEE_CNTRY_CD = selectedRowsData[i].consigneeCntryCd;
+      obj.CONSIGNEE_CNTRY_NM = selectedRowsData[i].consigneeCntryNm;
+      obj.CONSIGNEE_NATINALITY = selectedRowsData[i].consigneeNatinality;
+      obj.CONSIGNEE_NM = selectedRowsData[i].consigneeNm;
+      obj.CONSIGNEE_REG = selectedRowsData[i].consigneeReg;
+      obj.CONSIGNEE_ADDR = selectedRowsData[i].consigneeAddr;
+      obj.CONSIGNEE_TEL = selectedRowsData[i].consigneeTel;
+      obj.COMP_NAME = selectedRowsData[i].compName;
+      obj.COMP_REGISTER = selectedRowsData[i].compRegister;
+      obj.COMP_ADDR = selectedRowsData[i].compAddr;
+      obj.COMP_TEL = selectedRowsData[i].compTel;
+      obj.REG_DATE = selectedRowsData[i].regDate;
+      obj.MAIL_DATE = selectedRowsData[i].mailDate;
+      obj.ECOMMERCE_TYPE = selectedRowsData[i].ecommerceType;
+      obj.ECOMMERCE_LINK = selectedRowsData[i].ecommerceLink;
+
       arr.push(obj);
     }
 
