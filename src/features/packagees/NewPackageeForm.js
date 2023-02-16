@@ -3,20 +3,20 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAddNewPackageeMutation } from "./packageesApiSlice";
 import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Button from "@mui/material/Button";
+import {
+  Box,
+  Paper,
+  Grid,
+  TextField,
+  Button,
+  Stack,
+  Divider,
+  MenuItem,
+  InputAdornment,
+  Alert,
+  Typography,
+} from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import Stack from "@mui/material/Stack";
-import MenuItem from "@mui/material/MenuItem";
-import InputAdornment from "@mui/material/InputAdornment";
-import Alert from "@mui/material/Alert";
-import Typography from '@mui/material/Typography';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 
 const NewPackageeForm = ({ users }) => {
   const [addNewPackagee, { isLoading, isSuccess, isError, error }] =
@@ -141,17 +141,21 @@ const NewPackageeForm = ({ users }) => {
           Хадгалах
         </Button>
       </Stack>
-      <Grid container spacing={1} columns={16} sx={{ boxShadow: 3 }}>
-{/*       <Typography variant="h6" gutterBottom>
-        Shipping address
-      </Typography> */}
+      <Grid container spacing={1} columns={16} sx={{ boxShadow: 3, pr : 1, pb : 1 }}>
         <Grid item>
-          <div>
-            {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
+          <Paper variant="outlined">
+            <Typography variant="h6" m={2}>
+              Үндсэн мэдээлэл
+            </Typography>
+            {isError ? (
+              <Alert severity="error">{error?.data?.message}</Alert>
+            ) : (
+              <></>
+            )}
             <TextField
               //error={houseSeq.length != 3}
               //helperText={!houseSeq.length ? "name is " : ""}
-              style = {{width: 60}}
+              style={{ width: 60 }}
               value={houseSeq}
               label="№"
               size="small"
@@ -181,7 +185,7 @@ const NewPackageeForm = ({ users }) => {
               select
               label="Маягтын төрөл"
               size="small"
-              style = {{width: 120}}
+              style={{ width: 120 }}
               value={reportType}
               onChange={(e) => {
                 setReportType(e.target.value);
@@ -201,6 +205,122 @@ const NewPackageeForm = ({ users }) => {
                 setRiskType(e.target.value);
               }}
             />
+            <TextField
+              label="Шуудангын төрөл"
+              size="small"
+              defaultValue={"40"}
+              onChange={(e) => {
+                setTransportType(e.target.value);
+              }}
+            />
+            <TextField
+              label="Дипломат эсэх"
+              size="small"
+              defaultValue={"N"}
+              onChange={(e) => {
+                setIsDiplomat(e.target.value);
+              }}
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={8}>
+          <Paper variant="outlined">
+            <Typography variant="h6" m={2}>
+              Илгээгчийн мэдээлэл
+            </Typography>
+            <TextField
+              label="Илгээгч нэр"
+              size="small"
+              value={shipperNm}
+              onChange={(e) => {
+                setShipperNm(e.target.value);
+              }}
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={8}>
+          <Paper variant="outlined">
+            <Typography variant="h6" m={2}>
+              Хүлээн авагчийн мэдээлэл
+            </Typography>
+            <TextField
+              label="Хүлээн авагч улс хот нэр"
+              size="small"
+              value={consigneeCntryNm}
+              onChange={(e) => {
+                setConsigneeCntryNm(e.target.value);
+              }}
+            />
+            <TextField
+              label="Хүлээн авагч нэр"
+              size="small"
+              value={consigneeNm}
+              onChange={(e) => {
+                setConsigneeNm(e.target.value);
+              }}
+            />
+            <TextField
+              label="Хүлээн авагч Регистр №"
+              size="small"
+              value={consigneeReg}
+              onChange={(e) => {
+                setConsigneeReg(e.target.value);
+              }}
+            />
+            <TextField
+              label="Хүлээн авагч Утасны дугаар"
+              size="small"
+              value={consigneeTel}
+              onChange={(e) => {
+                setConsigneeTel(e.target.value);
+              }}
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={16}>
+          <Paper variant="outlined">
+            <Typography variant="h6" m={2}>
+              Зуучлагчийн мэдээлэл
+            </Typography>
+            <TextField
+              label="Нэр"
+              size="small"
+              value={compName}
+              onChange={(e) => {
+                setCompName(e.target.value);
+              }}
+            />
+            <TextField
+              label="Регистр №"
+              size="small"
+              value={compRegister}
+              onChange={(e) => {
+                setCompRegister(e.target.value);
+              }}
+            />
+            <TextField
+              label="Хаяг"
+              size="small"
+              value={compAddr}
+              onChange={(e) => {
+                setCompAddr(e.target.value);
+              }}
+            />
+            <TextField
+              label="Утасны дугаар"
+              size="small"
+              value={compTel}
+              onChange={(e) => {
+                setCompTel(e.target.value);
+              }}
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={16}>
+          <Paper variant="outlined">
+            <Typography variant="h6" m={2}>
+              Барааны мэдээлэл
+            </Typography>
             <TextField
               label="Цэвэр жин"
               id="outlined-start-adornment"
@@ -350,23 +470,6 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              label="Шуудангын төрөл"
-              size="small"
-              defaultValue={"40"}
-              value={transportType}
-              onChange={(e) => {
-                setTransportType(e.target.value);
-              }}
-            />
-            <TextField
-              label="Дипломат эсэх"
-              size="small"
-              defaultValue={"N"}
-              onChange={(e) => {
-                setIsDiplomat(e.target.value);
-              }}
-            />
-            <TextField
               label="БТКУС код"
               size="small"
               value={hsCode}
@@ -382,85 +485,7 @@ const NewPackageeForm = ({ users }) => {
                 setGoodsNm(e.target.value);
               }}
             />
-            <TextField
-              label="Илгээгч нэр"
-              size="small"
-              value={shipperNm}
-              onChange={(e) => {
-                setShipperNm(e.target.value);
-              }}
-            />
-            <TextField
-              label="Хүлээн авагч улс хот нэр"
-              size="small"
-              value={consigneeCntryNm}
-              onChange={(e) => {
-                setConsigneeCntryNm(e.target.value);
-              }}
-            />
-            <TextField
-              label="Хүлээн авагч нэр"
-              size="small"
-              value={consigneeNm}
-              onChange={(e) => {
-                setConsigneeNm(e.target.value);
-              }}
-            />
-            <TextField
-              label="Хүлээн авагч Регистр №"
-              size="small"
-              value={consigneeReg}
-              onChange={(e) => {
-                setConsigneeReg(e.target.value);
-              }}
-            />
-            <TextField
-              label="Хүлээн авагч Утасны дугаар"
-              size="small"
-              value={consigneeTel}
-              onChange={(e) => {
-                setConsigneeTel(e.target.value);
-              }}
-            />
-            <TextField
-              label="Нэр"
-              size="small"
-              value={compName}
-              onChange={(e) => {
-                setCompName(e.target.value);
-              }}
-            />
-            <TextField
-              label="Регистр №"
-              size="small"
-              value={compRegister}
-              onChange={(e) => {
-                setCompRegister(e.target.value);
-              }}
-            />
-            <TextField
-              label="Хаяг"
-              size="small"
-              value={compAddr}
-              onChange={(e) => {
-                setCompAddr(e.target.value);
-              }}
-            />
-            <TextField
-              label="Утасны дугаар"
-              size="small"
-              value={compTel}
-              onChange={(e) => {
-                setCompTel(e.target.value);
-              }}
-            />
-          </div>
-        </Grid>
-        <Grid item xs={8}>
-          <Item>xs=8</Item>
-        </Grid>
-        <Grid item xs={8}>
-          <Item>xs=8</Item>
+          </Paper>
         </Grid>
       </Grid>
     </Box>

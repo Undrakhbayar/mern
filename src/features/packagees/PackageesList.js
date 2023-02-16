@@ -9,16 +9,21 @@ import Packagee from "./Packagee";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import { DataGrid, gridClasses, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  gridClasses,
+  GridActionsCellItem,
+  GridRowParams,
+} from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import MailIcon from "@mui/icons-material/Mail";
 import Stack from "@mui/material/Stack";
 import { alpha, styled } from "@mui/material/styles";
-import EditIcon from '@mui/icons-material/Edit';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import Link from '@mui/material/Link';
+import EditIcon from "@mui/icons-material/Edit";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import Link from "@mui/material/Link";
 
 const ODD_OPACITY = 0.2;
 
@@ -59,24 +64,27 @@ const PackageesList = () => {
   const columns = [
     {
       field: "id",
-      headerName: "ID",
-      width: 250,
-      renderCell: (params) => {
-        return <Link href={`/dash/packagees/${params.row.id}`}>{params.row.id}</Link>;
-      }
+      headerName: "number",
+      filterable: false,
+      renderCell: (index) => index.api.getRowIndex(index.row.id)+1,
     },
     {
       field: "houseSeq",
       headerName: "№",
       headerClassName: "",
-      width: 150,
-      editable: true,
+      width: 60,
     },
     {
       field: "mailId",
       headerName: "Илгээмжийн Дугаар",
       width: 150,
-      editable: true,
+      renderCell: (params) => {
+        return (
+          <Link href={`/dash/packagees/${params.row.id}`}>
+            {params.row.mailId}
+          </Link>
+        );
+      },
     },
     {
       field: "blNo",
@@ -110,17 +118,17 @@ const PackageesList = () => {
       field: "edit",
       headerName: "Засах",
       width: 100,
-      getActions: (params: GridRowParams) => [
+      getActions: (params) => [
         <GridActionsCellItem
           key={0}
           icon={<EditIcon color="primary" />}
-          label= "Засах"
+          label="Засах"
           onClick={() => handleEdit(params)}
         />,
       ],
-    }
+    },
   ];
-  const handleEdit = (id) => navigate(`/dash/packagees/${id}`)
+  const handleEdit = (id) => navigate(`/dash/packagees/${id}`);
   const {
     data: packagees,
     isLoading,
@@ -273,6 +281,7 @@ const PackageesList = () => {
           variant="outlined"
           startIcon={<SendIcon />}
           onClick={onSendPackageesClicked}
+          color="success"
         >
           Илгээх
         </Button>
@@ -280,11 +289,12 @@ const PackageesList = () => {
           variant="outlined"
           startIcon={<DeleteIcon />}
           onClick={onDeletePackageesClicked}
+          color="error"
         >
           Устгах
         </Button>
         <Button
-          variant="contained"
+          variant="outlined"
           endIcon={<MailIcon />}
           onClick={onNewPackageeClicked}
         >

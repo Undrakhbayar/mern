@@ -1,37 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFileCirclePlus,
-  faFilePen,
-  faUserGear,
-  faUserPlus,
-  faRightFromBracket,
-} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-
 import { useSendLogoutMutation } from "../features/auth/authApiSlice";
-
 import useAuth from "../hooks/useAuth";
 
-import * as FaIcons from "react-icons/fa";
-import * as AiIcons from "react-icons/ai";
-import { SidebarData } from "./SidebarData";
-import { IconContext } from "react-icons";
-import Button from "@mui/material/Button";
+import {
+  AppBar,
+  Toolbar,
+  Drawer,
+  List,
+  Menu,
+  MenuItem,
+  CssBaseline,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Button,
+  Box,
+  IconButton,
+} from "@mui/material";
+
+import MailIcon from "@mui/icons-material/Mail";
+import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Box from "@mui/material/Box";
-import { spacing } from '@mui/system';
 
 const DASH_REGEX = /^\/dash(\/)?$/;
 const NOTES_REGEX = /^\/dash\/notes(\/)?$/;
 const PACKAGEES_REGEX = /^\/dash\/packagees(\/)?$/;
 const USERS_REGEX = /^\/dash\/users(\/)?$/;
 
-function Navbar() {
-  const [sidebar, setSidebar] = useState(false);
+const drawerWidth = 240;
 
-  const showSidebar = () => setSidebar(!sidebar);
-
+export default function NavBar() {
   const { isManager, isAdmin } = useAuth();
 
   const navigate = useNavigate();
@@ -44,124 +45,114 @@ function Navbar() {
     if (isSuccess) navigate("/login");
   }, [isSuccess, navigate]);
 
-  const onNewNoteClicked = () => navigate("/dash/notes/new");
-  const onNewUserClicked = () => navigate("/dash/users/new");
-  const onNotesClicked = () => navigate("/dash/notes");
-  const onUsersClicked = () => navigate("/dash/users");
-
-  let dashClass = null;
-  if (
-    !DASH_REGEX.test(pathname) &&
-    !NOTES_REGEX.test(pathname) &&
-    !USERS_REGEX.test(pathname)
-  ) {
-    dashClass = "dash-header__container--small";
-  }
-
-  let newNoteButton = null;
-  if (NOTES_REGEX.test(pathname)) {
-    newNoteButton = (
-      <button
-        className="icon-button"
-        title="New Note"
-        onClick={onNewNoteClicked}
-      >
-        <FontAwesomeIcon icon={faFileCirclePlus} />
-      </button>
-    );
-  }
-
-  let newUserButton = null;
-  if (USERS_REGEX.test(pathname)) {
-    newUserButton = (
-      <button
-        className="icon-button"
-        title="New User"
-        onClick={onNewUserClicked}
-      >
-        <FontAwesomeIcon icon={faUserPlus} />
-      </button>
-    );
-  }
-
-  let userButton = null;
-  if (isManager || isAdmin) {
-    if (!USERS_REGEX.test(pathname) && pathname.includes("/dash")) {
-      userButton = (
-        <button className="icon-button" title="Users" onClick={onUsersClicked}>
-          <FontAwesomeIcon icon={faUserGear} />
-        </button>
-      );
+  const navigator = (index) => {
+    if (index == 0) {
+      navigate("/dash/packagees");
+    } else {
+      navigate("/dash/users");
     }
-  }
+  };
 
-  const logoutButton = (
-    <Button
-      variant="contained"
-      endIcon={<LogoutIcon />}
-      onClick={sendLogout}
-    >
-      Гарах
-    </Button>
-  );
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-  const errClass = isError ? "errmsg" : "offscreen";
-
-  let buttonContent;
-  if (isLoading) {
-    buttonContent = <p>Logging Out...</p>;
-  } else {
-    buttonContent = (
-      <>
-        {/*               {newNoteButton}
-              {newUserButton}
-              {notesButton} */}
-        {userButton}
-      </>
-    );
-  }
+  const [selectedIndex, setSelectedIndex] = useState("");
+  const buttonProps = (value) => ({
+    selected: selectedIndex === value,
+    onClick: () => {
+      setSelectedIndex(value);
+      navigator(value);
+    },
+  });
 
   return (
-    <>
-      <IconContext.Provider value={{ color: "#fff" }}>
-        <div className="navbar">
-{/*           <Link to="#" className="menu-bars">
-            <FaIcons.FaBars onClick={showSidebar} />
-          </Link> */}
-          <Box
-            ml={"94%"}
-            //margin
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="flex-end"
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      >
+        <Toolbar style={{ justifyContent: "flex-end" }}>
+          <IconButton
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
           >
-            {logoutButton}
-          </Box>
-        </div>
-        {/* <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}> */}
-        <nav className="nav-menu active">
-          <ul className="nav-menu-items" onClick={showSidebar}>
-            {/*             <li className='navbar-toggle'>
-              <Link to='#' className='menu-bars'>
-                <AiIcons.AiOutlineClose />
-              </Link>
-            </li> */}
-            <li className="nav-text">{buttonContent}</li>
-            {SidebarData.map((item, index) => {
-              return (
-                <li key={index} className={item.cName}>
-                  <Link to={item.path}>
-                    {item.icon}
-                    <span>{item.title}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      </IconContext.Provider>
-    </>
+            <PersonIcon style={{ color: "white" }} fontSize="large" />
+          </IconButton>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem onClick={handleClose}>Хэрэглэгчийн мэдээлэл</MenuItem>
+            {/* <MenuItem onClick={handleClose}>My account</MenuItem> */}
+            <MenuItem onClick={sendLogout}>Гарах</MenuItem>
+          </Menu>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+            bgcolor: "#1C2536",
+            color: "#9DA4AE",
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Toolbar />
+        <List
+          sx={{
+            // selected and (selected + hover) states
+            "&& .Mui-selected, && .Mui-selected:hover": {
+              "&, & .MuiListItemIcon-root": {
+                color: "#fff",
+              },
+            },
+            // hover states
+            "& .MuiListItemButton-root:hover": {
+              bgcolor: "rgba(255, 255, 255, 0.1)",
+              "&, & .MuiListItemIcon-root": {
+                color: "#fff",
+              },
+            },
+          }}
+        >
+          <ListItem key={1} disablePadding>
+            <ListItemButton {...buttonProps(0)}>
+              <ListItemIcon>
+                <MailIcon style={{ color: "#9DA4AE" }} />
+              </ListItemIcon>
+              <ListItemText primary="Шуудангийн бүртгэл" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key={2} disablePadding>
+            <ListItemButton {...buttonProps(1)}>
+              <ListItemIcon>
+                <PersonIcon style={{ color: "#9DA4AE" }} />
+              </ListItemIcon>
+              <ListItemText primary="Хэрэглэгчийн бүртгэл" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Drawer>
+    </Box>
   );
 }
-
-export default Navbar;

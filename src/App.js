@@ -45,12 +45,6 @@ function App() {
                   </Route>
                 </Route>
 
-                <Route path="notes">
-                  <Route index element={<NotesList />} />
-                  <Route path=":id" element={<EditNote />} />
-                  <Route path="new" element={<NewNote />} />
-                </Route>
-
                 <Route path="packagees">
                   <Route index element={<PackageesList />} />
                   <Route path=":id" element={<EditPackagee />} />
