@@ -41,7 +41,7 @@ function Navbar() {
     useSendLogoutMutation();
 
   useEffect(() => {
-    if (isSuccess) navigate("/");
+    if (isSuccess) navigate("/login");
   }, [isSuccess, navigate]);
 
   const onNewNoteClicked = () => navigate("/dash/notes/new");

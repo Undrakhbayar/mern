@@ -14,6 +14,9 @@ import Stack from "@mui/material/Stack";
 import MenuItem from "@mui/material/MenuItem";
 import InputAdornment from "@mui/material/InputAdornment";
 import Alert from "@mui/material/Alert";
+import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 const NewPackageeForm = ({ users }) => {
   const [addNewPackagee, { isLoading, isSuccess, isError, error }] =
@@ -139,12 +142,16 @@ const NewPackageeForm = ({ users }) => {
         </Button>
       </Stack>
       <Grid container spacing={1} columns={16} sx={{ boxShadow: 3 }}>
+{/*       <Typography variant="h6" gutterBottom>
+        Shipping address
+      </Typography> */}
         <Grid item>
           <div>
             {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
             <TextField
               //error={houseSeq.length != 3}
               //helperText={!houseSeq.length ? "name is " : ""}
+              style = {{width: 60}}
               value={houseSeq}
               label="№"
               size="small"
@@ -174,6 +181,7 @@ const NewPackageeForm = ({ users }) => {
               select
               label="Маягтын төрөл"
               size="small"
+              style = {{width: 120}}
               value={reportType}
               onChange={(e) => {
                 setReportType(e.target.value);

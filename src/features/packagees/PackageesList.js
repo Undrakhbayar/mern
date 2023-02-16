@@ -3,20 +3,68 @@ import { useState, useEffect } from "react";
 import {
   useGetPackageesQuery,
   useDeletePackageeMutation,
+  useUpdatePackageeMutation,
 } from "./packageesApiSlice";
 import Packagee from "./Packagee";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, gridClasses, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import MailIcon from "@mui/icons-material/Mail";
 import Stack from "@mui/material/Stack";
+import { alpha, styled } from "@mui/material/styles";
+import EditIcon from '@mui/icons-material/Edit';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import Link from '@mui/material/Link';
+
+const ODD_OPACITY = 0.2;
+
+const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+  [`& .${gridClasses.row}.even`]: {
+    backgroundColor: theme.palette.grey[200],
+    "&:hover, &.Mui-hovered": {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+      "@media (hover: none)": {
+        backgroundColor: "transparent",
+      },
+    },
+    "&.Mui-selected": {
+      backgroundColor: alpha(
+        theme.palette.primary.main,
+        ODD_OPACITY + theme.palette.action.selectedOpacity
+      ),
+      "&:hover, &.Mui-hovered": {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          ODD_OPACITY +
+            theme.palette.action.selectedOpacity +
+            theme.palette.action.hoverOpacity
+        ),
+        // Reset on touch devices, it doesn't add specificity
+        "@media (hover: none)": {
+          backgroundColor: alpha(
+            theme.palette.primary.main,
+            ODD_OPACITY + theme.palette.action.selectedOpacity
+          ),
+        },
+      },
+    },
+  },
+}));
+
 const PackageesList = () => {
   const columns = [
-    { field: "id", headerName: "ID", width: 90 },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 250,
+      renderCell: (params) => {
+        return <Link href={`/dash/packagees/${params.row.id}`}>{params.row.id}</Link>;
+      }
+    },
     {
       field: "houseSeq",
       headerName: "№",
@@ -52,7 +100,27 @@ const PackageesList = () => {
       valueGetter: (params) =>
         `${params.row.firstName || ""} ${params.row.lastName || ""}`,
     },
+    {
+      field: "prgsStatusCd",
+      headerName: "Төлөв",
+      width: 110,
+      editable: true,
+    },
+    {
+      field: "edit",
+      headerName: "Засах",
+      width: 100,
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          key={0}
+          icon={<EditIcon color="primary" />}
+          label= "Засах"
+          onClick={() => handleEdit(params)}
+        />,
+      ],
+    }
   ];
+  const handleEdit = (id) => navigate(`/dash/packagees/${id}`)
   const {
     data: packagees,
     isLoading,
@@ -162,6 +230,12 @@ const PackageesList = () => {
       obj.ECOMMERCE_LINK = selectedRowsData[i].ecommerceLink;
 
       arr.push(obj);
+      await updatePackagee({
+        id: selectedRowsData[i].id,
+        mailId: selectedRowsData[i].mailId,
+        blNo: selectedRowsData[i].blNo,
+        prgsStatusCd: "11",
+      });
     }
 
     let jsonString = JSON.stringify(arr);
@@ -176,6 +250,16 @@ const PackageesList = () => {
       .then((res) => res.json())
       .then((res) => console.log(res));
   };
+
+  const [prgsStatusCd, setPrgsStatusCd] = useState([]);
+  const [updatePackagee, { isLoadingU, isSuccessU, isErrorU, errorU }] =
+    useUpdatePackageeMutation();
+
+  useEffect(() => {
+    if (isSuccessU) {
+      setPrgsStatusCd("");
+    }
+  }, [isSuccessU]);
 
   const content = (
     <Box sx={{ height: 400, width: "100%" }}>
@@ -207,7 +291,7 @@ const PackageesList = () => {
           Нэмэх
         </Button>
       </Stack>
-      <DataGrid
+      <StripedDataGrid
         sx={{ boxShadow: 2 }}
         rows={rows}
         onSelectionModelChange={setSelection}
