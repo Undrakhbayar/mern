@@ -73,7 +73,8 @@ const EditPackageeForm = ({ packagee, users }) => {
 
   useEffect(() => {
     const getReportTypes = async () => {
-      const res = await fetch("http://localhost:3500/reportTypes", {
+      //const res = await fetch("http://localhost:3500/reportTypes", {
+      const res = await fetch("https://mern-api-lcmj.onrender.com", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

@@ -66,7 +66,7 @@ const PackageesList = () => {
       field: "id",
       headerName: "number",
       filterable: false,
-      renderCell: (index) => index.api.getRowIndex(index.row.id)+1,
+      renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
     },
     {
       field: "houseSeq",
@@ -248,16 +248,17 @@ const PackageesList = () => {
 
     let jsonString = JSON.stringify(arr);
     console.log(jsonString);
-    const res = await fetch("https://api.gaali.mn/ceps/send/cargo/short", {
+    const requestOptions = {
       method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: jsonString,
-    })
-      .then((res) => res.json())
-      .then((res) => console.log(res));
+    };
+    const res = await fetch(
+      "https://api.gaali.mn/ceps/send/cargo/short",
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((response) => console.log(response));
   };
 
   const [prgsStatusCd, setPrgsStatusCd] = useState([]);

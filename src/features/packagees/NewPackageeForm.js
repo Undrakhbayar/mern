@@ -71,7 +71,8 @@ const NewPackageeForm = ({ users }) => {
 
   useEffect(() => {
     const getReportTypes = async () => {
-      const res = await fetch("http://localhost:3500/reportTypes", {
+      //const res = await fetch("http://localhost:3500/reportTypes", {
+      const res = await fetch("https://mern-api-lcmj.onrender.com", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +142,12 @@ const NewPackageeForm = ({ users }) => {
           Хадгалах
         </Button>
       </Stack>
-      <Grid container spacing={1} columns={16} sx={{ boxShadow: 3, pr : 1, pb : 1 }}>
+      <Grid
+        container
+        spacing={1}
+        columns={16}
+        sx={{ boxShadow: 3, pr: 1, pb: 1 }}
+      >
         <Grid item>
           <Paper variant="outlined">
             <Typography variant="h6" m={2}>
