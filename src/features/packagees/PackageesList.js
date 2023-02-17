@@ -250,6 +250,7 @@ const PackageesList = () => {
     console.log(jsonString);
     const res = await fetch("https://api.gaali.mn/ceps/send/cargo/short", {
       method: "POST",
+      mode: "no-cors",
       headers: {
         "Content-Type": "application/json",
       },
