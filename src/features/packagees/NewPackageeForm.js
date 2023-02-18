@@ -3,33 +3,26 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAddNewPackageeMutation } from "./packageesApiSlice";
 import { styled } from "@mui/material/styles";
-import {
-  Box,
-  Paper,
-  Grid,
-  TextField,
-  Button,
-  Stack,
-  Divider,
-  MenuItem,
-  InputAdornment,
-  Alert,
-  Typography,
-} from "@mui/material";
+import { Box, Paper, Grid, TextField, Button, Stack, Divider, MenuItem, InputAdornment, Alert, Typography, Autocomplete } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const NewPackageeForm = ({ users }) => {
-  const [addNewPackagee, { isLoading, isSuccess, isError, error }] =
-    useAddNewPackageeMutation();
+  const [addNewPackagee, { isLoading, isSuccess, isError, error }] = useAddNewPackageeMutation();
 
   const navigate = useNavigate();
+
   const [houseSeq, setHouseSeq] = useState("");
   const [mailId, setMailId] = useState("");
+  const [mailBagNumber, setMailBagNumber] = useState("");
   const [blNo, setBlNo] = useState("");
-  const [riskType, setRiskType] = useState("");
   const [reportType, setReportType] = useState("");
+  const [riskType, setRiskType] = useState("");
   const [netWgt, setNetWgt] = useState("");
   const [wgt, setWgt] = useState("");
+  const [wgtUnit, setWgtUnit] = useState("KG");
   const [qty, setQty] = useState("");
   const [qtyUnit, setQtyUnit] = useState("");
   const [dangGoodsCode, setDangGoodsCode] = useState("");
@@ -49,17 +42,33 @@ const NewPackageeForm = ({ users }) => {
   const [isDiplomat, setIsDiplomat] = useState("");
   const [hsCode, setHsCode] = useState("");
   const [goodsNm, setGoodsNm] = useState("");
+  const [shipperCntryCd, setShipperCntryCd] = useState("");
+  const [shipperCntryNm, setShipperCntryNm] = useState("");
+  const [shipperNatinality, setShipperNatinality] = useState("");
   const [shipperNm, setShipperNm] = useState("");
+  const [shipperReg, setShipperReg] = useState("");
+  const [shipperAddr, setShipperAddr] = useState("");
+  const [shipperTel, setShipperTel] = useState("");
+  const [consigneeCntryCd, setConsigneeCntryCd] = useState("");
   const [consigneeCntryNm, setConsigneeCntryNm] = useState("");
+  const [consigneeNatinality, setConsigneeNatinality] = useState("");
   const [consigneeNm, setConsigneeNm] = useState("");
   const [consigneeReg, setConsigneeReg] = useState("");
+  const [consigneeAddr, setConsigneeAddr] = useState("");
   const [consigneeTel, setConsigneeTel] = useState("");
   const [compName, setCompName] = useState("");
   const [compRegister, setCompRegister] = useState("");
   const [compAddr, setCompAddr] = useState("");
   const [compTel, setCompTel] = useState("");
+  const [mailDate, setMailDate] = useState(dayjs(new Date()));
+  const [ecommerceType, setEcommerceType] = useState("");
+  const [ecommerceLink, setEcommerceLink] = useState("");
+
   const [userId, setUserId] = useState(users[0].id);
   const [reportTypes, setReportTypes] = useState([]);
+  const [transportTypes, setTransportTypes] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [isDiplomats, setIsDiplomats] = useState([]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -69,10 +78,11 @@ const NewPackageeForm = ({ users }) => {
     }
   }, [isSuccess, navigate]);
 
+  const referenceUrl = "http://localhost:3500/references";
+  //const referenceUrl = "https://mern-api-lcmj.onrender.com/references";
   useEffect(() => {
-    const getReportTypes = async () => {
-      //const res = await fetch("http://localhost:3500/reportTypes", {
-      const res = await fetch("https://mern-api-lcmj.onrender.com", {
+    const getReferences = async () => {
+      const res = await fetch(referenceUrl + "?reportType", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -80,9 +90,18 @@ const NewPackageeForm = ({ users }) => {
       });
 
       const response = await res.json();
-      setReportTypes(response);
+
+      const reportTypes = response.filter(({ type }) => type === "reportType");
+      const transportTypes = response.filter(({ type }) => type === "transportType");
+      const countries = response.filter(({ type }) => type === "country");
+      const isDiplomats = response.filter(({ type }) => type === "diplomat");
+
+      setReportTypes(reportTypes);
+      setTransportTypes(transportTypes);
+      setCountries(countries);
+      setIsDiplomats(isDiplomats);
     };
-    getReportTypes();
+    getReferences();
   }, []);
 
   const canSave = [houseSeq, userId].every(Boolean) && !isLoading;
@@ -94,22 +113,53 @@ const NewPackageeForm = ({ users }) => {
         user: userId,
         houseSeq,
         mailId,
+        mailBagNumber,
         blNo,
+        reportType,
+        riskType,
         netWgt,
         wgt,
+        wgtUnit,
         qty,
+        qtyUnit,
+        dangGoodsCode,
         transFare,
+        transFareCurr,
         price1,
+        price1Curr,
+        price2,
+        price2Curr,
+        price3,
+        price3Curr,
+        price4,
+        price4Curr,
+        price5,
+        price5Curr,
+        transportType,
+        isDiplomat,
+        hsCode,
         goodsNm,
+        shipperCntryCd,
+        shipperCntryNm,
+        shipperNatinality,
         shipperNm,
+        shipperReg,
+        shipperAddr,
+        shipperTel,
+        consigneeCntryCd,
         consigneeCntryNm,
+        consigneeNatinality,
         consigneeNm,
         consigneeReg,
+        consigneeAddr,
         consigneeTel,
         compName,
         compRegister,
         compAddr,
         compTel,
+        mailDate,
+        ecommerceType,
+        ecommerceLink,
       });
     }
   };
@@ -132,36 +182,22 @@ const NewPackageeForm = ({ users }) => {
         "& .MuiTextField-root": { m: 1, width: "25ch" },
       }}
     >
-      <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="flex-end"
-        sx={{ mb: 2 }}
-      >
+      <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
         <Button variant="contained" endIcon={<SaveIcon />} type="submit">
           Хадгалах
         </Button>
       </Stack>
-      <Grid
-        container
-        spacing={1}
-        columns={16}
-        sx={{ boxShadow: 3, pr: 1, pb: 1 }}
-      >
-        <Grid item>
+      <Grid container spacing={1} columns={26} sx={{ boxShadow: 3, pr: 1, pb: 1 }} alignItems="center">
+        <Grid item xs={26}>
           <Paper variant="outlined">
             <Typography variant="h6" m={2}>
               Үндсэн мэдээлэл
             </Typography>
-            {isError ? (
-              <Alert severity="error">{error?.data?.message}</Alert>
-            ) : (
-              <></>
-            )}
+            {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
             <TextField
               //error={houseSeq.length != 3}
               //helperText={!houseSeq.length ? "name is " : ""}
-              style={{ width: 60 }}
+              style={{ width: 70 }}
               value={houseSeq}
               label="№"
               size="small"
@@ -172,10 +208,20 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               value={mailId}
+              style={{ width: 200 }}
               label="Илгээмжийн дугаар"
               size="small"
               onChange={(e) => {
                 setMailId(e.target.value);
+              }}
+            />
+            <TextField
+              value={mailBagNumber}
+              style={{ width: 160 }}
+              label="Богцын дугаар"
+              size="small"
+              onChange={(e) => {
+                setMailBagNumber(e.target.value);
               }}
             />
             <TextField
@@ -187,78 +233,170 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              id="outlined-select-currency"
-              select
-              label="Маягтын төрөл"
-              size="small"
-              style={{ width: 120 }}
-              value={reportType}
-              onChange={(e) => {
-                setReportType(e.target.value);
-              }}
-            >
-              {reportTypes.map((option) => (
-                <MenuItem key={option.type} value={option.type}>
-                  {option.type}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
               value={riskType}
+              style={{ width: 190 }}
               label="Эрсдлийн төлөв /үнэлгээ/ "
               size="small"
               onChange={(e) => {
                 setRiskType(e.target.value);
               }}
             />
-            <TextField
-              label="Шуудангын төрөл"
+            <Autocomplete
               size="small"
-              defaultValue={"40"}
+              style={{
+                display: "inline-flex",
+                width: 200
+              }}
+              fullWidth={false}
+              options={reportTypes.map((option) => option.value)}
+              renderInput={(params) => <TextField {...params} label="Маягтын төрөл" />}
               onChange={(e) => {
-                setTransportType(e.target.value);
+                setReportType(e.target.textContent);
               }}
             />
-            <TextField
-              label="Дипломат эсэх"
+
+            <Autocomplete
               size="small"
-              defaultValue={"N"}
+              id="combo-box-demo"
+              style={{
+                display: "inline-flex",
+                width: 220
+              }}
+              fullWidth={false}
+              options={transportTypes.map((option) => "[" + option.value + "] " + option.description)}
+              renderInput={(params) => <TextField {...params} label="Шуудангын төрөл" />}
               onChange={(e) => {
-                setIsDiplomat(e.target.value);
+                setTransportType(e.target.textContent.substring(1, 3));
               }}
             />
+            <Autocomplete
+              size="small"
+              style={{
+                display: "inline-flex",
+                width: 140
+              }}
+              fullWidth={false}
+              options={isDiplomats.map((option) => "[" + option.value + "] " + option.description)}
+              renderInput={(params) => <TextField {...params} label="Дипломат эсэх" />}
+              onChange={(e) => {
+                setIsDiplomat(e.target.textContent.substring(1, 2));
+              }}
+            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Ачаа хөдөлсөн огноо"
+                inputFormat="YYYY-MM-DD"
+                value={mailDate}
+                onChange={(e) => {
+                  setMailDate(e);
+                }}
+                renderInput={(params) => <TextField size="small" style={{ width: 180 }} {...params} />}
+              />
+            </LocalizationProvider>
           </Paper>
         </Grid>
-        <Grid item xs={8}>
-          <Paper variant="outlined">
+        <Grid item xs={10}>
+          <Paper variant="outlined" style={{margin:"auto"}}>
             <Typography variant="h6" m={2}>
               Илгээгчийн мэдээлэл
             </Typography>
             <TextField
-              label="Илгээгч нэр"
+              label="Улс хотын код"
+              size="small"
+              value={shipperCntryCd}
+              onChange={(e) => {
+                setShipperCntryCd(e.target.value);
+              }}
+            />
+            <TextField
+              label="Улс хотын нэр"
+              size="small"
+              value={shipperCntryNm}
+              onChange={(e) => {
+                setShipperCntryNm(e.target.value);
+              }}
+            />
+            <Autocomplete
+              size="small"
+              style={{
+                display: "inline-flex",
+              }}
+              fullWidth={false}
+              options={countries.map((option) => "[" + option.value + "] " + option.description)}
+              renderInput={(params) => <TextField {...params} label="Харьяалал" />}
+              onChange={(e) => {
+                setShipperNatinality(e.target.textContent.substring(1, 3));
+              }}
+            />
+            <TextField
+              label="Нэр"
               size="small"
               value={shipperNm}
               onChange={(e) => {
                 setShipperNm(e.target.value);
               }}
             />
+            <TextField
+              label="Регистр №"
+              size="small"
+              value={shipperReg}
+              onChange={(e) => {
+                setShipperReg(e.target.value);
+              }}
+            />
+            <TextField
+              label="Хаяг"
+              size="small"
+              value={shipperAddr}
+              onChange={(e) => {
+                setShipperAddr(e.target.value);
+              }}
+            />
+            <TextField
+              label="Утасны дугаар"
+              size="small"
+              value={shipperTel}
+              onChange={(e) => {
+                setShipperTel(e.target.value);
+              }}
+            />
           </Paper>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={10}>
           <Paper variant="outlined">
             <Typography variant="h6" m={2}>
               Хүлээн авагчийн мэдээлэл
             </Typography>
             <TextField
-              label="Хүлээн авагч улс хот нэр"
+              label="Улс хотын код"
+              size="small"
+              value={consigneeCntryCd}
+              onChange={(e) => {
+                setConsigneeCntryCd(e.target.value);
+              }}
+            />
+            <TextField
+              label="Улс хотын нэр"
               size="small"
               value={consigneeCntryNm}
               onChange={(e) => {
                 setConsigneeCntryNm(e.target.value);
               }}
             />
+            <Autocomplete
+              size="small"
+              style={{
+                display: "inline-flex",
+              }}
+              fullWidth={false}
+              options={countries.map((option) => "[" + option.value + "] " + option.description)}
+              renderInput={(params) => <TextField {...params} label="Харьяалал" />}
+              onChange={(e) => {
+                setConsigneeNatinality(e.target.textContent.substring(1, 3));
+              }}
+            />
             <TextField
-              label="Хүлээн авагч нэр"
+              label="Нэр"
               size="small"
               value={consigneeNm}
               onChange={(e) => {
@@ -266,7 +404,7 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              label="Хүлээн авагч Регистр №"
+              label="Регистр №"
               size="small"
               value={consigneeReg}
               onChange={(e) => {
@@ -274,7 +412,15 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              label="Хүлээн авагч Утасны дугаар"
+              label="Хаяг"
+              size="small"
+              value={consigneeAddr}
+              onChange={(e) => {
+                setConsigneeAddr(e.target.value);
+              }}
+            />
+            <TextField
+              label="Утасны дугаар"
               size="small"
               value={consigneeTel}
               onChange={(e) => {
@@ -283,7 +429,7 @@ const NewPackageeForm = ({ users }) => {
             />
           </Paper>
         </Grid>
-        <Grid item xs={16}>
+        <Grid item xs={6}>
           <Paper variant="outlined">
             <Typography variant="h6" m={2}>
               Зуучлагчийн мэдээлэл
@@ -322,41 +468,47 @@ const NewPackageeForm = ({ users }) => {
             />
           </Paper>
         </Grid>
-        <Grid item xs={16}>
+        <Grid item xs={26}>
           <Paper variant="outlined">
             <Typography variant="h6" m={2}>
               Барааны мэдээлэл
             </Typography>
             <TextField
+              label="Барааны нэр"
+              style={{width: 400}}
+              size="small"
+              value={goodsNm}
+              onChange={(e) => {
+                setGoodsNm(e.target.value);
+              }}
+            />
+            <TextField
               label="Цэвэр жин"
-              id="outlined-start-adornment"
+              style={{width: 170}}
               size="small"
               value={netWgt}
               onChange={(e) => {
                 setNetWgt(e.target.value);
               }}
               InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">KG</InputAdornment>
-                ),
+                endAdornment: <InputAdornment position="start">KG</InputAdornment>,
               }}
             />
             <TextField
               label="Бохир жин"
-              id="outlined-start-adornment"
+              style={{width: 170}}
               size="small"
               value={wgt}
               onChange={(e) => {
                 setWgt(e.target.value);
               }}
               InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">KG</InputAdornment>
-                ),
+                endAdornment: <InputAdornment position="start">KG</InputAdornment>,
               }}
             />
             <TextField
               label="Баглаа боодлын тоо"
+              style={{width: 160}}
               size="small"
               value={qty}
               onChange={(e) => {
@@ -365,6 +517,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Баглаа боодлын нэгж"
+              style={{width: 170}}
               size="small"
               value={qtyUnit}
               onChange={(e) => {
@@ -372,15 +525,8 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              label="Аюултай барааны код"
-              size="small"
-              value={dangGoodsCode}
-              onChange={(e) => {
-                setDangGoodsCode(e.target.value);
-              }}
-            />
-            <TextField
               label="Тээврийн зардал үнэ"
+              style={{width: 170}}
               size="small"
               value={transFare}
               onChange={(e) => {
@@ -389,6 +535,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Тээврийн зардал валют"
+              style={{width: 180}}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -397,6 +544,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 1"
+              style={{width: 125}}
               size="small"
               value={price1}
               onChange={(e) => {
@@ -405,6 +553,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 1 валют"
+              style={{width: 125}}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -413,6 +562,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 2"
+              style={{width: 125}}
               size="small"
               value={price2}
               onChange={(e) => {
@@ -421,6 +571,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 2 валют"
+              style={{width: 125}}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -429,6 +580,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 3"
+              style={{width: 125}}
               size="small"
               value={price3}
               onChange={(e) => {
@@ -437,6 +589,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 3 валют"
+              style={{width: 125}}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -445,6 +598,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 4"
+              style={{width: 125}}
               size="small"
               value={price4}
               onChange={(e) => {
@@ -453,6 +607,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 4 валют"
+              style={{width: 125}}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -461,6 +616,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 5"
+              style={{width: 125}}
               size="small"
               value={price5}
               onChange={(e) => {
@@ -469,6 +625,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 5 валют"
+              style={{width: 125}}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -477,6 +634,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="БТКУС код"
+              style={{width: 125}}
               size="small"
               value={hsCode}
               onChange={(e) => {
@@ -484,11 +642,30 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              label="Барааны нэр"
+              label="Аюултай барааны код"
+              style={{width: 125}}
               size="small"
-              value={goodsNm}
+              value={dangGoodsCode}
               onChange={(e) => {
-                setGoodsNm(e.target.value);
+                setDangGoodsCode(e.target.value);
+              }}
+            />
+            <TextField
+              label="Цахим худалдааны төлбөрийн баримтын хуулбар"
+              size="small"
+              style={{width: 400}}
+              value={ecommerceType}
+              onChange={(e) => {
+                setEcommerceType(e.target.value);
+              }}
+            />
+            <TextField
+              label="Цахим худалдааны линк"
+              style={{width: 600}}
+              size="small"
+              value={ecommerceLink}
+              onChange={(e) => {
+                setEcommerceLink(e.target.value);
               }}
             />
           </Paper>

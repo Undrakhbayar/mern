@@ -8,22 +8,18 @@ import {
 import Packagee from "./Packagee";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import Box from "@mui/material/Box";
+import { Box, Button, Stack, Link } from "@mui/material";
 import {
   DataGrid,
   gridClasses,
   GridActionsCellItem,
-  GridRowParams,
+  GridToolbar,
 } from "@mui/x-data-grid";
+import { alpha, styled } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import MailIcon from "@mui/icons-material/Mail";
-import Stack from "@mui/material/Stack";
-import { alpha, styled } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import Link from "@mui/material/Link";
 
 const ODD_OPACITY = 0.2;
 
@@ -112,7 +108,11 @@ const PackageesList = () => {
       field: "prgsStatusCd",
       headerName: "Төлөв",
       width: 110,
-      editable: true,
+    },
+    {
+      field: "transportType",
+      headerName: "Шуудангийн төрөл",
+      width: 110,
     },
     {
       field: "edit",
@@ -136,7 +136,7 @@ const PackageesList = () => {
     isError,
     error,
   } = useGetPackageesQuery("packageesList", {
-    pollingInterval: 150000,
+    pollingInterval: 1000000,
     /*     refetchOnFocus: true,
     refetchOnMountOrArgChange: true, */
   });
@@ -280,44 +280,86 @@ const PackageesList = () => {
         sx={{ mb: 2 }}
       >
         <Button
-          variant="outlined"
+          variant="contained"
           startIcon={<SendIcon />}
           onClick={onSendPackageesClicked}
-          color="success"
+          //color="success"
+          sx={{
+            bgcolor: "#6366F1",
+            ":hover": { bgcolor: "#4338CA" },
+          }}
         >
           Илгээх
         </Button>
         <Button
-          variant="outlined"
+          variant="contained"
           startIcon={<DeleteIcon />}
           onClick={onDeletePackageesClicked}
-          color="error"
+          sx={{
+            bgcolor: "#6366F1",
+            ":hover": { bgcolor: "#4338CA" },
+          }}
         >
           Устгах
         </Button>
         <Button
-          variant="outlined"
+          variant="contained"
           endIcon={<MailIcon />}
           onClick={onNewPackageeClicked}
+          sx={{
+            bgcolor: "#6366F1",
+            ":hover": { bgcolor: "#4338CA" },
+          }}
         >
           Нэмэх
         </Button>
       </Stack>
-      <StripedDataGrid
-        sx={{ boxShadow: 2 }}
-        rows={rows}
-        onSelectionModelChange={setSelection}
-        {...rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5, 10, 20]}
-        checkboxSelection
-        disableSelectionOnClick
-        experimentalFeatures={{ newEditingApi: true }}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-        }
-      />
+      <div style={{ height: 600 }}>
+        <StripedDataGrid
+          sx={{ boxShadow: 2 }}
+          rows={rows}
+          onSelectionModelChange={setSelection}
+          {...rows}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[5, 10, 20]}
+          checkboxSelection
+          disableSelectionOnClick
+          experimentalFeatures={{ newEditingApi: true }}
+          density="compact"
+          localeText={{
+            columnMenuFilter: "Шүүх",
+            columnMenuHideColumn: "Hide column",
+            columnMenuUnsort: "Unsort",
+            columnMenuSortAsc: "Sort by ASC",
+            columnMenuSortDesc: "Sort by DESC",
+            toolbarDensity: "Хэмжээ",
+            toolbarDensityLabel: "Size",
+            toolbarDensityCompact: "Жижиг",
+            toolbarDensityStandard: "Дунд",
+            toolbarDensityComfortable: "Том",
+            MuiTablePagination: {
+              labelRowsPerPage: "Хуудсанд",
+            },
+          }}
+          components={{
+            Toolbar: GridToolbar,
+          }}
+          componentsProps={{
+            panel: {
+              sx: {
+                "& .MuiDataGrid-toolbarContainer .MuiButtonBase-root-MuiButton-root":
+                  {
+                    color: "#6366f1",
+                  },
+              },
+            },
+          }}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+          }
+        />
+      </div>
     </Box>
   );
   return content;

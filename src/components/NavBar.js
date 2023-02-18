@@ -23,10 +23,10 @@ import {
 
 import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
+import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const DASH_REGEX = /^\/dash(\/)?$/;
-const NOTES_REGEX = /^\/dash\/notes(\/)?$/;
 const PACKAGEES_REGEX = /^\/dash\/packagees(\/)?$/;
 const USERS_REGEX = /^\/dash\/users(\/)?$/;
 
@@ -42,8 +42,13 @@ export default function NavBar() {
     useSendLogoutMutation();
 
   useEffect(() => {
-    if (isSuccess) navigate("/login");
+    if (isSuccess) navigate("/");
   }, [isSuccess, navigate]);
+
+  const sendHome = () => {
+    navigate("/dash/packagees");
+    setSelectedIndex(0);
+  };
 
   const navigator = (index) => {
     if (index == 0) {
@@ -78,7 +83,9 @@ export default function NavBar() {
         position="fixed"
         sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
       >
-        <Toolbar style={{ justifyContent: "flex-end" }}>
+        <Toolbar
+          style={{ justifyContent: "flex-end", backgroundColor: "#eee" }}
+        >
           <IconButton
             id="basic-button"
             aria-controls={open ? "basic-menu" : undefined}
@@ -86,7 +93,7 @@ export default function NavBar() {
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
           >
-            <PersonIcon style={{ color: "white" }} fontSize="large" />
+            <PersonIcon style={{ color: "#6366f1" }} fontSize="large" />
           </IconButton>
           <Menu
             id="basic-menu"
@@ -117,21 +124,30 @@ export default function NavBar() {
         variant="permanent"
         anchor="left"
       >
-        <Toolbar />
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          color="#fff"
+          padding={1}
+        >
+          <HomeIcon sx={{ fontSize: 40 }} onClick={sendHome} />
+        </Box>
         <List
           sx={{
             // selected and (selected + hover) states
-            "&& .Mui-selected, && .Mui-selected:hover": {
-              "&, & .MuiListItemIcon-root": {
+            "& .Mui-selected, & .Mui-selected:hover": {
+              bgcolor: "rgba(255, 255, 255, 0.04)",
+              "& .MuiTypography-root": {
                 color: "#fff",
+              },
+              "& .MuiSvgIcon-root": {
+                color: "#6366F1 !important",
               },
             },
             // hover states
             "& .MuiListItemButton-root:hover": {
-              bgcolor: "rgba(255, 255, 255, 0.1)",
-              "&, & .MuiListItemIcon-root": {
-                color: "#fff",
-              },
+              bgcolor: "rgba(255, 255, 255, 0.04)",
             },
           }}
         >
