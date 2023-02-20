@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { setCredentials } from "./authSlice";
@@ -16,13 +16,14 @@ import Checkbox from "@mui/material/Checkbox";
 import Links from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import Alert from "@mui/material/Alert";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const Login = () => {
-  const userRef = useRef();
+  //const userRef = useRef();
   const errRef = useRef();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -68,7 +69,7 @@ const Login = () => {
   const handlePwdInput = (e) => setPassword(e.target.value);
   const handleToggle = () => setPersist((prev) => !prev);
 
-  const errClass = errMsg ? "errmsg" : "offscreen";
+  //const errClass = errMsg ? "errmsg" : "offscreen";
 
   if (isLoading) return <p>Loading...</p>;
   const theme = createTheme();
@@ -144,6 +145,7 @@ const Login = () => {
             noValidate
             sx={{ mt: 1 }}
           >
+            {errMsg ? <Alert severity="error">{errMsg}</Alert> : <></>}
             <TextField
               margin="normal"
               required

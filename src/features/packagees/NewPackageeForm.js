@@ -2,8 +2,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAddNewPackageeMutation } from "./packageesApiSlice";
-import { styled } from "@mui/material/styles";
-import { Box, Paper, Grid, TextField, Button, Stack, Divider, MenuItem, InputAdornment, Alert, Typography, Autocomplete } from "@mui/material";
+import { Box, Paper, Grid, TextField, Button, Stack, InputAdornment, Alert, Typography, Autocomplete } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -22,7 +21,7 @@ const NewPackageeForm = ({ users }) => {
   const [riskType, setRiskType] = useState("");
   const [netWgt, setNetWgt] = useState("");
   const [wgt, setWgt] = useState("");
-  const [wgtUnit, setWgtUnit] = useState("KG");
+  //const [wgtUnit, setWgtUnit] = useState("KG");
   const [qty, setQty] = useState("");
   const [qtyUnit, setQtyUnit] = useState("");
   const [dangGoodsCode, setDangGoodsCode] = useState("");
@@ -119,7 +118,7 @@ const NewPackageeForm = ({ users }) => {
         riskType,
         netWgt,
         wgt,
-        wgtUnit,
+        //wgtUnit,
         qty,
         qtyUnit,
         dangGoodsCode,
@@ -164,15 +163,7 @@ const NewPackageeForm = ({ users }) => {
     }
   };
 
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-  }));
-
-  const errClass = isError ? "errmsg" : "offscreen";
+  //const errClass = isError ? "errmsg" : "offscreen";
 
   const content = (
     <Box
@@ -183,7 +174,15 @@ const NewPackageeForm = ({ users }) => {
       }}
     >
       <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
-        <Button variant="contained" endIcon={<SaveIcon />} type="submit">
+        <Button
+          sx={{
+            bgcolor: "#6366F1",
+            ":hover": { bgcolor: "#4338CA" },
+          }}
+          variant="contained"
+          endIcon={<SaveIcon />}
+          type="submit"
+        >
           Хадгалах
         </Button>
       </Stack>
@@ -245,7 +244,7 @@ const NewPackageeForm = ({ users }) => {
               size="small"
               style={{
                 display: "inline-flex",
-                width: 200
+                width: 200,
               }}
               fullWidth={false}
               options={reportTypes.map((option) => option.value)}
@@ -260,7 +259,7 @@ const NewPackageeForm = ({ users }) => {
               id="combo-box-demo"
               style={{
                 display: "inline-flex",
-                width: 220
+                width: 220,
               }}
               fullWidth={false}
               options={transportTypes.map((option) => "[" + option.value + "] " + option.description)}
@@ -273,7 +272,7 @@ const NewPackageeForm = ({ users }) => {
               size="small"
               style={{
                 display: "inline-flex",
-                width: 140
+                width: 140,
               }}
               fullWidth={false}
               options={isDiplomats.map((option) => "[" + option.value + "] " + option.description)}
@@ -296,7 +295,7 @@ const NewPackageeForm = ({ users }) => {
           </Paper>
         </Grid>
         <Grid item xs={10}>
-          <Paper variant="outlined" style={{margin:"auto"}}>
+          <Paper variant="outlined" style={{ margin: "auto" }}>
             <Typography variant="h6" m={2}>
               Илгээгчийн мэдээлэл
             </Typography>
@@ -475,7 +474,7 @@ const NewPackageeForm = ({ users }) => {
             </Typography>
             <TextField
               label="Барааны нэр"
-              style={{width: 400}}
+              style={{ width: 400 }}
               size="small"
               value={goodsNm}
               onChange={(e) => {
@@ -484,7 +483,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Цэвэр жин"
-              style={{width: 170}}
+              style={{ width: 170 }}
               size="small"
               value={netWgt}
               onChange={(e) => {
@@ -496,7 +495,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Бохир жин"
-              style={{width: 170}}
+              style={{ width: 170 }}
               size="small"
               value={wgt}
               onChange={(e) => {
@@ -508,7 +507,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Баглаа боодлын тоо"
-              style={{width: 160}}
+              style={{ width: 160 }}
               size="small"
               value={qty}
               onChange={(e) => {
@@ -517,7 +516,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Баглаа боодлын нэгж"
-              style={{width: 170}}
+              style={{ width: 170 }}
               size="small"
               value={qtyUnit}
               onChange={(e) => {
@@ -526,7 +525,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Тээврийн зардал үнэ"
-              style={{width: 170}}
+              style={{ width: 170 }}
               size="small"
               value={transFare}
               onChange={(e) => {
@@ -535,7 +534,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Тээврийн зардал валют"
-              style={{width: 180}}
+              style={{ width: 180 }}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -544,7 +543,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 1"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               value={price1}
               onChange={(e) => {
@@ -553,7 +552,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 1 валют"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -562,7 +561,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 2"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               value={price2}
               onChange={(e) => {
@@ -571,7 +570,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 2 валют"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -580,7 +579,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 3"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               value={price3}
               onChange={(e) => {
@@ -589,7 +588,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 3 валют"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -598,7 +597,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 4"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               value={price4}
               onChange={(e) => {
@@ -607,7 +606,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 4 валют"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -616,7 +615,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 5"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               value={price5}
               onChange={(e) => {
@@ -625,7 +624,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Үнэ 5 валют"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               defaultValue={"USD"}
               onChange={(e) => {
@@ -634,7 +633,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="БТКУС код"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               value={hsCode}
               onChange={(e) => {
@@ -643,7 +642,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Аюултай барааны код"
-              style={{width: 125}}
+              style={{ width: 125 }}
               size="small"
               value={dangGoodsCode}
               onChange={(e) => {
@@ -653,7 +652,7 @@ const NewPackageeForm = ({ users }) => {
             <TextField
               label="Цахим худалдааны төлбөрийн баримтын хуулбар"
               size="small"
-              style={{width: 400}}
+              style={{ width: 400 }}
               value={ecommerceType}
               onChange={(e) => {
                 setEcommerceType(e.target.value);
@@ -661,7 +660,7 @@ const NewPackageeForm = ({ users }) => {
             />
             <TextField
               label="Цахим худалдааны линк"
-              style={{width: 600}}
+              style={{ width: 600 }}
               size="small"
               value={ecommerceLink}
               onChange={(e) => {

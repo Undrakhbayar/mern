@@ -1,7 +1,6 @@
 import NewPackageeForm from './NewPackageeForm'
 import { useGetUsersQuery } from '../users/usersApiSlice'
 import PulseLoader from 'react-spinners/PulseLoader'
-import useTitle from '../../hooks/useTitle'
 
 const NewPackagee = () => {
     //useTitle('POST: шуудан бүртгэх')

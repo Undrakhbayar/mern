@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSendLogoutMutation } from "../features/auth/authApiSlice";
 import useAuth from "../hooks/useAuth";
 
@@ -11,12 +11,10 @@ import {
   Menu,
   MenuItem,
   CssBaseline,
-  Divider,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Button,
   Box,
   IconButton,
 } from "@mui/material";
@@ -24,25 +22,24 @@ import {
 import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
-import LogoutIcon from "@mui/icons-material/Logout";
 
-const DASH_REGEX = /^\/dash(\/)?$/;
+/* const DASH_REGEX = /^\/dash(\/)?$/;
 const PACKAGEES_REGEX = /^\/dash\/packagees(\/)?$/;
-const USERS_REGEX = /^\/dash\/users(\/)?$/;
+const USERS_REGEX = /^\/dash\/users(\/)?$/; */
 
 const drawerWidth = 240;
 
 export default function NavBar() {
-  const { isManager, isAdmin } = useAuth();
+  //const { isManager, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const [sendLogout, { isLoading, isSuccess, isError, error }] =
-    useSendLogoutMutation();
-
+  //const [sendLogout, { isLoading, isSuccess, isError, error }] = useSendLogoutMutation();
+  const [sendLogout, { isSuccess }] = useSendLogoutMutation();
   useEffect(() => {
-    if (isSuccess) navigate("/");
+    if (isSuccess) navigate("/login");
   }, [isSuccess, navigate]);
 
   const sendHome = () => {
@@ -51,7 +48,7 @@ export default function NavBar() {
   };
 
   const navigator = (index) => {
-    if (index == 0) {
+    if (index === 0) {
       navigate("/dash/packagees");
     } else {
       navigate("/dash/users");
@@ -76,16 +73,24 @@ export default function NavBar() {
     },
   });
 
+  let userMenu = null;
+  if (isAdmin) {
+    userMenu = (
+      <ListItem key={2} disablePadding>
+        <ListItemButton {...buttonProps(1)}>
+          <ListItemIcon>
+            <PersonIcon style={{ color: "#9DA4AE" }} />
+          </ListItemIcon>
+          <ListItemText primary="Хэрэглэгчийн бүртгэл" />
+        </ListItemButton>
+      </ListItem>
+    );
+  }
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-      >
-        <Toolbar
-          style={{ justifyContent: "flex-end", backgroundColor: "#eee" }}
-        >
+      <AppBar position="fixed" sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}>
+        <Toolbar style={{ justifyContent: "flex-end", backgroundColor: "#eee" }}>
           <IconButton
             id="basic-button"
             aria-controls={open ? "basic-menu" : undefined}
@@ -124,13 +129,7 @@ export default function NavBar() {
         variant="permanent"
         anchor="left"
       >
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          color="#fff"
-          padding={1}
-        >
+        <Box display="flex" alignItems="center" justifyContent="center" color="#fff" padding={1}>
           <HomeIcon sx={{ fontSize: 40 }} onClick={sendHome} />
         </Box>
         <List
@@ -159,14 +158,7 @@ export default function NavBar() {
               <ListItemText primary="Шуудангийн бүртгэл" />
             </ListItemButton>
           </ListItem>
-          <ListItem key={2} disablePadding>
-            <ListItemButton {...buttonProps(1)}>
-              <ListItemIcon>
-                <PersonIcon style={{ color: "#9DA4AE" }} />
-              </ListItemIcon>
-              <ListItemText primary="Хэрэглэгчийн бүртгэл" />
-            </ListItemButton>
-          </ListItem>
+          {userMenu}
         </List>
       </Drawer>
     </Box>

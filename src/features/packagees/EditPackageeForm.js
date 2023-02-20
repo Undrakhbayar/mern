@@ -1,12 +1,10 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUpdatePackageeMutation, useDeletePackageeMutation } from "./packageesApiSlice";
-import { styled } from "@mui/material/styles";
-import { Box, Paper, Grid, TextField, Button, Stack, Divider, MenuItem, InputAdornment, Alert, Typography, Autocomplete } from "@mui/material";
+import { useUpdatePackageeMutation, useAddNewPackageeMutation } from "./packageesApiSlice";
+import { Box, Paper, Grid, TextField, Button, Stack, InputAdornment, Alert, Typography, Autocomplete } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const EditPackageeForm = ({ packagee, users }) => {
@@ -20,7 +18,7 @@ const EditPackageeForm = ({ packagee, users }) => {
   const [riskType, setRiskType] = useState(packagee.riskType);
   const [netWgt, setNetWgt] = useState(packagee.netWgt);
   const [wgt, setWgt] = useState(packagee.wgt);
-  const [wgtUnit, setWgtUnit] = useState("KG");
+  //const [wgtUnit, setWgtUnit] = useState("KG");
   const [qty, setQty] = useState(packagee.qty);
   const [qtyUnit, setQtyUnit] = useState(packagee.qtyUnit);
   const [dangGoodsCode, setDangGoodsCode] = useState(packagee.dangGoodsCode);
@@ -69,15 +67,17 @@ const EditPackageeForm = ({ packagee, users }) => {
   const [isDiplomats, setIsDiplomats] = useState([]);
 
   const [updatePackagee, { isLoading, isSuccess, isError, error }] = useUpdatePackageeMutation();
+  const [addNewPackagee, { isLoading: isLoadingA, isSuccess: isSuccessA, isError: isErrorA, error: errorA }] = useAddNewPackageeMutation();
 
   useEffect(() => {
-    if (isSuccess) {
-      setHouseSeq(packagee.houseSeq);
-      setUserId(packagee.houseSeq);
+    if (isSuccess || isSuccessA) {
+      setUserId("");
+      localStorage.removeItem("path");
       navigate("/dash/packagees");
     }
-  }, [isSuccess, navigate]);
+  }, [isSuccess, isSuccessA, navigate]);
 
+  console.log(localStorage.getItem("path"));
   const referenceUrl = "http://localhost:3500/references";
   //const referenceUrl = "https://mern-api-lcmj.onrender.com/references";
   useEffect(() => {
@@ -104,76 +104,121 @@ const EditPackageeForm = ({ packagee, users }) => {
     getReferences();
   }, []);
 
-  const canSave = [houseSeq, userId].every(Boolean) && !isLoading;
+  const canSave = [houseSeq, userId].every(Boolean) && !isLoading && !isLoadingA;
 
   const onSavePackageeClicked = async (e) => {
     e.preventDefault();
     if (canSave) {
-      await updatePackagee({
-        id: packagee.id,
-        user: userId,
-        houseSeq,
-        mailId,
-        mailBagNumber,
-        blNo,
-        reportType,
-        riskType,
-        netWgt,
-        wgt,
-        wgtUnit,
-        qty,
-        qtyUnit,
-        dangGoodsCode,
-        transFare,
-        transFareCurr,
-        price1,
-        price1Curr,
-        price2,
-        price2Curr,
-        price3,
-        price3Curr,
-        price4,
-        price4Curr,
-        price5,
-        price5Curr,
-        transportType,
-        isDiplomat,
-        hsCode,
-        goodsNm,
-        shipperCntryCd,
-        shipperCntryNm,
-        shipperNatinality,
-        shipperNm,
-        shipperReg,
-        shipperAddr,
-        shipperTel,
-        consigneeCntryCd,
-        consigneeCntryNm,
-        consigneeNatinality,
-        consigneeNm,
-        consigneeReg,
-        consigneeAddr,
-        consigneeTel,
-        compName,
-        compRegister,
-        compAddr,
-        compTel,
-        mailDate,
-        ecommerceType,
-        ecommerceLink,
-      });
+      if (localStorage.getItem("path") === "copy") {
+        await addNewPackagee({
+          user: userId,
+          houseSeq,
+          mailId,
+          mailBagNumber,
+          blNo,
+          reportType,
+          riskType,
+          netWgt,
+          wgt,
+          //wgtUnit,
+          qty,
+          qtyUnit,
+          dangGoodsCode,
+          transFare,
+          transFareCurr,
+          price1,
+          price1Curr,
+          price2,
+          price2Curr,
+          price3,
+          price3Curr,
+          price4,
+          price4Curr,
+          price5,
+          price5Curr,
+          transportType,
+          isDiplomat,
+          hsCode,
+          goodsNm,
+          shipperCntryCd,
+          shipperCntryNm,
+          shipperNatinality,
+          shipperNm,
+          shipperReg,
+          shipperAddr,
+          shipperTel,
+          consigneeCntryCd,
+          consigneeCntryNm,
+          consigneeNatinality,
+          consigneeNm,
+          consigneeReg,
+          consigneeAddr,
+          consigneeTel,
+          compName,
+          compRegister,
+          compAddr,
+          compTel,
+          mailDate,
+          ecommerceType,
+          ecommerceLink,
+        });
+      } else {
+        await updatePackagee({
+          id: packagee.id,
+          user: userId,
+          houseSeq,
+          mailId,
+          mailBagNumber,
+          blNo,
+          reportType,
+          riskType,
+          netWgt,
+          wgt,
+          //wgtUnit,
+          qty,
+          qtyUnit,
+          dangGoodsCode,
+          transFare,
+          transFareCurr,
+          price1,
+          price1Curr,
+          price2,
+          price2Curr,
+          price3,
+          price3Curr,
+          price4,
+          price4Curr,
+          price5,
+          price5Curr,
+          transportType,
+          isDiplomat,
+          hsCode,
+          goodsNm,
+          shipperCntryCd,
+          shipperCntryNm,
+          shipperNatinality,
+          shipperNm,
+          shipperReg,
+          shipperAddr,
+          shipperTel,
+          consigneeCntryCd,
+          consigneeCntryNm,
+          consigneeNatinality,
+          consigneeNm,
+          consigneeReg,
+          consigneeAddr,
+          consigneeTel,
+          compName,
+          compRegister,
+          compAddr,
+          compTel,
+          mailDate,
+          ecommerceType,
+          ecommerceLink,
+        });
+      }
     }
   };
-
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-  }));
-
-  const errClass = isError ? "errmsg" : "offscreen";
 
   const content = (
     <Box
@@ -184,7 +229,15 @@ const EditPackageeForm = ({ packagee, users }) => {
       }}
     >
       <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
-        <Button variant="contained" endIcon={<SaveIcon />} type="submit">
+        <Button
+          sx={{
+            bgcolor: "#6366F1",
+            ":hover": { bgcolor: "#4338CA" },
+          }}
+          variant="contained"
+          endIcon={<SaveIcon />}
+          type="submit"
+        >
           Хадгалах
         </Button>
       </Stack>
@@ -195,6 +248,7 @@ const EditPackageeForm = ({ packagee, users }) => {
               Үндсэн мэдээлэл
             </Typography>
             {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
+            {isErrorA ? <Alert severity="error">{errorA?.data?.message}</Alert> : <></>}
             <TextField
               //error={houseSeq.length != 3}
               //helperText={!houseSeq.length ? "name is " : ""}

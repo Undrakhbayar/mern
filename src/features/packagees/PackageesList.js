@@ -1,25 +1,16 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import {
-  useGetPackageesQuery,
-  useDeletePackageeMutation,
-  useUpdatePackageeMutation,
-} from "./packageesApiSlice";
-import Packagee from "./Packagee";
+import { useGetPackageesQuery, useDeletePackageeMutation, useUpdatePackageeMutation } from "./packageesApiSlice";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Stack, Link } from "@mui/material";
-import {
-  DataGrid,
-  gridClasses,
-  GridActionsCellItem,
-  GridToolbar,
-} from "@mui/x-data-grid";
+import { Box, Button, Stack, Link, Alert } from "@mui/material";
+import { DataGrid, gridClasses, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import { alpha, styled } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import MailIcon from "@mui/icons-material/Mail";
 import EditIcon from "@mui/icons-material/Edit";
+import CopyIcon from "@mui/icons-material/ContentCopy";
 
 const ODD_OPACITY = 0.2;
 
@@ -33,23 +24,12 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       },
     },
     "&.Mui-selected": {
-      backgroundColor: alpha(
-        theme.palette.primary.main,
-        ODD_OPACITY + theme.palette.action.selectedOpacity
-      ),
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
       "&:hover, &.Mui-hovered": {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          ODD_OPACITY +
-            theme.palette.action.selectedOpacity +
-            theme.palette.action.hoverOpacity
-        ),
+        backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity),
         // Reset on touch devices, it doesn't add specificity
         "@media (hover: none)": {
-          backgroundColor: alpha(
-            theme.palette.primary.main,
-            ODD_OPACITY + theme.palette.action.selectedOpacity
-          ),
+          backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
         },
       },
     },
@@ -58,12 +38,12 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 
 const PackageesList = () => {
   const columns = [
-    {
+/*     {
       field: "id",
       headerName: "number",
       filterable: false,
       renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
-    },
+    }, */
     {
       field: "houseSeq",
       headerName: "№",
@@ -72,38 +52,31 @@ const PackageesList = () => {
     },
     {
       field: "mailId",
-      headerName: "Илгээмжийн Дугаар",
-      width: 150,
+      headerName: "Илгээмжийн дугаар",
+      width: 170,
       renderCell: (params) => {
-        return (
-          <Link href={`/dash/packagees/${params.row.id}`}>
-            {params.row.mailId}
-          </Link>
-        );
+        return <Link href={`/dash/packagees/${params.row.id}`}>{params.row.mailId}</Link>;
       },
     },
     {
       field: "blNo",
       headerName: "Тээврийн баримтын дугаар",
       width: 150,
-      editable: true,
     },
     {
       field: "netWgt",
       headerName: "Цэвэр жин",
       type: "number",
       width: 110,
-      editable: true,
     },
-    {
+/*     {
       field: "fullName",
       headerName: "Full name",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       width: 160,
-      valueGetter: (params) =>
-        `${params.row.firstName || ""} ${params.row.lastName || ""}`,
-    },
+      valueGetter: (params) => `${params.row.firstName || ""} ${params.row.lastName || ""}`,
+    }, */
     {
       field: "prgsStatusCd",
       headerName: "Төлөв",
@@ -118,14 +91,7 @@ const PackageesList = () => {
       field: "edit",
       headerName: "Засах",
       width: 100,
-      getActions: (params) => [
-        <GridActionsCellItem
-          key={0}
-          icon={<EditIcon color="primary" />}
-          label="Засах"
-          onClick={() => handleEdit(params)}
-        />,
-      ],
+      getActions: (params) => [<GridActionsCellItem key={0} icon={<EditIcon color="primary" />} label="Засах" onClick={() => handleEdit(params)} />],
     },
   ];
   const handleEdit = (id) => navigate(`/dash/packagees/${id}`);
@@ -140,52 +106,56 @@ const PackageesList = () => {
     /*     refetchOnFocus: true,
     refetchOnMountOrArgChange: true, */
   });
+  let content;
 
+  if (isError) {
+    content = <Alert severity="error">{error?.data?.message}</Alert>;
+  }
+
+  if (isLoading) content = <p>Loading...</p>;
   const { username, isManager, isAdmin } = useAuth();
 
   const navigate = useNavigate();
   const onNewPackageeClicked = () => navigate("/dash/packagees/new");
 
-  const [
-    deletePackagee,
-    { isSuccess: isDelSuccess, isError: isDelError, error: delerror },
-  ] = useDeletePackageeMutation();
+  const [deletePackagee, { isSuccess: isDelSuccess, isError: isDelError, error: delerror }] = useDeletePackageeMutation();
 
   useEffect(() => {
     if (isDelSuccess) {
-      navigate("/dash/packagees");
+      navigate(0);
     }
-  }, [isSuccess, isDelSuccess, navigate]);
+  }, [isDelSuccess, navigate]);
 
   const onDeletePackageesClicked = async () => {
     await deletePackagee({ id: selection });
   };
+  const onCopyPackageesClicked = async () => {
+    localStorage.setItem('path', 'copy');
+    navigate(`/dash/packagees/${selection}`)
+  };
+  let unfiltered = [];
   let rows = [];
-
+  const [pageSize, setPageSize] = useState(10);
   const [selection, setSelection] = useState([]);
 
   if (isSuccess) {
-    const { ids, entities } = packagees;
-    rows = Object.values(entities);
-    let filteredIds;
+    const { entities } = packagees;
+
+    unfiltered = Object.values(entities);
     if (isManager || isAdmin) {
-      filteredIds = [...ids];
+      rows = [...unfiltered];
     } else {
-      filteredIds = ids.filter(
-        (packageeId) => entities[packageeId].username === username
-      );
+      rows = unfiltered.filter(({ regusername }) => regusername === username);
     }
   }
 
   const onSendPackageesClicked = async () => {
-    const selectedRowsData = selection.map((id) =>
-      rows.find((row) => row.id === id)
-    );
+    const selectedRowsData = selection.map((id) => rows.find((row) => row.id === id));
     console.log(selectedRowsData);
     let arr = [];
 
     for (let i = 0; i < selectedRowsData.length; i++) {
-      let obj = new Object();
+      let obj = {};
       obj.HOUSE_SEQ = selectedRowsData[i].houseSeq;
       obj.MAIL_ID = selectedRowsData[i].mailId;
       obj.MAIL_BAG_NUMBER = selectedRowsData[i].mailBagNumber;
@@ -253,17 +223,13 @@ const PackageesList = () => {
       headers: { "Content-Type": "application/json" },
       body: jsonString,
     };
-    const res = await fetch(
-      "https://api.gaali.mn/ceps/send/cargo/short",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((response) => console.log(response));
+    const res = await fetch("https://api.gaali.mn/ceps/send/cargo/short", requestOptions)
+      .then((res) => res.json())
+      .then((res) => console.log(res));
   };
 
   const [prgsStatusCd, setPrgsStatusCd] = useState([]);
-  const [updatePackagee, { isLoadingU, isSuccessU, isErrorU, errorU }] =
-    useUpdatePackageeMutation();
+  const [updatePackagee, { isLoadingU, isSuccessU, isErrorU, errorU }] = useUpdatePackageeMutation();
 
   useEffect(() => {
     if (isSuccessU) {
@@ -271,14 +237,9 @@ const PackageesList = () => {
     }
   }, [isSuccessU]);
 
-  const content = (
+  content = (
     <Box sx={{ height: 400, width: "100%" }}>
-      <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="flex-end"
-        sx={{ mb: 2 }}
-      >
+      <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
         <Button
           variant="contained"
           startIcon={<SendIcon />}
@@ -290,6 +251,18 @@ const PackageesList = () => {
           }}
         >
           Илгээх
+        </Button>
+        <Button
+          variant="contained"
+          startIcon={<CopyIcon />}
+          onClick={onCopyPackageesClicked}
+          //color="success"
+          sx={{
+            bgcolor: "#6366F1",
+            ":hover": { bgcolor: "#4338CA" },
+          }}
+        >
+          Хуулах
         </Button>
         <Button
           variant="contained"
@@ -314,6 +287,7 @@ const PackageesList = () => {
           Нэмэх
         </Button>
       </Stack>
+      {isDelError ? <Alert severity="error">{delerror?.data?.message}</Alert> : <></>}
       <div style={{ height: 600 }}>
         <StripedDataGrid
           sx={{ boxShadow: 2 }}
@@ -321,8 +295,9 @@ const PackageesList = () => {
           onSelectionModelChange={setSelection}
           {...rows}
           columns={columns}
-          pageSize={10}
-          rowsPerPageOptions={[5, 10, 20]}
+          pageSize={pageSize}
+          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+          rowsPerPageOptions={[10, 20, 30]}
           checkboxSelection
           disableSelectionOnClick
           experimentalFeatures={{ newEditingApi: true }}
@@ -338,26 +313,11 @@ const PackageesList = () => {
             toolbarDensityCompact: "Жижиг",
             toolbarDensityStandard: "Дунд",
             toolbarDensityComfortable: "Том",
-            MuiTablePagination: {
-              labelRowsPerPage: "Хуудсанд",
-            },
           }}
           components={{
             Toolbar: GridToolbar,
           }}
-          componentsProps={{
-            panel: {
-              sx: {
-                "& .MuiDataGrid-toolbarContainer .MuiButtonBase-root-MuiButton-root":
-                  {
-                    color: "#6366f1",
-                  },
-              },
-            },
-          }}
-          getRowClassName={(params) =>
-            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-          }
+          getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
         />
       </div>
     </Box>

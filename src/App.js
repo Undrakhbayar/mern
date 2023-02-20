@@ -1,15 +1,11 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
-import Public from './components/Public'
 import Login from './features/auth/Login';
 import DashLayout from './components/DashLayout'
 import Welcome from './features/auth/Welcome'
-import NotesList from './features/notes/NotesList'
 import UsersList from './features/users/UsersList'
 import EditUser from './features/users/EditUser'
 import NewUserForm from './features/users/NewUserForm'
-import EditNote from './features/notes/EditNote'
-import NewNote from './features/notes/NewNote'
 import PackageesList from './features/packagees/PackageesList'
 import EditPackagee from './features/packagees/EditPackagee'
 import NewPackagee from './features/packagees/NewPackagee'
@@ -27,7 +23,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         {/* public routes */}
         <Route index element={<Login />} />
-        {/* <Route path="login" element={<Login />} /> */}
+        <Route path="login" element={<Login />} />
 
         {/* Protected Routes */}
         <Route element={<PersistLogin />}>
