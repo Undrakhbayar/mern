@@ -23,10 +23,6 @@ import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
 
-/* const DASH_REGEX = /^\/dash(\/)?$/;
-const PACKAGEES_REGEX = /^\/dash\/packagees(\/)?$/;
-const USERS_REGEX = /^\/dash\/users(\/)?$/; */
-
 const drawerWidth = 240;
 
 export default function NavBar() {
@@ -42,16 +38,31 @@ export default function NavBar() {
     if (isSuccess) navigate("/login");
   }, [isSuccess, navigate]);
 
+  useEffect(() => {
+    if (pathname.includes("packagee")) {
+      console.log("packageehere")
+      setSelectedIndex(0);
+    } else {
+      console.log("otherhere")
+      setSelectedIndex(1);
+    }
+  }, [pathname]);
+
   const sendHome = () => {
     navigate("/dash/packagees");
     setSelectedIndex(0);
   };
 
   const navigator = (index) => {
-    if (index === 0) {
-      navigate("/dash/packagees");
-    } else {
-      navigate("/dash/users");
+    switch (index) {
+      case 0:
+        navigate("/dash/packagees");
+        break;
+      case 1:
+        navigate("/dash/users");
+        break;
+      default:
+        navigate("/dash/packagees");
     }
   };
 

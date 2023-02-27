@@ -166,6 +166,7 @@ const EditPackageeForm = ({ packagee, users }) => {
         await updatePackagee({
           id: packagee.id,
           user: userId,
+          prgsStatusCd : '10',
           houseSeq,
           mailId,
           mailBagNumber,
@@ -228,6 +229,7 @@ const EditPackageeForm = ({ packagee, users }) => {
         "& .MuiTextField-root": { m: 1, width: "25ch" },
       }}
     >
+      { packagee.prgsStatusCd === '10' ?
       <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
         <Button
           sx={{
@@ -241,6 +243,8 @@ const EditPackageeForm = ({ packagee, users }) => {
           Хадгалах
         </Button>
       </Stack>
+      :<></>
+      }
       <Grid container spacing={1} columns={26} sx={{ boxShadow: 3, pr: 1, pb: 1 }} alignItems="center">
         <Grid item xs={26}>
           <Paper variant="outlined">

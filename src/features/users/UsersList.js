@@ -6,7 +6,6 @@ import { Box, Button, Stack, Link, Alert } from "@mui/material";
 import { DataGrid, gridClasses, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import { alpha, styled } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SendIcon from "@mui/icons-material/Send";
 import MailIcon from "@mui/icons-material/Mail";
 import EditIcon from "@mui/icons-material/Edit";
 const UsersList = () => {
@@ -58,7 +57,7 @@ const UsersList = () => {
   if (isSuccess) {
     const { ids, entities } = users;
     rows = Object.values(entities);
-    const tableContent = ids?.length && ids.map((userId) => <User key={userId} userId={userId} />);
+    //const tableContent = ids?.length && ids.map((userId) => <User key={userId} userId={userId} />);
 
     content = (
       <Box sx={{ height: 400, width: "100%" }}>

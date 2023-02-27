@@ -2,11 +2,29 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAddNewPackageeMutation } from "./packageesApiSlice";
-import { Box, Paper, Grid, TextField, Button, Stack, InputAdornment, Alert, Typography, Autocomplete } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Grid,
+  TextField,
+  Button,
+  Stack,
+  InputAdornment,
+  Alert,
+  Typography,
+  Autocomplete,
+  FormGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { GreenRedSwitch, CustomInput } from "../../components/Components";
 
 const NewPackageeForm = ({ users }) => {
   const [addNewPackagee, { isLoading, isSuccess, isError, error }] = useAddNewPackageeMutation();
@@ -164,7 +182,7 @@ const NewPackageeForm = ({ users }) => {
   };
 
   //const errClass = isError ? "errmsg" : "offscreen";
-
+  const label = { inputProps: { "aria-label": "Color switch demo" } };
   const content = (
     <Box
       component="form"
@@ -188,50 +206,46 @@ const NewPackageeForm = ({ users }) => {
       </Stack>
       <Grid container spacing={1} columns={26} sx={{ boxShadow: 3, pr: 1, pb: 1 }} alignItems="center">
         <Grid item xs={26}>
-          <Paper variant="outlined">
+          <Paper elevation={3}>
             <Typography variant="h6" m={2}>
               Үндсэн мэдээлэл
             </Typography>
             {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
-            <TextField
-              //error={houseSeq.length != 3}
-              //helperText={!houseSeq.length ? "name is " : ""}
-              style={{ width: 70 }}
+            <CustomInput
+              style={{ width: 50 }}
               value={houseSeq}
               label="№"
-              size="small"
               inputProps={{ maxLength: 3 }}
               onChange={(e) => {
                 setHouseSeq(e.target.value);
               }}
             />
-            <TextField
+            <CustomInput
               value={mailId}
-              style={{ width: 200 }}
+              style={{ width: 175 }}
               label="Илгээмжийн дугаар"
-              size="small"
               onChange={(e) => {
                 setMailId(e.target.value);
               }}
             />
-            <TextField
+            <CustomInput
               value={mailBagNumber}
-              style={{ width: 160 }}
+              style={{ width: 135 }}
               label="Богцын дугаар"
-              size="small"
               onChange={(e) => {
                 setMailBagNumber(e.target.value);
               }}
             />
-            <TextField
+            <CustomInput
               value={blNo}
+              style={{ width: 240 }}
               label="Тээврийн баримтын дугаар"
-              size="small"
               onChange={(e) => {
                 setBlNo(e.target.value);
               }}
             />
-            <TextField
+            {/*             <TextField
+              variant="standard"
               value={riskType}
               style={{ width: 190 }}
               label="Эрсдлийн төлөв /үнэлгээ/ "
@@ -239,16 +253,34 @@ const NewPackageeForm = ({ users }) => {
               onChange={(e) => {
                 setRiskType(e.target.value);
               }}
-            />
+            /> */}
+            <FormGroup
+              style={{
+                display: "inline",
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <GreenRedSwitch
+                    defaultChecked
+                    onChange={(e) => {
+                      //console.log(e.target.checked);
+                      e.target.checked ? setRiskType("green") : setRiskType("red");
+                    }}
+                  />
+                }
+                label="Эрсдлийн төлөв"
+              />
+            </FormGroup>
             <Autocomplete
               size="small"
               style={{
                 display: "inline-flex",
-                width: 200,
+                width: 175,
               }}
               fullWidth={false}
               options={reportTypes.map((option) => option.value)}
-              renderInput={(params) => <TextField {...params} label="Маягтын төрөл" />}
+              renderInput={(params) => <TextField variant="standard" {...params} label="Маягтын төрөл" />}
               onChange={(e) => {
                 setReportType(e.target.textContent);
               }}
@@ -256,40 +288,47 @@ const NewPackageeForm = ({ users }) => {
 
             <Autocomplete
               size="small"
-              id="combo-box-demo"
               style={{
                 display: "inline-flex",
-                width: 220,
+                width: 200,
               }}
               fullWidth={false}
               options={transportTypes.map((option) => "[" + option.value + "] " + option.description)}
-              renderInput={(params) => <TextField {...params} label="Шуудангын төрөл" />}
+              renderInput={(params) => <TextField variant="standard" {...params} label="Шуудангын төрөл" />}
               onChange={(e) => {
                 setTransportType(e.target.textContent.substring(1, 3));
               }}
             />
-            <Autocomplete
+{/*             <Autocomplete
               size="small"
               style={{
                 display: "inline-flex",
-                width: 140,
+                width: 165,
               }}
               fullWidth={false}
               options={isDiplomats.map((option) => "[" + option.value + "] " + option.description)}
-              renderInput={(params) => <TextField {...params} label="Дипломат эсэх" />}
+              renderInput={(params) => <TextField variant="standard" {...params} label="Дипломат эсэх" />}
               onChange={(e) => {
                 setIsDiplomat(e.target.textContent.substring(1, 2));
               }}
-            />
+            /> */}
+            <FormControl>
+              <FormLabel id="demo-row-radio-buttons-group-label">Дипломат эсэх</FormLabel>
+              <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
+                <FormControlLabel value="Y" control={<Radio />} label="Тийм" />
+                <FormControlLabel value="N" control={<Radio />} label="Үгүй" />
+              </RadioGroup>
+            </FormControl>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
+                variant="standard"
                 label="Ачаа хөдөлсөн огноо"
                 inputFormat="YYYY-MM-DD"
                 value={mailDate}
                 onChange={(e) => {
                   setMailDate(e);
                 }}
-                renderInput={(params) => <TextField size="small" style={{ width: 180 }} {...params} />}
+                renderInput={(params) => <TextField variant="standard" size="small" style={{ width: 140 }} {...params} />}
               />
             </LocalizationProvider>
           </Paper>
@@ -321,10 +360,11 @@ const NewPackageeForm = ({ users }) => {
                 display: "inline-flex",
               }}
               fullWidth={false}
-              options={countries.map((option) => "[" + option.value + "] " + option.description)}
+              options={countries.map((option) => `${option.value}-${option.description}`)}
               renderInput={(params) => <TextField {...params} label="Харьяалал" />}
               onChange={(e) => {
-                setShipperNatinality(e.target.textContent.substring(1, 3));
+                console.log(e.target.textContent.split("-")[0]);
+                setShipperNatinality(e.target.textContent.split("-")[0]);
               }}
             />
             <TextField
@@ -344,19 +384,20 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              label="Хаяг"
-              size="small"
-              value={shipperAddr}
-              onChange={(e) => {
-                setShipperAddr(e.target.value);
-              }}
-            />
-            <TextField
               label="Утасны дугаар"
               size="small"
               value={shipperTel}
               onChange={(e) => {
                 setShipperTel(e.target.value);
+              }}
+            />
+            <TextField
+              label="Хаяг"
+              size="small"
+              style={{ width: 550 }}
+              value={shipperAddr}
+              onChange={(e) => {
+                setShipperAddr(e.target.value);
               }}
             />
           </Paper>
@@ -411,19 +452,21 @@ const NewPackageeForm = ({ users }) => {
               }}
             />
             <TextField
-              label="Хаяг"
-              size="small"
-              value={consigneeAddr}
-              onChange={(e) => {
-                setConsigneeAddr(e.target.value);
-              }}
-            />
-            <TextField
               label="Утасны дугаар"
               size="small"
               value={consigneeTel}
               onChange={(e) => {
                 setConsigneeTel(e.target.value);
+              }}
+            />
+            <TextField
+              variant="standard"
+              label="Хаяг"
+              size="small"
+              style={{ width: 550 }}
+              value={consigneeAddr}
+              onChange={(e) => {
+                setConsigneeAddr(e.target.value);
               }}
             />
           </Paper>

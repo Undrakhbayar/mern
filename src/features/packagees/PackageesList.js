@@ -10,7 +10,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import MailIcon from "@mui/icons-material/Mail";
 import EditIcon from "@mui/icons-material/Edit";
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import CopyIcon from "@mui/icons-material/ContentCopy";
+import { OrderStatus } from "../../components/Components";
 
 const ODD_OPACITY = 0.2;
 
@@ -38,7 +40,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 
 const PackageesList = () => {
   const columns = [
-/*     {
+    /*     {
       field: "id",
       headerName: "number",
       filterable: false,
@@ -47,7 +49,6 @@ const PackageesList = () => {
     {
       field: "houseSeq",
       headerName: "№",
-      headerClassName: "",
       width: 60,
     },
     {
@@ -69,7 +70,7 @@ const PackageesList = () => {
       type: "number",
       width: 110,
     },
-/*     {
+    /*     {
       field: "fullName",
       headerName: "Full name",
       description: "This column has a value getter and is not sortable.",
@@ -80,7 +81,12 @@ const PackageesList = () => {
     {
       field: "prgsStatusCd",
       headerName: "Төлөв",
-      width: 110,
+      width: 120,
+      align: "center",
+      headerAlign: "center",
+      renderCell: function render({ row }) {
+        return <OrderStatus status={row.prgsStatusCd} />;
+      },
     },
     {
       field: "transportType",
@@ -88,13 +94,38 @@ const PackageesList = () => {
       width: 110,
     },
     {
-      field: "edit",
+      field: "actions",
       headerName: "Засах",
-      width: 100,
-      getActions: (params) => [<GridActionsCellItem key={0} icon={<EditIcon color="primary" />} label="Засах" onClick={() => handleEdit(params)} />],
+      sortable: false,
+      type: "actions",
+      getActions: ({ row }) => [
+        <GridActionsCellItem
+          key={1}
+          icon={<EditIcon />}
+          sx={{ padding: "2px 6px" }}
+          label = "Засах"
+          disabled = {row.prgsStatusCd === '11'}
+          onClick={() => {
+            handleEdit(row.id);
+          }}
+        />,
+        <GridActionsCellItem
+          key={2}
+          icon={<DeleteIcon />}
+          sx={{ padding: "2px 6px" }}
+          label="Устгах"
+          disabled = {row.prgsStatusCd === '11'}
+          onClick={() => {
+            handleDelete(row);
+          }}
+        />,
+      ],
     },
   ];
   const handleEdit = (id) => navigate(`/dash/packagees/${id}`);
+  const handleDelete = async (id) => {
+    await deletePackagee({ id: [id] });
+  };
   const {
     data: packagees,
     isLoading,
@@ -130,8 +161,8 @@ const PackageesList = () => {
     await deletePackagee({ id: selection });
   };
   const onCopyPackageesClicked = async () => {
-    localStorage.setItem('path', 'copy');
-    navigate(`/dash/packagees/${selection}`)
+    localStorage.setItem("path", "copy");
+    navigate(`/dash/packagees/${selection}`);
   };
   let unfiltered = [];
   let rows = [];
@@ -318,6 +349,7 @@ const PackageesList = () => {
             Toolbar: GridToolbar,
           }}
           getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
+          initialState={{ pinnedColumns: { left: ['houseSeq'], right: ['actions'] } }}
         />
       </div>
     </Box>
