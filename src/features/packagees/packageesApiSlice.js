@@ -69,6 +69,18 @@ export const packageesApiSlice = apiSlice.injectEndpoints({
                 { type: 'Packagee', id: arg.id }
             ]
         }),
+        sendPackagee: builder.mutation({
+            query: initialPackagee => ({
+                url: '/packagees/send',
+                method: 'Post',
+                body: {
+                    ...initialPackagee,
+                }
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Packagee', id: arg.id }
+            ]
+        }),
     }),
 })
 
@@ -77,6 +89,7 @@ export const {
     useAddNewPackageeMutation,
     useUpdatePackageeMutation,
     useDeletePackageeMutation,
+    useSendPackageeMutation,
 } = packageesApiSlice
 
 // returns the query result object
