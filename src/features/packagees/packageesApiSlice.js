@@ -43,6 +43,15 @@ export const packageesApiSlice = apiSlice.injectEndpoints({
                     ...initialPackagee,
                 }
             }),
+            transformResponse: (response) => response.createdId,
+            providesTags: result => {
+                return result
+                    ? [
+                            ...result.items.map(({ id }) => ({ type: 'Packagee', id })),
+                            { type: 'Packagee', id: 'LIST' },
+                      ]
+                    : [{ type: 'Packagee', id: 'LIST' }];
+            },
             invalidatesTags: [
                 { type: 'Packagee', id: "LIST" }
             ]

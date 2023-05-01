@@ -9,6 +9,10 @@
   font-weight: 500;
 }
 
+body {
+  background-color: rgb(240, 240, 240) !important
+}
+
 @media screen and (min-width: 768px) {
 .dash-container {
     margin-left: 250px;

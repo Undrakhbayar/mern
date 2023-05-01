@@ -10,7 +10,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import MailIcon from "@mui/icons-material/Mail";
 import EditIcon from "@mui/icons-material/Edit";
-import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import CopyIcon from "@mui/icons-material/ContentCopy";
 import { OrderStatus } from "../../components/Components";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
@@ -18,9 +17,9 @@ import { useAddNewPackageeMutation } from "./packageesApiSlice";
 import { useGetUsersQuery } from "../users/usersApiSlice";
 import * as XLSX from "xlsx";
 
-const ODD_OPACITY = 0.2;
+/*const ODD_OPACITY = 0.2;
 
-const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   [`& .${gridClasses.row}.even`]: {
     backgroundColor: theme.palette.grey[200],
     "&:hover, &.Mui-hovered": {
@@ -40,7 +39,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       },
     },
   },
-}));
+})); */
 
 const PackageesList = () => {
   const columns = [
@@ -161,11 +160,11 @@ const PackageesList = () => {
   const [deletePackagee, { isSuccess: isDelSuccess, isError: isDelError, error: delerror }] = useDeletePackageeMutation();
   const [sendPackagee, { isSuccess: isSendSuccess, isError: isSendError, error: sendError }] = useSendPackageeMutation();
 
-  /*   useEffect(() => {
+  useEffect(() => {
     if (isDelSuccess) {
       navigate(0);
     }
-  }, [isDelSuccess, navigate]); */
+  }, [isDelSuccess, navigate]);
 
   const onDeletePackageesClicked = async () => {
     await deletePackagee({ id: selection });
@@ -405,7 +404,7 @@ const PackageesList = () => {
           //for (let i = 1; i < data.length; i++) {
           data.shift();
           const finalData = data.map((v) => ({ ...v, user: users[0].id }));
-          console.log(finalData)
+          console.log(finalData);
           onSavePackageeClicked(finalData);
           //}
         } else {
@@ -419,13 +418,13 @@ const PackageesList = () => {
 
   content = (
     <Box sx={{ height: 400, width: "100%" }}>
-      <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
+      <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 1 }}>
         <input type="file" onChange={handleFile} accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"></input>
         <Button
           variant="contained"
           startIcon={<SendIcon />}
           onClick={onSendPackageesClicked}
-          //color="success"
+          size="small"
           sx={{
             bgcolor: "#6366F1",
             ":hover": { bgcolor: "#4338CA" },
@@ -433,22 +432,23 @@ const PackageesList = () => {
         >
           Илгээх
         </Button>
-        <Button
+{/*         <Button
           variant="contained"
           startIcon={<CopyIcon />}
           onClick={onCopyPackageesClicked}
-          //color="success"
+          size="small"
           sx={{
             bgcolor: "#6366F1",
             ":hover": { bgcolor: "#4338CA" },
           }}
         >
           Хуулах
-        </Button>
+        </Button> */}
         <Button
           variant="contained"
           startIcon={<DeleteIcon />}
           onClick={onDeletePackageesClicked}
+          size="small"
           sx={{
             bgcolor: "#6366F1",
             ":hover": { bgcolor: "#4338CA" },
@@ -460,6 +460,7 @@ const PackageesList = () => {
           variant="contained"
           endIcon={<MailIcon />}
           onClick={onNewPackageeClicked}
+          size="small"
           sx={{
             bgcolor: "#6366F1",
             ":hover": { bgcolor: "#4338CA" },
@@ -470,10 +471,10 @@ const PackageesList = () => {
       </Stack>
       {isDelError ? <Alert severity="error">{delerror?.data?.message}</Alert> : <></>}
       <div style={{ height: 600 }}>
-        <StripedDataGrid
-          sx={{ boxShadow: 2 }}
+        <DataGrid
+          sx={{ boxShadow: 2, bgcolor: '#fff' }}
           rows={rows}
-          onSelectionModelChange={setSelection}
+          onRowSelectionModelChange={setSelection}
           {...rows}
           columns={columns}
           pageSize={pageSize}

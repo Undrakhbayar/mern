@@ -2,7 +2,6 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUpdatePackageeMutation, useAddNewPackageeMutation } from "./packageesApiSlice";
-import { useGetItemsQuery, useAddNewItemMutation } from "./itemsApiSlice";
 import {
   Box,
   Paper,
@@ -20,58 +19,14 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
-  Modal,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
 import SaveIcon from "@mui/icons-material/Save";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const EditPackageeForm = ({ packagee, users }) => {
   const navigate = useNavigate();
-  const {
-    data: items,
-    isLoandig: isLoadingList,
-    isSuccess: isSuccessList,
-    isError: isErrorList,
-    error: errorList,
-  } = useGetItemsQuery(packagee.id, {
-    pollingInterval: 1000000,
-    /*     refetchOnFocus: true,
-    refetchOnMountOrArgChange: true, */
-  });
-  const columns = [
-    {
-      field: "houseSeq",
-      headerName: "№",
-      width: 60,
-    },
-    {
-      field: "goodsNm",
-      headerName: "Барааны нэр",
-      width: 150,
-    },
-    {
-      field: "netWgt",
-      headerName: "Цэвэр жин",
-      type: "number",
-      width: 110,
-    },
-    {
-      field: "delYn",
-      headerName: "Төлөв",
-      width: 120,
-    },
-  ];
-  const [pageSize, setPageSize] = useState(10);
-  const [selection, setSelection] = useState([]);
-  let rows = [];
-  if (isSuccessList) {
-    console.log(items);
-    const { entities } = items;
-    rows = Object.values(entities);
-  }
-
+  console.log(packagee);
   const [houseSeq, setHouseSeq] = useState(packagee.houseSeq);
   const [mailId, setMailId] = useState(packagee.mailId);
   const [mailBagNumber, setMailBagNumber] = useState(packagee.mailBagNumber);
@@ -131,7 +86,6 @@ const EditPackageeForm = ({ packagee, users }) => {
 
   const [updatePackagee, { isLoading, isSuccess, isError, error }] = useUpdatePackageeMutation();
   const [addNewPackagee, { isLoading: isLoadingA, isSuccess: isSuccessA, isError: isErrorA, error: errorA }] = useAddNewPackageeMutation();
-  const [addNewItem, { isLoading: isLoadingItem, isSuccess: isSuccessItem, isError: isErrorItem, error: errorItem }] = useAddNewItemMutation();
 
   useEffect(() => {
     if (isSuccess || isSuccessA) {
@@ -140,12 +94,6 @@ const EditPackageeForm = ({ packagee, users }) => {
       navigate("/dash/packagees");
     }
   }, [isSuccess, isSuccessA, navigate]);
-
-  useEffect(() => {
-    if (isSuccessItem) {
-      handleClose();
-    }
-  }, [isSuccessItem]);
 
   console.log(localStorage.getItem("path"));
   const referenceUrl = "http://localhost:3500/references";
@@ -176,7 +124,7 @@ const EditPackageeForm = ({ packagee, users }) => {
     getReferences();
   }, []);
 
-  const canSave = [houseSeq, userId].every(Boolean) && !isLoading && !isLoadingA && !isLoadingItem;
+  const canSave = [houseSeq, userId].every(Boolean) && !isLoading && !isLoadingA;
 
   const onSavePackageeClicked = async (e) => {
     e.preventDefault();
@@ -293,54 +241,6 @@ const EditPackageeForm = ({ packagee, users }) => {
     }
   };
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const onSaveItemClicked = async (e) => {
-    e.preventDefault();
-    if (canSave) {
-      await addNewItem({
-        packageeId: packagee.id,
-        houseSeq,
-        netWgt,
-        wgt,
-        //wgtUnit,
-        qty,
-        qtyUnit,
-        dangGoodsCode,
-        transFare,
-        transFareCurr,
-        price1,
-        price1Curr,
-        price2,
-        price2Curr,
-        price3,
-        price3Curr,
-        price4,
-        price4Curr,
-        price5,
-        price5Curr,
-        transportType,
-        isDiplomat,
-        hsCode,
-        goodsNm,
-        mailDate,
-        ecommerceType,
-        ecommerceLink,
-      });
-    }
-  };
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 1000,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
   const content = (
     <Box
       component="form"
@@ -656,261 +556,209 @@ const EditPackageeForm = ({ packagee, users }) => {
             />
           </Paper>
         </Grid>
-        <Grid item xs={26}></Grid>
+        <Grid item xs={26}>
+          <Paper variant="outlined">
+            <Typography variant="h6" m={2}>
+              Барааны мэдээлэл
+            </Typography>
+            <TextField
+              label="Барааны нэр"
+              style={{ width: 400 }}
+              size="small"
+              value={goodsNm}
+              onChange={(e) => {
+                setGoodsNm(e.target.value);
+              }}
+            />
+            <TextField
+              label="Цэвэр жин"
+              style={{ width: 170 }}
+              size="small"
+              value={netWgt}
+              onChange={(e) => {
+                setNetWgt(e.target.value);
+              }}
+              InputProps={{
+                endAdornment: <InputAdornment position="start">KG</InputAdornment>,
+              }}
+            />
+            <TextField
+              label="Бохир жин"
+              style={{ width: 170 }}
+              size="small"
+              value={wgt}
+              onChange={(e) => {
+                setWgt(e.target.value);
+              }}
+              InputProps={{
+                endAdornment: <InputAdornment position="start">KG</InputAdornment>,
+              }}
+            />
+            <TextField
+              label="Баглаа боодлын тоо"
+              style={{ width: 160 }}
+              size="small"
+              value={qty}
+              onChange={(e) => {
+                setQty(e.target.value);
+              }}
+            />
+            <TextField
+              label="Баглаа боодлын нэгж"
+              style={{ width: 170 }}
+              size="small"
+              value={qtyUnit}
+              onChange={(e) => {
+                setQtyUnit(e.target.value);
+              }}
+            />
+            <TextField
+              label="Тээврийн зардал үнэ"
+              style={{ width: 170 }}
+              size="small"
+              value={transFare}
+              onChange={(e) => {
+                setTransFare(e.target.value);
+              }}
+            />
+            <TextField
+              label="Тээврийн зардал валют"
+              style={{ width: 180 }}
+              size="small"
+              value={transFareCurr}
+              onChange={(e) => {
+                setTransFareCurr(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 1"
+              style={{ width: 125 }}
+              size="small"
+              value={price1}
+              onChange={(e) => {
+                setPrice1(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 1 валют"
+              style={{ width: 125 }}
+              size="small"
+              value={price1Curr}
+              onChange={(e) => {
+                setPrice1Curr(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 2"
+              style={{ width: 125 }}
+              size="small"
+              value={price2}
+              onChange={(e) => {
+                setPrice2(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 2 валют"
+              style={{ width: 125 }}
+              size="small"
+              value={price2Curr}
+              onChange={(e) => {
+                setPrice2Curr(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 3"
+              style={{ width: 125 }}
+              size="small"
+              value={price3}
+              onChange={(e) => {
+                setPrice3(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 3 валют"
+              style={{ width: 125 }}
+              size="small"
+              value={price3Curr}
+              onChange={(e) => {
+                setPrice3Curr(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 4"
+              style={{ width: 125 }}
+              size="small"
+              value={price4}
+              onChange={(e) => {
+                setPrice4(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 4 валют"
+              style={{ width: 125 }}
+              size="small"
+              value={price4Curr}
+              onChange={(e) => {
+                setPrice4Curr(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 5"
+              style={{ width: 125 }}
+              size="small"
+              value={price5}
+              onChange={(e) => {
+                setPrice5(e.target.value);
+              }}
+            />
+            <TextField
+              label="Үнэ 5 валют"
+              style={{ width: 125 }}
+              size="small"
+              value={price5Curr}
+              onChange={(e) => {
+                setPrice5Curr(e.target.value);
+              }}
+            />
+            <TextField
+              label="БТКУС код"
+              style={{ width: 125 }}
+              size="small"
+              value={hsCode}
+              onChange={(e) => {
+                setHsCode(e.target.value);
+              }}
+            />
+            <TextField
+              label="Аюултай барааны код"
+              style={{ width: 125 }}
+              size="small"
+              value={dangGoodsCode}
+              onChange={(e) => {
+                setDangGoodsCode(e.target.value);
+              }}
+            />
+            <TextField
+              label="Цахим худалдааны төлбөрийн баримтын хуулбар"
+              size="small"
+              style={{ width: 400 }}
+              value={ecommerceType}
+              onChange={(e) => {
+                setEcommerceType(e.target.value);
+              }}
+            />
+            <TextField
+              label="Цахим худалдааны линк"
+              style={{ width: 600 }}
+              size="small"
+              value={ecommerceLink}
+              onChange={(e) => {
+                setEcommerceLink(e.target.value);
+              }}
+            />
+          </Paper>
+        </Grid>
       </Grid>
-      {packagee.prgsStatusCd === "10" ? (
-        <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ m: 1 }}>
-          <Button
-            sx={{
-              bgcolor: "#6366F1",
-              ":hover": { bgcolor: "#4338CA" },
-            }}
-            variant="contained"
-            endIcon={<SaveIcon />}
-            onClick={handleOpen}
-            size="small"
-          >
-            Бараа нэмэх
-          </Button>
-          <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-            <Box sx={style}>
-              <Paper variant="outlined">
-                <Typography variant="h6" m={2}>
-                  Барааны мэдээлэл
-                </Typography>
-                <TextField
-                  label="Барааны нэр"
-                  style={{ width: 400 }}
-                  size="small"
-                  value={goodsNm}
-                  onChange={(e) => {
-                    setGoodsNm(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Цэвэр жин"
-                  style={{ width: 170 }}
-                  size="small"
-                  value={netWgt}
-                  onChange={(e) => {
-                    setNetWgt(e.target.value);
-                  }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="start">KG</InputAdornment>,
-                  }}
-                />
-                <TextField
-                  label="Бохир жин"
-                  style={{ width: 170 }}
-                  size="small"
-                  value={wgt}
-                  onChange={(e) => {
-                    setWgt(e.target.value);
-                  }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="start">KG</InputAdornment>,
-                  }}
-                />
-                <TextField
-                  label="Баглаа боодлын тоо"
-                  style={{ width: 160 }}
-                  size="small"
-                  value={qty}
-                  onChange={(e) => {
-                    setQty(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Баглаа боодлын нэгж"
-                  style={{ width: 170 }}
-                  size="small"
-                  value={qtyUnit}
-                  onChange={(e) => {
-                    setQtyUnit(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Тээврийн зардал үнэ"
-                  style={{ width: 170 }}
-                  size="small"
-                  value={transFare}
-                  onChange={(e) => {
-                    setTransFare(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Тээврийн зардал валют"
-                  style={{ width: 180 }}
-                  size="small"
-                  value={transFareCurr}
-                  onChange={(e) => {
-                    setTransFareCurr(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 1"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price1}
-                  onChange={(e) => {
-                    setPrice1(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 1 валют"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price1Curr}
-                  onChange={(e) => {
-                    setPrice1Curr(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 2"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price2}
-                  onChange={(e) => {
-                    setPrice2(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 2 валют"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price2Curr}
-                  onChange={(e) => {
-                    setPrice2Curr(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 3"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price3}
-                  onChange={(e) => {
-                    setPrice3(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 3 валют"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price3Curr}
-                  onChange={(e) => {
-                    setPrice3Curr(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 4"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price4}
-                  onChange={(e) => {
-                    setPrice4(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 4 валют"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price4Curr}
-                  onChange={(e) => {
-                    setPrice4Curr(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 5"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price5}
-                  onChange={(e) => {
-                    setPrice5(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Үнэ 5 валют"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={price5Curr}
-                  onChange={(e) => {
-                    setPrice5Curr(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="БТКУС код"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={hsCode}
-                  onChange={(e) => {
-                    setHsCode(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Аюултай барааны код"
-                  style={{ width: 125 }}
-                  size="small"
-                  value={dangGoodsCode}
-                  onChange={(e) => {
-                    setDangGoodsCode(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Цахим худалдааны төлбөрийн баримтын хуулбар"
-                  size="small"
-                  style={{ width: 400 }}
-                  value={ecommerceType}
-                  onChange={(e) => {
-                    setEcommerceType(e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Цахим худалдааны линк"
-                  style={{ width: 600 }}
-                  size="small"
-                  value={ecommerceLink}
-                  onChange={(e) => {
-                    setEcommerceLink(e.target.value);
-                  }}
-                />
-              </Paper>
-              <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
-                <Button
-                  sx={{
-                    bgcolor: "#6366F1",
-                    ":hover": { bgcolor: "#4338CA" },
-                  }}
-                  variant="contained"
-                  endIcon={<SaveIcon />}
-                  onClick={onSaveItemClicked}
-                >
-                  Хадгалах
-                </Button>
-              </Stack>
-            </Box>
-          </Modal>
-        </Stack>
-      ) : (
-        <></>
-      )}
-      <div style={{ height: 400 }}>
-        <DataGrid
-          sx={{ boxShadow: 2 }}
-          rows={rows}
-          //onRowSelectionModelChange={setSelection}
-          {...rows}
-          columns={columns}
-          pageSize={pageSize}
-          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[10, 20, 30]}
-          checkboxSelection
-          disableSelectionOnClick
-          experimentalFeatures={{ newEditingApi: true }}
-          density="compact"
-          getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
-          initialState={{ pinnedColumns: { left: ["houseSeq"], right: ["actions"] } }}
-        />
-      </div>
     </Box>
   );
 

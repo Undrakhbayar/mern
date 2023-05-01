@@ -101,7 +101,7 @@ export default function NavBar() {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}>
-        <Toolbar style={{ justifyContent: "flex-end", backgroundColor: "#eee" }}>
+        <Toolbar style={{ justifyContent: "flex-end", backgroundColor: "#fff" }}>
           <IconButton
             id="basic-button"
             aria-controls={open ? "basic-menu" : undefined}
