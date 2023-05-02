@@ -14,7 +14,6 @@ import {
   Alert,
   Typography,
   Autocomplete,
-  FormGroup,
   FormControlLabel,
   FormControl,
   FormLabel,
@@ -78,29 +77,29 @@ const EditPackageeForm = ({ packagee, users }) => {
   const [blNo, setBlNo] = useState(packagee.blNo);
   const [reportType, setReportType] = useState(packagee.reportType);
   const [riskType, setRiskType] = useState(packagee.riskType);
-  const [netWgt, setNetWgt] = useState(packagee.netWgt);
-  const [wgt, setWgt] = useState(packagee.wgt);
+  const [netWgt, setNetWgt] = useState("");
+  const [wgt, setWgt] = useState("");
   //const [wgtUnit, setWgtUnit] = useState("KG");
-  const [qty, setQty] = useState(packagee.qty);
-  const [qtyUnit, setQtyUnit] = useState(packagee.qtyUnit);
-  const [dangGoodsCode, setDangGoodsCode] = useState(packagee.dangGoodsCode);
-  const [transFare, setTransFare] = useState(packagee.transFare);
-  const [transFareCurr, setTransFareCurr] = useState(packagee.transFareCurr);
-  const [price1, setPrice1] = useState(packagee.price1);
-  const [price1Curr, setPrice1Curr] = useState(packagee.price1Curr);
-  const [price2, setPrice2] = useState(packagee.price2);
-  const [price2Curr, setPrice2Curr] = useState(packagee.price2Curr);
-  const [price3, setPrice3] = useState(packagee.price3);
-  const [price3Curr, setPrice3Curr] = useState(packagee.price3Curr);
-  const [price4, setPrice4] = useState(packagee.price4);
-  const [price4Curr, setPrice4Curr] = useState(packagee.price4Curr);
-  const [price5, setPrice5] = useState(packagee.price5);
-  const [price5Curr, setPrice5Curr] = useState(packagee.price5Curr);
+  const [qty, setQty] = useState("");
+  const [qtyUnit, setQtyUnit] = useState("");
+  const [dangGoodsCode, setDangGoodsCode] = useState("");
+  const [transFare, setTransFare] = useState("");
+  const [transFareCurr, setTransFareCurr] = useState("");
+  const [price1, setPrice1] = useState("");
+  const [price1Curr, setPrice1Curr] = useState("");
+  const [price2, setPrice2] = useState("");
+  const [price2Curr, setPrice2Curr] = useState("");
+  const [price3, setPrice3] = useState("");
+  const [price3Curr, setPrice3Curr] = useState("");
+  const [price4, setPrice4] = useState("");
+  const [price4Curr, setPrice4Curr] = useState("");
+  const [price5, setPrice5] = useState("");
+  const [price5Curr, setPrice5Curr] = useState("");
   const [transportType, setTransportType] = useState(packagee.transportType);
   const [transportTypeI, setTransportTypeI] = useState(packagee.transportType);
   const [isDiplomat, setIsDiplomat] = useState(packagee.isDiplomat);
-  const [hsCode, setHsCode] = useState(packagee.hsCode);
-  const [goodsNm, setGoodsNm] = useState(packagee.goodsNm);
+  const [hsCode, setHsCode] = useState("");
+  const [goodsNm, setGoodsNm] = useState("");
   const [shipperCntryCd, setShipperCntryCd] = useState(packagee.shipperCntryCd);
   const [shipperCntryNm, setShipperCntryNm] = useState(packagee.shipperCntryNm);
   const [shipperNatinality, setShipperNatinality] = useState(packagee.shipperNatinality);
@@ -120,8 +119,8 @@ const EditPackageeForm = ({ packagee, users }) => {
   const [compAddr, setCompAddr] = useState(packagee.compAddr);
   const [compTel, setCompTel] = useState(packagee.compTel);
   const [mailDate, setMailDate] = useState(packagee.mailDate);
-  const [ecommerceType, setEcommerceType] = useState(packagee.ecommerceType);
-  const [ecommerceLink, setEcommerceLink] = useState(packagee.ecommerceLink);
+  const [ecommerceType, setEcommerceType] = useState("");
+  const [ecommerceLink, setEcommerceLink] = useState("");
 
   const [userId, setUserId] = useState(users[0].id);
   const [reportTypes, setReportTypes] = useState([]);
@@ -176,7 +175,7 @@ const EditPackageeForm = ({ packagee, users }) => {
     getReferences();
   }, []);
 
-  const canSave = [houseSeq, userId].every(Boolean) && !isLoading && !isLoadingA && !isLoadingItem;
+  const canSave = [userId].every(Boolean) && !isLoading && !isLoadingA && !isLoadingItem;
 
   const onSavePackageeClicked = async (e) => {
     e.preventDefault();
