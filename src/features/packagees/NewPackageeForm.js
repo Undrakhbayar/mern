@@ -27,16 +27,17 @@ import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GreenRedSwitch, CustomInput, CustomFormLabel, theme } from "../../components/Components";
 import { REFERENCE_URL } from "../../config/common";
+import useAuth from '../../hooks/useAuth'
 
 const NewPackageeForm = ({ users }) => {
   const [addNewPackagee, { isLoading, isSuccess, isError, error, data }] = useAddNewPackageeMutation();
-
   const navigate = useNavigate();
-
+  const { userid, username, isManager, isAdmin, compname, compregister, comptel, compaddr } = useAuth();
+  //console.log(userid, username, comptel, compregister, compname, compaddr);
   const [houseSeq, setHouseSeq] = useState("");
   const [mailId, setMailId] = useState("");
-  const [mailBagNumber, setMailBagNumber] = useState("");
-  const [blNo, setBlNo] = useState("");
+/*   const [mailBagNumber, setMailBagNumber] = useState("");
+  const [blNo, setBlNo] = useState(""); */
   const [reportType, setReportType] = useState("");
   const [riskType, setRiskType] = useState("");
   const [transportType, setTransportType] = useState("");
@@ -55,13 +56,13 @@ const NewPackageeForm = ({ users }) => {
   const [consigneeReg, setConsigneeReg] = useState("");
   const [consigneeAddr, setConsigneeAddr] = useState("");
   const [consigneeTel, setConsigneeTel] = useState("");
-  const [compName, setCompName] = useState("");
-  const [compRegister, setCompRegister] = useState("");
-  const [compAddr, setCompAddr] = useState("");
-  const [compTel, setCompTel] = useState("");
+  const [compName] = useState(compname);
+  const [compRegister] = useState(compregister);
+  const [compAddr] = useState(compaddr);
+  const [compTel] = useState(comptel);
   const [mailDate, setMailDate] = useState(dayjs().format("YYYY-MM-DD"));
 
-  const [userId, setUserId] = useState(users[0].id);
+  const [userId, setUserId] = useState(userid);
   const [reportTypes, setReportTypes] = useState([]);
   const [transportTypes, setTransportTypes] = useState([]);
   const [countries, setCountries] = useState([]);
@@ -161,14 +162,14 @@ const NewPackageeForm = ({ users }) => {
             </Button>
           </Stack>
           <Paper sx={{ pl: 2, pb:3 }}>
-            <Grid container columns={12} alignItems="center">
+            <Grid container columns={12}>
               <Grid item xs={12}>
                 <Typography variant="h6" m={2}>
                   Үндсэн мэдээлэл
                 </Typography>
                 {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
               </Grid>
-              <Grid item xs={4} alignItems="center">
+              <Grid item xs={3} >
                 {/*             <CustomInput
               style={{ width: 50 }}
               value={houseSeq}
@@ -178,7 +179,7 @@ const NewPackageeForm = ({ users }) => {
                 setHouseSeq(e.target.value);
               }}
             /> */}
-                <Stack gap="12px">
+                <Stack>
                   <FormControl>
                     <CustomFormLabel name="Илгээмжийн дугаар" />
                     <CustomInput
@@ -201,8 +202,8 @@ const NewPackageeForm = ({ users }) => {
                   </FormControl>
                 </Stack>
               </Grid>
-              <Grid item xs={4}>
-                <Stack gap="12px">
+              <Grid item xs={3}>
+                <Stack>
                   <FormControl>
                     <CustomFormLabel name="Маягтын төрөл" />
                     <Autocomplete
@@ -236,24 +237,8 @@ const NewPackageeForm = ({ users }) => {
                   </FormControl>
                 </Stack>
               </Grid>
-              <Grid item xs={4}>
-                {/*             <CustomInput
-              value={mailBagNumber}
-              style={{ width: 135 }}
-              label="Богцын дугаар"
-              onChange={(e) => {
-                setMailBagNumber(e.target.value);
-              }}
-            />
-            <CustomInput
-              value={blNo}
-              style={{ width: 240 }}
-              label="Тээврийн баримтын дугаар"
-              onChange={(e) => {
-                setBlNo(e.target.value);
-              }}
-            /> */}
-                <Stack gap="12px">
+              <Grid item xs={3}>
+                <Stack>
                   <FormControl>
                     <CustomFormLabel name="Эрсдлийн төлөв" />
                     <FormGroup
@@ -275,7 +260,7 @@ const NewPackageeForm = ({ users }) => {
                     <CustomFormLabel name="Дипломат эсэх" />
                     <RadioGroup
                       row
-                      aria-labelledby="demo-row-radio-buttons-group-label"
+                      defaultValue="N"
                       onChange={(e) => {
                         setIsDiplomat(e.target.value);
                       }}
