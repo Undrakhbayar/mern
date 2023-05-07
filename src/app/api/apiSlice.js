@@ -3,7 +3,7 @@ import { setCredentials } from '../../features/auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
     baseUrl: 'https://mern-api-lcmj.onrender.com', //PROD
-    //baseUrl: 'http://localhost:3500', //TEST
+    //baseUrl: 'http://localhost:3500', //PROD
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = getState().auth.token
@@ -50,6 +50,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const apiSlice = createApi({
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Note', 'User', 'Packagee'],
+    tagTypes: ['Note', 'User', 'Packagee', 'Item', 'Mailid', 'Bundle'],
     endpoints: builder => ({})
 })

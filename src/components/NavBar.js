@@ -17,11 +17,16 @@ import {
   ListItemText,
   Box,
   IconButton,
+  Collapse,
 } from "@mui/material";
 
 import MailIcon from "@mui/icons-material/Mail";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import PostAdd from "@mui/icons-material/PostAdd";
+import LibraryBooks from "@mui/icons-material/LibraryBooks";
 
 const drawerWidth = 240;
 
@@ -40,10 +45,8 @@ export default function NavBar() {
 
   useEffect(() => {
     if (pathname.includes("packagee")) {
-      console.log("packageehere")
       setSelectedIndex(0);
     } else {
-      console.log("otherhere")
       setSelectedIndex(1);
     }
   }, [pathname]);
@@ -59,6 +62,9 @@ export default function NavBar() {
         navigate("/dash/packagees");
         break;
       case 1:
+        navigate("/dash/bundles");
+        break;
+      case 2:
         navigate("/dash/users");
         break;
       default:
@@ -84,11 +90,16 @@ export default function NavBar() {
     },
   });
 
+  const [openList, setOpenList] = React.useState(true);
+
+  const handleClickList = () => {
+    setOpenList(!openList);
+  };
   let userMenu = null;
   if (isAdmin) {
     userMenu = (
       <ListItem key={2} disablePadding>
-        <ListItemButton {...buttonProps(1)}>
+        <ListItemButton {...buttonProps(2)}>
           <ListItemIcon>
             <PersonIcon style={{ color: "#9DA4AE" }} />
           </ListItemIcon>
@@ -161,14 +172,29 @@ export default function NavBar() {
             },
           }}
         >
-          <ListItem key={1} disablePadding>
-            <ListItemButton {...buttonProps(0)}>
-              <ListItemIcon>
-                <MailIcon style={{ color: "#9DA4AE" }} />
-              </ListItemIcon>
-              <ListItemText primary="Шуудангийн бүртгэл" />
-            </ListItemButton>
-          </ListItem>
+          <ListItemButton onClick={handleClickList}>
+            <ListItemIcon>
+              <MailIcon style={{ color: "#9DA4AE" }} />
+            </ListItemIcon>
+            <ListItemText primary="Шуудангийн бүртгэл" />
+            {openList ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openList} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton {...buttonProps(0)} sx={{ pl: 4 }}>
+                <ListItemIcon>
+                  <PostAdd style={{ color: "#9DA4AE" }} />
+                </ListItemIcon>
+                <ListItemText primary="Шуудан бүртгэх" />
+              </ListItemButton>
+              <ListItemButton {...buttonProps(1)} sx={{ pl: 4 }}>
+                <ListItemIcon>
+                  <LibraryBooks style={{ color: "#9DA4AE" }} />
+                </ListItemIcon>
+                <ListItemText primary="Богцлох" />
+              </ListItemButton>
+            </List>
+          </Collapse>
           {userMenu}
         </List>
       </Drawer>

@@ -1,20 +1,10 @@
-import NewPackageeForm from './NewPackageeForm'
-import { useGetUsersQuery } from '../users/usersApiSlice'
-import PulseLoader from 'react-spinners/PulseLoader'
+import NewPackageeForm from "./NewPackageeForm";
 
 const NewPackagee = () => {
-    //useTitle('POST: шуудан бүртгэх')
+  //useTitle('POST: шуудан бүртгэх')
 
-    const { users } = useGetUsersQuery("usersList", {
-        selectFromResult: ({ data }) => ({
-            users: data?.ids.map(id => data?.entities[id])
-        }),
-    })
+  const content = <NewPackageeForm />;
 
-    if (!users?.length) return <PulseLoader color={"#FFF"} />
-
-    const content = <NewPackageeForm users={users} />
-
-    return content
-}
-export default NewPackagee
+  return content;
+};
+export default NewPackagee;

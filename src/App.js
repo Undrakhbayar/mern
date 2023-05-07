@@ -7,6 +7,7 @@ import UsersList from './features/users/UsersList'
 import EditUser from './features/users/EditUser'
 import NewUserForm from './features/users/NewUserForm'
 import PackageesList from './features/packagees/PackageesList'
+import BundlesList from './features/bundles/BundlesList'
 import EditPackagee from './features/packagees/EditPackagee'
 import NewPackagee from './features/packagees/NewPackagee'
 import Prefetch from './features/auth/Prefetch'
@@ -46,7 +47,11 @@ function App() {
                   <Route path=":id" element={<EditPackagee />} />
                   <Route path="new" element={<NewPackagee />} />
                 </Route>
-
+                <Route path="bundles">
+                  <Route index element={<BundlesList />} />
+                  <Route path=":id" element={<EditPackagee />} />
+                  <Route path="new" element={<NewPackagee />} />
+                </Route>
               </Route>{/* End Dash */}
             </Route>
           </Route>

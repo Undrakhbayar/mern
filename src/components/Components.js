@@ -13,6 +13,18 @@ const theme = createTheme({
   },
 });
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 1000,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 const GreenRedSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase": {
     color: red[600],
@@ -31,15 +43,17 @@ const GreenRedSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const CustomInput = ({ style, label, value, inputProps, onChange }) => {
-  return (
-    <TextField variant="outlined" size="small" sx={{ mr:2 }} style={style} label={label} value={value} inputProps={inputProps} onChange={onChange} />
-  );
+const CustomInput = ({ style, label, value, inputProps, onChange, InputProps }) => {
+  return <TextField variant="outlined" size="small" sx={{ mr: 2 }} style={style} label={label} value={value} inputProps={inputProps} onChange={onChange} InputProps={InputProps}/>;
 };
-
+const DisabledInput = styled(TextField)({
+  "& .MuiInputBase-root.Mui-disabled": {
+    backgroundColor: "#f0f0f0",
+  },
+});
 const CustomFormLabel = ({ name }) => {
   return (
-    <FormLabel required sx={{ fontWeight: "600", fontSize: "14px", color: "text.primary", ml:0.5, pb:0.5, pt:0.5 }}>
+    <FormLabel required sx={{ fontWeight: "600", fontSize: "14px", color: "text.primary", ml: 0.5, pb: 0.5, pt: 0.5 }}>
       {name}
     </FormLabel>
   );
@@ -68,4 +82,4 @@ const OrderStatus = ({ status }) => {
 
   return <Chip variant="outlined" size="small" color={color} label={text} />;
 };
-export { GreenRedSwitch, CustomInput, OrderStatus, CustomFormLabel, theme };
+export { GreenRedSwitch, CustomInput, OrderStatus, CustomFormLabel, theme, DisabledInput, style };
