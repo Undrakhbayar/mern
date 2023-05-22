@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "-": "^0.0.1",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^4.5.8",
@@ -19,10 +18,8 @@
     "@reduxjs/toolkit": "^1.9.1",
     "convert-excel-to-json": "^1.7.0",
     "dayjs": "^1.11.7",
-    "g": "^2.0.1",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
-    "npm": "^9.6.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-excel-renderer": "^1.1.0",

@@ -15,31 +15,8 @@ import { OrderStatus } from "../../components/Components";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import { useAddNewPackageeMutation } from "./packageesApiSlice";
 import { useGetUsersQuery } from "../users/usersApiSlice";
+import gridDefaultLocaleText from "../../components/LocalTextConstants";
 import * as XLSX from "xlsx";
-
-/*const ODD_OPACITY = 0.2;
-
- const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
-  [`& .${gridClasses.row}.even`]: {
-    backgroundColor: theme.palette.grey[200],
-    "&:hover, &.Mui-hovered": {
-      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
-      "@media (hover: none)": {
-        backgroundColor: "transparent",
-      },
-    },
-    "&.Mui-selected": {
-      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
-      "&:hover, &.Mui-hovered": {
-        backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity),
-        // Reset on touch devices, it doesn't add specificity
-        "@media (hover: none)": {
-          backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
-        },
-      },
-    },
-  },
-})); */
 
 const PackageesList = () => {
   const columns = [
@@ -482,25 +459,11 @@ const PackageesList = () => {
           rowsPerPageOptions={[10, 20, 30]}
           checkboxSelection
           disableSelectionOnClick
-          experimentalFeatures={{ newEditingApi: true }}
           density="compact"
-          localeText={{
-            columnMenuFilter: "Шүүх",
-            columnMenuHideColumn: "Hide column",
-            columnMenuUnsort: "Unsort",
-            columnMenuSortAsc: "Sort by ASC",
-            columnMenuSortDesc: "Sort by DESC",
-            toolbarDensity: "Хэмжээ",
-            toolbarDensityLabel: "Size",
-            toolbarDensityCompact: "Жижиг",
-            toolbarDensityStandard: "Дунд",
-            toolbarDensityComfortable: "Том",
-          }}
+          localeText={gridDefaultLocaleText}
           components={{
             Toolbar: GridToolbar,
           }}
-          getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
-          initialState={{ pinnedColumns: { left: ["houseSeq"], right: ["actions"] } }}
         />
       </div>
     </Box>

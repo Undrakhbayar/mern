@@ -4,16 +4,17 @@ import { useGetBundlesQuery, useDeleteBundleMutation, useUpdateBundleMutation, u
 import { useGetPackageesQuery } from "../packagees/packageesApiSlice";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { Box, Paper, Grid, TextField, Button, Stack, InputAdornment, Alert, Typography, FormControl, Modal, Link } from "@mui/material";
+import { Box, Paper, Grid, Button, Stack, InputAdornment, Alert, Typography, FormControl, Modal, Link } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
-import MailIcon from "@mui/icons-material/Mail";
 import EditIcon from "@mui/icons-material/Edit";
-import { OrderStatus } from "../../components/Components";
-import { OutTable, ExcelRenderer } from "react-excel-renderer";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, style, OrderStatus } from "../../components/Components";
+import gridDefaultLocaleText from "../../components/LocalTextConstants";
+import dayjs from "dayjs";
 import { useAddNewBundleMutation } from "./bundlesApiSlice";
 import { useGetUsersQuery } from "../users/usersApiSlice";
-import { CustomInput, CustomFormLabel, style } from "../../components/Components";
 import SaveIcon from "@mui/icons-material/Save";
 import * as XLSX from "xlsx";
 
@@ -71,12 +72,14 @@ const BundlesList = () => {
       width: 120,
     },
   ];
-  const [netWgt, setNetWgt] = useState("");
-  const [wgt, setWgt] = useState("");
-  const [dangGoodsCode, setDangGoodsCode] = useState("");
-  const [transFare, setTransFare] = useState("");
-  const [transFareCurr, setTransFareCurr] = useState("");
-  const [hsCode, setHsCode] = useState("");
+  const [bundleBranch, setBundleBranch] = useState("");
+  const [bundleNo, setBundleNo] = useState("");
+  const [bundleWgt, setBundleWgt] = useState("");
+  const [bundleDate, setBundleDate] = useState("");
+  const [bundleType, setBundleType] = useState("");
+  const [innerNo, setInnerNo] = useState("");
+  const [sumWgt, setSumWgt] = useState("");
+  const [sumCnt, setSumCnt] = useState("");
 
   const handleEdit = (id) => navigate(`/dash/bundles/${id}`);
   const handleDelete = async (id) => {
@@ -153,7 +156,7 @@ const BundlesList = () => {
   console.log(isSuccessPackagees);
   if (isSuccessPackagees) {
     const { entities } = packagees;
-    console.log(entities)
+    console.log(entities);
     unfilteredPackagees = Object.values(entities);
     if (isManager || isAdmin) {
       rowsPackagee = [...unfilteredPackagees];
@@ -223,8 +226,11 @@ const BundlesList = () => {
     }
   };
   const [open, setOpen] = React.useState(false);
+  const [openPackage, setOpenPackage] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleOpenPackage = () => setOpenPackage(true);
+  const handleClosePackage = () => setOpenPackage(false);
   content = (
     <Box sx={{ height: 400, width: "100%" }}>
       <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 1 }}>
@@ -269,117 +275,15 @@ const BundlesList = () => {
           disableSelectionOnClick
           experimentalFeatures={{ newEditingApi: true }}
           density="compact"
-          localeText={{
-            columnMenuFilter: "Шүүх",
-            columnMenuHideColumn: "Hide column",
-            columnMenuUnsort: "Unsort",
-            columnMenuSortAsc: "Sort by ASC",
-            columnMenuSortDesc: "Sort by DESC",
-            toolbarDensity: "Хэмжээ",
-            toolbarDensityLabel: "Size",
-            toolbarDensityCompact: "Жижиг",
-            toolbarDensityStandard: "Дунд",
-            toolbarDensityComfortable: "Том",
-          }}
+          localeText={gridDefaultLocaleText}
           components={{
             Toolbar: GridToolbar,
           }}
-          getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
-          initialState={{ pinnedColumns: { left: ["houseSeq"], right: ["actions"] } }}
         />
       </div>
       <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ m: 1 }}>
-        <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Modal open={open} onClose={handleClose}>
           <Box sx={style}>
-            <Paper variant="outlined">
-              <Grid container columns={11}>
-                <Grid item xs={11}>
-                  <Typography variant="h6" m={2}>
-                    Барааны мэдээлэл
-                  </Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <FormControl>
-                    <CustomFormLabel name="Цэвэр жин" />
-                    <CustomInput
-                      value={netWgt}
-                      onChange={(e) => {
-                        setNetWgt(e.target.value);
-                      }}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="start">KG</InputAdornment>,
-                      }}
-                    />
-                    <CustomFormLabel name="Бохир жин" />
-                    <CustomInput
-                      value={wgt}
-                      onChange={(e) => {
-                        setWgt(e.target.value);
-                      }}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="start">KG</InputAdornment>,
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={3}>
-                  <Stack>
-                    <CustomFormLabel name="Тээврийн зардал үнэ" />
-                    <CustomInput
-                      value={transFare}
-                      onChange={(e) => {
-                        setTransFare(e.target.value);
-                      }}
-                    />
-                    <CustomFormLabel name="Тээврийн зардал валют" />
-                    <CustomInput
-                      value={transFareCurr}
-                      onChange={(e) => {
-                        setTransFareCurr(e.target.value);
-                      }}
-                    />
-                  </Stack>
-                </Grid>
-                <Grid item xs={5}>
-                  <Stack>
-                    <CustomFormLabel name="БТКУС код" />
-                    <CustomInput
-                      value={hsCode}
-                      onChange={(e) => {
-                        setHsCode(e.target.value);
-                      }}
-                    />
-                    <CustomFormLabel name="Аюултай барааны код" />
-                    <CustomInput
-                      value={dangGoodsCode}
-                      onChange={(e) => {
-                        setDangGoodsCode(e.target.value);
-                      }}
-                    />
-                  </Stack>
-                </Grid>
-              </Grid>
-              <Grid item xs={11}>
-                <div style={{ height: 600 }}>
-                  <DataGrid
-                    sx={{ boxShadow: 2, bgcolor: "#fff" }}
-                    rows={rowsPackagee}
-                    onRowSelectionModelChange={setSelection}
-                    {...rowsPackagee}
-                    columns={columns}
-                    pageSize={pageSize}
-                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                    rowsPerPageOptions={[10, 20, 30]}
-                    checkboxSelection
-                    disableSelectionOnClick
-                    experimentalFeatures={{ newEditingApi: true }}
-                    density="compact"
-                    getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
-                    initialState={{ pinnedColumns: { left: ["houseSeq"], right: ["actions"] } }}
-                  />
-                </div>
-              </Grid>
-            </Paper>
             <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
               <Button
                 sx={{
@@ -394,6 +298,110 @@ const BundlesList = () => {
                 Хадгалах
               </Button>
             </Stack>
+            <Paper variant="outlined">
+              <Grid container columns={11}>
+                <Grid item xs={11}>
+                  <Typography variant="h6" m={2}>
+                    Барааны мэдээлэл
+                  </Typography>
+                </Grid>
+                <Grid item xs={3}>
+                  <FormControl>
+                    <CustomFormLabel name="Багц хүлээн авах салбар" />
+                    <CustomInput
+                      value={bundleBranch}
+                      onChange={(e) => {
+                        setBundleBranch(e.target.value);
+                      }}
+                    />
+                    <CustomFormLabel name="Богцны огноо" />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        size="small"
+                        defaultValue={dayjs()}
+                        format="YYYY-MM-DD"
+                        onChange={(e) => setBundleDate(e.format("YYYY-MM-DD"))}
+                        slotProps={{ textField: { size: "small" } }}
+                        sx={{ mr: 2 }}
+                      />
+                    </LocalizationProvider>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={3}>
+                  <Stack>
+                    <CustomFormLabel name="Богцны дугаар" />
+                    <CustomInput
+                      value={bundleNo}
+                      onChange={(e) => {
+                        setBundleNo(e.target.value);
+                      }}
+                    />
+                    <CustomFormLabel name="Илгээмжний төрөл" />
+                    <CustomInput
+                      value={bundleType}
+                      onChange={(e) => {
+                        setBundleType(e.target.value);
+                      }}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={5}>
+                  <Stack>
+                    <CustomFormLabel name="Богцны жин" />
+                    <CustomInput
+                      value={bundleWgt}
+                      onChange={(e) => {
+                        setBundleWgt(e.target.value);
+                      }}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="start">KG</InputAdornment>,
+                      }}
+                    />
+                    <CustomFormLabel name="Дотуур дагаврын дугаар" />
+                    <CustomInput
+                      value={innerNo}
+                      onChange={(e) => {
+                        setInnerNo(e.target.value);
+                      }}
+                    />
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Paper>
+            <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
+              <Button
+                sx={{
+                  bgcolor: "#6366F1",
+                  ":hover": { bgcolor: "#4338CA" },
+                }}
+                variant="contained"
+                endIcon={<SaveIcon />}
+                onClick={handleOpenPackage}
+                size="small"
+              >
+                Илгээмж нэмэх
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
+        <Modal open={openPackage} onClose={handleClosePackage}>
+          <Box sx={style}>
+            <div style={{ height: 600 }}>
+              <DataGrid
+                sx={{ boxShadow: 2, bgcolor: "#fff" }}
+                rows={rowsPackagee}
+                onRowSelectionModelChange={setSelection}
+                {...rowsPackagee}
+                columns={columns}
+                pageSize={pageSize}
+                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                rowsPerPageOptions={[10, 20, 30]}
+                checkboxSelection
+                disableSelectionOnClick
+                density="compact"
+                localeText={gridDefaultLocaleText}
+              />
+            </div>
           </Box>
         </Modal>
       </Stack>
