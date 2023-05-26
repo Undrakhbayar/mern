@@ -50,7 +50,7 @@ const Login = () => {
       dispatch(setCredentials({ accessToken }));
       setUsername("");
       setPassword("");
-      navigate("/dash/packagees");
+      navigate("/dash/mails");
     } catch (err) {
       if (!err.status) {
         setErrMsg("No Server Response");

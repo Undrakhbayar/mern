@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAddNewPackageeMutation } from "./packageesApiSlice";
+import { useAddNewMailMutation } from "./mailsApiSlice";
 import {
   Box,
   Paper,
@@ -29,8 +29,8 @@ import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, DisabledInput } fr
 import { REFERENCE_URL } from "../../config/common";
 import useAuth from "../../hooks/useAuth";
 
-const NewPackageeForm = () => {
-  const [addNewPackagee, { isLoading, isSuccess, isError, error, data }] = useAddNewPackageeMutation();
+const NewMailForm = () => {
+  const [addNewMail, { isLoading, isSuccess, isError, error, data }] = useAddNewMailMutation();
   const navigate = useNavigate();
   const { userid, username, isManager, isAdmin, compname, compregister, comptel, compaddr } = useAuth();
   const [houseSeq, setHouseSeq] = useState("");
@@ -73,9 +73,9 @@ const NewPackageeForm = () => {
     if (isSuccess) {
       setHouseSeq("");
       setUserId("");
-      navigate(`/dash/packagees/${data}`);
+      navigate(`/dash/mails/${data}`);
     }
-  }, [isSuccess, navigate]);
+  }, [isSuccess, navigate, data]);
 
   const referenceUrl = REFERENCE_URL;
   console.log(referenceUrl);
@@ -108,10 +108,10 @@ const NewPackageeForm = () => {
 
   const canSave = [userId].every(Boolean) && !isLoading;
 
-  const onSavePackageeClicked = async (e) => {
+  const onSaveMailClicked = async (e) => {
     e.preventDefault();
     if (canSave) {
-      await addNewPackagee({
+      await addNewMail({
         user: userId,
         houseSeq,
         //mailId,
@@ -148,7 +148,7 @@ const NewPackageeForm = () => {
   const content = (
     <ThemeProvider theme={theme}>
       <Container maxWidth="xl">
-        <Box component="form" onSubmit={onSavePackageeClicked}>
+        <Box component="form" onSubmit={onSaveMailClicked}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 1 }}>
             <Button
               sx={{
@@ -543,4 +543,4 @@ const NewPackageeForm = () => {
   return content;
 };
 
-export default NewPackageeForm;
+export default NewMailForm;

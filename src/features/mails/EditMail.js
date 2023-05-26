@@ -1,21 +1,21 @@
 import { useParams } from 'react-router-dom'
-import EditPackageeForm from './EditPackageeForm'
-import { useGetPackageesQuery } from './packageesApiSlice'
+import EditMailForm from './EditMailForm'
+import { useGetMailsQuery } from './mailsApiSlice'
 import { useGetUsersQuery } from '../users/usersApiSlice'
 import useAuth from '../../hooks/useAuth'
 import PulseLoader from 'react-spinners/PulseLoader'
 import useTitle from '../../hooks/useTitle'
 
-const EditPackagee = () => {
-    useTitle('techPackagees: Edit Packagee')
+const EditMail = () => {
+    useTitle('techMails: Edit Mail')
 
     const { id } = useParams()
 
     const { username, isManager, isAdmin } = useAuth()
 
-    const { packagee } = useGetPackageesQuery("packageesList", {
+    const { mail } = useGetMailsQuery("mailsList", {
         selectFromResult: ({ data }) => ({
-            packagee: data?.entities[id]
+            mail: data?.entities[id]
         }),
     })
 
@@ -25,17 +25,17 @@ const EditPackagee = () => {
         }),
     })
 
-    if (!packagee || !users?.length) return <PulseLoader color={"#FFF"} />
+    if (!mail || !users?.length) return <PulseLoader color={"#FFF"} />
 
 
     if (!isManager && !isAdmin) {
-        if (packagee.username !== username) {
+        if (mail.username !== username) {
             return <p className="errmsg">No access</p>
         }
     }
 
-    const content = <EditPackageeForm packagee={packagee} users={users} />
+    const content = <EditMailForm mail={mail} users={users} />
 
     return content
 }
-export default EditPackagee
+export default EditMail

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUpdatePackageeMutation, useAddNewPackageeMutation } from "./packageesApiSlice";
+import { useUpdateMailMutation, useAddNewMailMutation } from "./mailsApiSlice";
 import { useGetItemsQuery, useAddNewItemMutation } from "./itemsApiSlice";
 import {
   Box,
@@ -31,7 +31,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, style } from "../../components/Components";
 import dayjs from "dayjs";
 
-const EditPackageeForm = ({ packagee, users }) => {
+const EditMailForm = ({ mail, users }) => {
   const navigate = useNavigate();
   const {
     data: items,
@@ -39,7 +39,7 @@ const EditPackageeForm = ({ packagee, users }) => {
     isSuccess: isSuccessList,
     isError: isErrorList,
     error: errorList,
-  } = useGetItemsQuery(packagee.id, {
+  } = useGetItemsQuery(mail.id, {
     pollingInterval: 1000000,
     /*     refetchOnFocus: true,
     refetchOnMountOrArgChange: true, */
@@ -76,12 +76,12 @@ const EditPackageeForm = ({ packagee, users }) => {
     rows = Object.values(entities);
   }
 
-  const [houseSeq, setHouseSeq] = useState(packagee.houseSeq);
-  const [mailId, setMailId] = useState(packagee.mailId);
-  const [mailBagNumber, setMailBagNumber] = useState(packagee.mailBagNumber);
-  const [blNo, setBlNo] = useState(packagee.blNo);
-  const [reportType, setReportType] = useState(packagee.reportType);
-  const [riskType, setRiskType] = useState(packagee.riskType);
+  const [houseSeq, setHouseSeq] = useState(mail.houseSeq);
+  const [mailId, setMailId] = useState(mail.mailId);
+  const [mailBagNumber, setMailBagNumber] = useState(mail.mailBagNumber);
+  const [blNo, setBlNo] = useState(mail.blNo);
+  const [reportType, setReportType] = useState(mail.reportType);
+  const [riskType, setRiskType] = useState(mail.riskType);
   const [netWgt, setNetWgt] = useState("");
   const [wgt, setWgt] = useState("");
   //const [wgtUnit, setWgtUnit] = useState("KG");
@@ -100,28 +100,28 @@ const EditPackageeForm = ({ packagee, users }) => {
   const [price4Curr, setPrice4Curr] = useState("");
   const [price5, setPrice5] = useState("");
   const [price5Curr, setPrice5Curr] = useState(""); */
-  const [transportType, setTransportType] = useState(packagee.transportType);
-  const [transportTypeObject] = useState({ type: "transportType", value: packagee.transportType, description: packagee.transportTypeNm });
+  const [transportType, setTransportType] = useState(mail.transportType);
+  const [transportTypeObject] = useState({ type: "transportType", value: mail.transportType, description: mail.transportTypeNm });
   console.log(transportTypeObject);
-  const [transportTypeNm, setTransportTypeNm] = useState(packagee.transportTypeNm);
-  const [isDiplomat, setIsDiplomat] = useState(packagee.isDiplomat);
+  const [transportTypeNm, setTransportTypeNm] = useState(mail.transportTypeNm);
+  const [isDiplomat, setIsDiplomat] = useState(mail.isDiplomat);
   const [hsCode, setHsCode] = useState("");
   const [goodsNm, setGoodsNm] = useState("");
-  const [shipperCntryCd, setShipperCntryCd] = useState(packagee.shipperCntryCd);
-  const [shipperCntryNm, setShipperCntryNm] = useState(packagee.shipperCntryNm);
-  const [shipperNatinality, setShipperNatinality] = useState(packagee.shipperNatinality);
-  const [shipperNm, setShipperNm] = useState(packagee.shipperNm);
-  const [shipperReg, setShipperReg] = useState(packagee.shipperReg);
-  const [shipperAddr, setShipperAddr] = useState(packagee.shipperAddr);
-  const [shipperTel, setShipperTel] = useState(packagee.shipperTel);
-  const [consigneeCntryCd, setConsigneeCntryCd] = useState(packagee.consigneeCntryCd);
-  const [consigneeCntryNm, setConsigneeCntryNm] = useState(packagee.consigneeCntryNm);
-  const [consigneeNatinality, setConsigneeNatinality] = useState(packagee.consigneeNatinality);
-  const [consigneeNm, setConsigneeNm] = useState(packagee.consigneeNm);
-  const [consigneeReg, setConsigneeReg] = useState(packagee.consigneeReg);
-  const [consigneeAddr, setConsigneeAddr] = useState(packagee.consigneeAddr);
-  const [consigneeTel, setConsigneeTel] = useState(packagee.consigneeTel);
-  const [mailDate, setMailDate] = useState(packagee.mailDate);
+  const [shipperCntryCd, setShipperCntryCd] = useState(mail.shipperCntryCd);
+  const [shipperCntryNm, setShipperCntryNm] = useState(mail.shipperCntryNm);
+  const [shipperNatinality, setShipperNatinality] = useState(mail.shipperNatinality);
+  const [shipperNm, setShipperNm] = useState(mail.shipperNm);
+  const [shipperReg, setShipperReg] = useState(mail.shipperReg);
+  const [shipperAddr, setShipperAddr] = useState(mail.shipperAddr);
+  const [shipperTel, setShipperTel] = useState(mail.shipperTel);
+  const [consigneeCntryCd, setConsigneeCntryCd] = useState(mail.consigneeCntryCd);
+  const [consigneeCntryNm, setConsigneeCntryNm] = useState(mail.consigneeCntryNm);
+  const [consigneeNatinality, setConsigneeNatinality] = useState(mail.consigneeNatinality);
+  const [consigneeNm, setConsigneeNm] = useState(mail.consigneeNm);
+  const [consigneeReg, setConsigneeReg] = useState(mail.consigneeReg);
+  const [consigneeAddr, setConsigneeAddr] = useState(mail.consigneeAddr);
+  const [consigneeTel, setConsigneeTel] = useState(mail.consigneeTel);
+  const [mailDate, setMailDate] = useState(mail.mailDate);
   const [ecommerceType, setEcommerceType] = useState("");
   const [ecommerceLink, setEcommerceLink] = useState("");
 
@@ -131,19 +131,19 @@ const EditPackageeForm = ({ packagee, users }) => {
   const [countries, setCountries] = useState([]);
   const [isDiplomats, setIsDiplomats] = useState([]);
 
-  const [updatePackagee, { isLoading, isSuccess, isError, error }] = useUpdatePackageeMutation();
-  const [addNewPackagee, { isLoading: isLoadingA, isSuccess: isSuccessA, isError: isErrorA, error: errorA }] = useAddNewPackageeMutation();
+  const [updateMail, { isLoading, isSuccess, isError, error }] = useUpdateMailMutation();
+  const [addNewMail, { isLoading: isLoadingA, isSuccess: isSuccessA, isError: isErrorA, error: errorA }] = useAddNewMailMutation();
   const [addNewItem, { isLoading: isLoadingItem, isSuccess: isSuccessItem, isError: isErrorItem, error: errorItem }] = useAddNewItemMutation();
 
   const goList = () => {
-    navigate("/dash/packagees");
+    navigate("/dash/mails");
   };
 
   useEffect(() => {
     if (isSuccess || isSuccessA) {
       setUserId("");
       localStorage.removeItem("path");
-      navigate("/dash/packagees");
+      navigate("/dash/mails");
     }
   }, [isSuccess, isSuccessA, navigate]);
 
@@ -182,11 +182,11 @@ const EditPackageeForm = ({ packagee, users }) => {
 
   const canSave = [userId].every(Boolean) && !isLoading && !isLoadingA && !isLoadingItem;
 
-  const onSavePackageeClicked = async (e) => {
+  const onSaveMailClicked = async (e) => {
     e.preventDefault();
     if (canSave) {
       if (localStorage.getItem("path") === "copy") {
-        await addNewPackagee({
+        await addNewMail({
           user: userId,
           houseSeq,
           mailId,
@@ -226,8 +226,8 @@ const EditPackageeForm = ({ packagee, users }) => {
           ecommerceLink,
         });
       } else {
-        await updatePackagee({
-          id: packagee.id,
+        await updateMail({
+          id: mail.id,
           user: userId,
           prgsStatusCd: "10",
           houseSeq,
@@ -278,7 +278,7 @@ const EditPackageeForm = ({ packagee, users }) => {
     e.preventDefault();
     if (canSave) {
       await addNewItem({
-        packageeId: packagee.id,
+        mailId: mail.id,
         houseSeq,
         netWgt,
         wgt,
@@ -310,9 +310,9 @@ const EditPackageeForm = ({ packagee, users }) => {
   const content = (
     <ThemeProvider theme={theme}>
       <Container maxWidth="xl">
-        <Box component="form" onSubmit={onSavePackageeClicked}>
+        <Box component="form" onSubmit={onSaveMailClicked}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 1 }}>
-            {packagee.prgsStatusCd === "10" ? (
+            {mail.prgsStatusCd === "10" ? (
               <Button
                 sx={{
                   bgcolor: "#6366F1",
@@ -583,7 +583,7 @@ const EditPackageeForm = ({ packagee, users }) => {
               </Grid>
             </Grid>
           </Paper>
-          {packagee.prgsStatusCd === "10" ? (
+          {mail.prgsStatusCd === "10" ? (
             <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ m: 1 }}>
               <Button
                 sx={{
@@ -839,4 +839,4 @@ const EditPackageeForm = ({ packagee, users }) => {
   return content;
 };
 
-export default EditPackageeForm;
+export default EditMailForm;

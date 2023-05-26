@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { useGetPackageesQuery, useDeletePackageeMutation, useUpdatePackageeMutation, useSendPackageeMutation } from "./packageesApiSlice";
+import { useGetMailsQuery, useDeleteMailMutation, useUpdateMailMutation, useSendMailMutation } from "./mailsApiSlice";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Stack, Link, Alert } from "@mui/material";
@@ -13,12 +13,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import CopyIcon from "@mui/icons-material/ContentCopy";
 import { OrderStatus } from "../../components/Components";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
-import { useAddNewPackageeMutation } from "./packageesApiSlice";
+import { useAddNewMailMutation } from "./mailsApiSlice";
 import { useGetUsersQuery } from "../users/usersApiSlice";
 import gridDefaultLocaleText from "../../components/LocalTextConstants";
 import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
 
-const PackageesList = () => {
+const MailsList = () => {
   const columns = [
     /*     {
       field: "id",
@@ -36,7 +37,7 @@ const PackageesList = () => {
       headerName: "Илгээмжийн дугаар",
       width: 170,
       renderCell: (params) => {
-        return <Link href={`/dash/packagees/${params.row.id}`}>{params.row.mailId}</Link>;
+        return <Link href={`/dash/mails/${params.row.id}`}>{params.row.mailId}</Link>;
       },
     },
     {
@@ -107,17 +108,17 @@ const PackageesList = () => {
       width: 120,
     },
   ];
-  const handleEdit = (id) => navigate(`/dash/packagees/${id}`);
+  const handleEdit = (id) => navigate(`/dash/mails/${id}`);
   const handleDelete = async (id) => {
-    await deletePackagee({ id: [id] });
+    await deleteMail({ id: [id] });
   };
   const {
-    data: packagees,
+    data: mails,
     isLoading,
     isSuccess,
     isError,
     error,
-  } = useGetPackageesQuery("packageesList", {
+  } = useGetMailsQuery("mailsList", {
     pollingInterval: 1000000,
     /*     refetchOnFocus: true,
     refetchOnMountOrArgChange: true, */
@@ -132,10 +133,10 @@ const PackageesList = () => {
   const { username, isManager, isAdmin } = useAuth();
 
   const navigate = useNavigate();
-  const onNewPackageeClicked = () => navigate("/dash/packagees/new");
+  const onNewMailClicked = () => navigate("/dash/mails/new");
 
-  const [deletePackagee, { isSuccess: isDelSuccess, isError: isDelError, error: delerror }] = useDeletePackageeMutation();
-  const [sendPackagee, { isSuccess: isSendSuccess, isError: isSendError, error: sendError }] = useSendPackageeMutation();
+  const [deleteMail, { isSuccess: isDelSuccess, isError: isDelError, error: delerror }] = useDeleteMailMutation();
+  const [sendMail, { isSuccess: isSendSuccess, isError: isSendError, error: sendError }] = useSendMailMutation();
 
   useEffect(() => {
     if (isDelSuccess) {
@@ -143,12 +144,12 @@ const PackageesList = () => {
     }
   }, [isDelSuccess, navigate]);
 
-  const onDeletePackageesClicked = async () => {
-    await deletePackagee({ id: selection });
+  const onDeleteMailsClicked = async () => {
+    await deleteMail({ id: selection });
   };
-  const onCopyPackageesClicked = async () => {
+  const onCopyMailsClicked = async () => {
     localStorage.setItem("path", "copy");
-    navigate(`/dash/packagees/${selection}`);
+    navigate(`/dash/mails/${selection}`);
   };
   let unfiltered = [];
   let rows = [];
@@ -156,7 +157,7 @@ const PackageesList = () => {
   const [selection, setSelection] = useState([]);
 
   if (isSuccess) {
-    const { entities } = packagees;
+    const { entities } = mails;
 
     unfiltered = Object.values(entities);
     if (isManager || isAdmin) {
@@ -166,7 +167,7 @@ const PackageesList = () => {
     }
   }
 
-  const onSendPackageesClicked = async () => {
+  const onSendMailsClicked = async () => {
     /*const selectedRowsData = selection.map((id) => rows.find((row) => row.id === id));
     console.log(selectedRowsData);
     let arr = [];
@@ -225,7 +226,7 @@ const PackageesList = () => {
       obj.ECOMMERCE_LINK = selectedRowsData[i].ecommerceLink;
 
       arr.push(obj);
-      await updatePackagee({
+      await updateMail({
         id: selectedRowsData[i].id,
         mailId: selectedRowsData[i].mailId,
         blNo: selectedRowsData[i].blNo,
@@ -304,9 +305,9 @@ const PackageesList = () => {
 
       let jsonString = JSON.stringify(arr);
       console.log(jsonString);
-      await sendPackagee({ jsonString });
+      await sendMail({ jsonString });
 
-      await updatePackagee({
+      await updateMail({
         id: selectedRowsData[i].id,
         mailId: selectedRowsData[i].mailId,
         blNo: selectedRowsData[i].blNo,
@@ -316,7 +317,7 @@ const PackageesList = () => {
   };
 
   const [prgsStatusCd, setPrgsStatusCd] = useState([]);
-  const [updatePackagee, { isLoadingU, isSuccessU, isErrorU, errorU }] = useUpdatePackageeMutation();
+  const [updateMail, { isLoadingU, isSuccessU, isErrorU, errorU }] = useUpdateMailMutation();
 
   useEffect(() => {
     if (isSuccessU) {
@@ -335,7 +336,7 @@ const PackageesList = () => {
         console.log(resp.cols);
         console.log(resp.rows);
         for (let i = 0; i < resp.rows.length; i++) {
-          onSavePackageeClicked(resp.rows[i]);
+          onSaveMailClicked(resp.rows[i]);
         }
       }
     });
@@ -347,16 +348,16 @@ const PackageesList = () => {
     }),
   });
 
-  const onSavePackageeClicked = async (data) => {
-    await addNewPackagee({
+  const onSaveMailClicked = async (data) => {
+    await addNewMail({
       data,
     });
   };
-  const [addNewPackagee, { isLoading: isILoading, isSuccess: isISuccess, isError: isIErorr, error: Ierror }] = useAddNewPackageeMutation();
+  const [addNewMail, { isLoading: isILoading, isSuccess: isISuccess, isError: isIErorr, error: Ierror }] = useAddNewMailMutation();
   useEffect(() => {
     if (isISuccess) {
       console.log("here");
-      navigate("/dash/packagees");
+      navigate("/dash/mails");
     }
   }, [isISuccess, navigate]);
 
@@ -382,7 +383,7 @@ const PackageesList = () => {
           data.shift();
           const finalData = data.map((v) => ({ ...v, user: users[0].id }));
           console.log(finalData);
-          onSavePackageeClicked(finalData);
+          onSaveMailClicked(finalData);
           //}
         } else {
           alert("error!");
@@ -392,7 +393,103 @@ const PackageesList = () => {
       console.log("plz select your file");
     }
   };
+  const generatePDF = () => {
 
+    var doc = new jsPDF("p", "pt");
+    const json = require("../../img/arial-normal.json");
+    doc.addFileToVFS("utps.ttf", json.id);
+    doc.addFont("utps.ttf", "utps", "normal");
+    doc.setFont("utps");
+    doc.setFontSize(14);
+    doc.text("UTPS Гаалийн хяналтын бүс", 60, 24);
+    doc.text("Гарах хуудас", 120, 45);
+    doc.text("UTPS Гаалийн хяналтын бүс", 350, 24);
+    doc.text("Гарах хуудас", 410, 45);
+    doc.setFontSize(12);
+    doc.setFontSize(12);
+    doc.text("Nº", 20, 33);
+    doc.text("Nº", 310, 33);
+    doc.text("1", 22, 75);
+    doc.text("Илгээмжийн", 40, 65);
+    doc.text("дугаар", 40, 80);
+    
+    doc.text("1", 312, 75);
+    doc.text("Илгээмжийн", 330, 65);
+    doc.text("дугаар", 330, 80);
+    
+    doc.text("2", 22, 115);
+    doc.text("Бараа", 40, 105);
+    doc.text("хүлээн авагч", 40, 120);
+    doc.text("2", 312, 115);
+    doc.text("Бараа", 330, 105);
+    doc.text("хүлээн авагч", 330, 120);
+    doc.text("3", 22, 150);
+    doc.text("Барааны жин", 40, 150);
+    
+    doc.text("3", 312, 150);
+    doc.text("Барааны жин", 330, 150);
+    
+    doc.text("4", 22, 180);
+    doc.text("Барааны нэр", 40, 180);
+    doc.text("4", 312, 180);
+    doc.text("Барааны нэр", 330, 180);
+    doc.text("5", 22, 213);
+    doc.text("Манифестын", 40, 205);
+    doc.text("дугаар", 40, 220);
+
+    doc.text("5", 312, 213);
+    doc.text("Манифестын", 330, 205);
+    doc.text("дугаар", 330, 220);
+
+    doc.text("6", 22, 248);
+    doc.text("Гарсан огноо", 40, 248);
+    doc.text("6", 312, 248);
+    doc.text("Гарсан огноо", 330, 248);
+    doc.text("7", 22, 285);
+    doc.text("Зөвшөөрсөн ГУБ", 50, 285);
+    doc.text("7", 312, 285);
+    doc.text("Зөвшөөрсөн ГУБ", 340, 285);
+    doc.text("8", 22, 345);
+    doc.text("Тэмдэг", 75, 345);
+    doc.text("8", 312, 345);
+    doc.text("Тэмдэг", 365, 345);
+    doc.text("Зөвшөөрсөн ГУАБ", 175, 285);
+    doc.text("Тэмдэг", 205, 345);
+    doc.text("Зөвшөөрсөн ГУАБ", 465, 285);
+    doc.text("Тэмдэг", 495, 345);
+
+    doc.rect(15, 10, 280, 370);
+    doc.rect(305, 10, 280, 370);
+
+    doc.line(35, 10, 35, 380);
+    doc.line(35, 30, 295, 30);
+    doc.line(15, 50, 295, 50);
+    doc.line(15, 90, 295, 90);
+    doc.line(15, 130, 295, 130);
+    doc.line(15, 160, 295, 160);
+    doc.line(15, 190, 295, 190);
+    doc.line(15, 230, 295, 230);
+    doc.line(15, 260, 295, 260);
+    doc.line(15, 300, 295, 300);
+
+    doc.line(120, 50, 120, 260);
+    doc.line(160, 260, 160, 380);
+
+    doc.line(325, 10, 325, 380);
+    doc.line(325, 30, 585, 30);
+    doc.line(305, 50, 585, 50);
+    doc.line(305, 90, 585, 90);
+    doc.line(305, 130, 585, 130);
+    doc.line(305, 160, 585, 160);
+    doc.line(305, 190, 585, 190);
+    doc.line(305, 230, 585, 230);
+    doc.line(305, 260, 585, 260);
+    doc.line(305, 300, 585, 300);
+
+    doc.line(410, 50, 410, 260);
+    doc.line(450, 260, 450, 380);
+    window.open(doc.output("bloburl"), "new", "height=800,width=700");
+  };
   content = (
     <Box sx={{ height: 400, width: "100%" }}>
       <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 1 }}>
@@ -400,7 +497,7 @@ const PackageesList = () => {
         <Button
           variant="contained"
           startIcon={<SendIcon />}
-          onClick={onSendPackageesClicked}
+          onClick={onSendMailsClicked}
           size="small"
           sx={{
             bgcolor: "#6366F1",
@@ -409,10 +506,22 @@ const PackageesList = () => {
         >
           Илгээх
         </Button>
+        <Button
+          variant="contained"
+          startIcon={<SendIcon />}
+          onClick={generatePDF}
+          size="small"
+          sx={{
+            bgcolor: "#6366F1",
+            ":hover": { bgcolor: "#4338CA" },
+          }}
+        >
+          Хэвлэх
+        </Button>
 {/*         <Button
           variant="contained"
           startIcon={<CopyIcon />}
-          onClick={onCopyPackageesClicked}
+          onClick={onCopyMailsClicked}
           size="small"
           sx={{
             bgcolor: "#6366F1",
@@ -424,7 +533,7 @@ const PackageesList = () => {
         <Button
           variant="contained"
           startIcon={<DeleteIcon />}
-          onClick={onDeletePackageesClicked}
+          onClick={onDeleteMailsClicked}
           size="small"
           sx={{
             bgcolor: "#6366F1",
@@ -436,7 +545,7 @@ const PackageesList = () => {
         <Button
           variant="contained"
           endIcon={<MailIcon />}
-          onClick={onNewPackageeClicked}
+          onClick={onNewMailClicked}
           size="small"
           sx={{
             bgcolor: "#6366F1",
@@ -470,4 +579,4 @@ const PackageesList = () => {
   );
   return content;
 };
-export default PackageesList;
+export default MailsList;

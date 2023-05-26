@@ -6,10 +6,10 @@ import Welcome from './features/auth/Welcome'
 import UsersList from './features/users/UsersList'
 import EditUser from './features/users/EditUser'
 import NewUserForm from './features/users/NewUserForm'
-import PackageesList from './features/packagees/PackageesList'
+import MailsList from './features/mails/MailsList'
 import BundlesList from './features/bundles/BundlesList'
-import EditPackagee from './features/packagees/EditPackagee'
-import NewPackagee from './features/packagees/NewPackagee'
+import EditMail from './features/mails/EditMail'
+import NewMail from './features/mails/NewMail'
 import Prefetch from './features/auth/Prefetch'
 import PersistLogin from './features/auth/PersistLogin'
 import RequireAuth from './features/auth/RequireAuth'
@@ -42,15 +42,15 @@ function App() {
                   </Route>
                 </Route>
 
-                <Route path="packagees">
-                  <Route index element={<PackageesList />} />
-                  <Route path=":id" element={<EditPackagee />} />
-                  <Route path="new" element={<NewPackagee />} />
+                <Route path="mails">
+                  <Route index element={<MailsList />} />
+                  <Route path=":id" element={<EditMail />} />
+                  <Route path="new" element={<NewMail />} />
                 </Route>
                 <Route path="bundles">
                   <Route index element={<BundlesList />} />
-                  <Route path=":id" element={<EditPackagee />} />
-                  <Route path="new" element={<NewPackagee />} />
+                  <Route path=":id" element={<EditMail />} />
+                  <Route path="new" element={<NewMail />} />
                 </Route>
               </Route>{/* End Dash */}
             </Route>

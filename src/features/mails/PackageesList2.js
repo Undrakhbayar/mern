@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useGetPackageesQuery } from "./packageesApiSlice";
+import { useGetPackageesQuery } from "./mailsApiSlice";
 import Packagee from "./Packagee";
 import useAuth from "../../hooks/useAuth";
 import PropTypes from "prop-types";

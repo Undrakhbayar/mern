@@ -44,7 +44,7 @@ export default function NavBar() {
   }, [isSuccess, navigate]);
 
   useEffect(() => {
-    if (pathname.includes("packagee")) {
+    if (pathname.includes("mail")) {
       setSelectedIndex(0);
     } else {
       setSelectedIndex(1);
@@ -52,14 +52,14 @@ export default function NavBar() {
   }, [pathname]);
 
   const sendHome = () => {
-    navigate("/dash/packagees");
+    navigate("/dash/mails");
     setSelectedIndex(0);
   };
 
   const navigator = (index) => {
     switch (index) {
       case 0:
-        navigate("/dash/packagees");
+        navigate("/dash/mails");
         break;
       case 1:
         navigate("/dash/bundles");
@@ -68,7 +68,7 @@ export default function NavBar() {
         navigate("/dash/users");
         break;
       default:
-        navigate("/dash/packagees");
+        navigate("/dash/mails");
     }
   };
 

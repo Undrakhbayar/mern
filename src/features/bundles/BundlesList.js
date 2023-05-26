@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useGetBundlesQuery, useDeleteBundleMutation, useUpdateBundleMutation, useSendBundleMutation } from "./bundlesApiSlice";
-import { useGetPackageesQuery } from "../packagees/packageesApiSlice";
+import { useGetMailsQuery } from "../mails/mailsApiSlice";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Box, Paper, Grid, Button, Stack, InputAdornment, Alert, Typography, FormControl, Modal, Link } from "@mui/material";
@@ -97,12 +97,12 @@ const BundlesList = () => {
     refetchOnMountOrArgChange: true, */
   });
   const {
-    data: packagees,
-    isLoadingPackagees,
-    isSuccess: isSuccessPackagees,
-    isErrorPackagees,
-    errorPackagees,
-  } = useGetPackageesQuery("packageesList", {
+    data: mails,
+    isLoadingMails,
+    isSuccess: isSuccessMails,
+    isErrorMails,
+    errorMails,
+  } = useGetMailsQuery("mailsList", {
     pollingInterval: 1000000,
     /*     refetchOnFocus: true,
     refetchOnMountOrArgChange: true, */
@@ -138,8 +138,8 @@ const BundlesList = () => {
   };
   let unfiltered = [];
   let rows = [];
-  let unfilteredPackagees = [];
-  let rowsPackagee = [];
+  let unfilteredMails = [];
+  let rowsMail = [];
   const [pageSize, setPageSize] = useState(10);
   const [selection, setSelection] = useState([]);
 
@@ -153,15 +153,15 @@ const BundlesList = () => {
       rows = unfiltered.filter(({ regusername }) => regusername === username);
     }
   }
-  console.log(isSuccessPackagees);
-  if (isSuccessPackagees) {
-    const { entities } = packagees;
+  console.log(isSuccessMails);
+  if (isSuccessMails) {
+    const { entities } = mails;
     console.log(entities);
-    unfilteredPackagees = Object.values(entities);
+    unfilteredMails = Object.values(entities);
     if (isManager || isAdmin) {
-      rowsPackagee = [...unfilteredPackagees];
+      rowsMail = [...unfilteredMails];
     } else {
-      rowsPackagee = unfilteredPackagees.filter(({ regusername }) => regusername === username);
+      rowsMail = unfilteredMails.filter(({ regusername }) => regusername === username);
     }
   }
 
@@ -389,9 +389,9 @@ const BundlesList = () => {
             <div style={{ height: 600 }}>
               <DataGrid
                 sx={{ boxShadow: 2, bgcolor: "#fff" }}
-                rows={rowsPackagee}
+                rows={rowsMail}
                 onRowSelectionModelChange={setSelection}
-                {...rowsPackagee}
+                {...rowsMail}
                 columns={columns}
                 pageSize={pageSize}
                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
