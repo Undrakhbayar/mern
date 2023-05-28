@@ -12,7 +12,6 @@ import MailIcon from "@mui/icons-material/Mail";
 import EditIcon from "@mui/icons-material/Edit";
 import CopyIcon from "@mui/icons-material/ContentCopy";
 import { OrderStatus } from "../../components/Components";
-import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import { useAddNewMailMutation } from "./mailsApiSlice";
 import { useGetUsersQuery } from "../users/usersApiSlice";
 import gridDefaultLocaleText from "../../components/LocalTextConstants";
@@ -130,7 +129,7 @@ const MailsList = () => {
   }
 
   if (isLoading) content = <p>Loading...</p>;
-  const { username, isManager, isAdmin } = useAuth();
+  const { username, isManager, isAdmin, compregister } = useAuth();
 
   const navigate = useNavigate();
   const onNewMailClicked = () => navigate("/dash/mails/new");
@@ -161,7 +160,7 @@ const MailsList = () => {
 
     unfiltered = Object.values(entities);
     if (isManager || isAdmin) {
-      rows = [...unfiltered];
+      rows = unfiltered.filter(({ compRegister }) => compRegister === compregister);
     } else {
       rows = unfiltered.filter(({ regusername }) => regusername === username);
     }

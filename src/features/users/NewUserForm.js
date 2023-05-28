@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAddNewUserMutation } from "./usersApiSlice";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { ROLES } from "../../config/roles";
 import {
   Box,
@@ -13,18 +11,12 @@ import {
   Stack,
   Alert,
   Typography,
-  Autocomplete,
-  FormGroup,
-  FormControlLabel,
   FormControl,
-  FormLabel,
-  Radio,
-  RadioGroup,
   ThemeProvider,
   Container,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, DisabledInput } from "../../components/Components";
+import { CustomInput, CustomFormLabel, theme } from "../../components/Components";
 import useAuth from "../../hooks/useAuth";
 
 const USER_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;

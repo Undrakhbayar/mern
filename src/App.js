@@ -4,7 +4,6 @@ import Login from './features/auth/Login';
 import DashLayout from './components/DashLayout'
 import Welcome from './features/auth/Welcome'
 import UsersList from './features/users/UsersList'
-import EditUser from './features/users/EditUser'
 import NewUserForm from './features/users/NewUserForm'
 import MailsList from './features/mails/MailsList'
 import BundlesList from './features/bundles/BundlesList'
@@ -38,7 +37,6 @@ function App() {
                 <Route element={<RequireAuth allowedRoles={[ROLES.Manager, ROLES.Admin]} />}>
                   <Route path="users">
                     <Route index element={<UsersList />} />
-                    <Route path=":id" element={<EditUser />} />
                     <Route path="new" element={<NewUserForm />} />
                   </Route>
                 </Route>
