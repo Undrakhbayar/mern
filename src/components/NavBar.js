@@ -47,14 +47,19 @@ export default function NavBar() {
   useEffect(() => {
     if (pathname.includes("mail")) {
       setSelectedIndex(0);
+      setOpenListMail(true);
     } else if (pathname.includes("bundle")) {
       setSelectedIndex(1);
+      setOpenListMail(true);
     } else if (pathname.includes("outer")) {
       setSelectedIndex(2);
+      setOpenListMail(true);
     } else if (pathname.includes("branch")) {
       setSelectedIndex(3);
+      setOpenListUser(true);
     } else if (pathname.includes("user")) {
       setSelectedIndex(4);
+      setOpenListUser(true);
     }
   }, [pathname]);
 
@@ -103,8 +108,8 @@ export default function NavBar() {
     },
   });
 
-  const [openListMail, setOpenListMail] = React.useState(true);
-  const [openListUser, setOpenListUser] = React.useState(true);
+  const [openListMail, setOpenListMail] = React.useState(false);
+  const [openListUser, setOpenListUser] = React.useState(false);
 
   const handleListMail = () => {
     setOpenListMail(!openListMail);

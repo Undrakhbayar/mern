@@ -11,7 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, style, OrderStatus } from "../../components/Components";
+import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, style, OrderStatus, DisabledInput } from "../../components/Components";
 import gridDefaultLocaleText from "../../components/LocalTextConstants";
 import dayjs from "dayjs";
 import { useGetUsersQuery } from "../users/usersApiSlice";
@@ -22,11 +22,11 @@ const BundlesList = () => {
   const { userid } = useAuth();
   const columns = [
     {
-      field: "mailBagNumber",
+      field: "bundleNo",
       headerName: "Богцын дугаар",
       width: 170,
       renderCell: (params) => {
-        return <Link href={`/dash/bundles/${params.row.id}`}>{params.row.mailId}</Link>;
+        return <Link href={`/dash/bundles/${params.row.id}`}>{params.row.bundleNo}</Link>;
       },
     },
     {
@@ -73,10 +73,45 @@ const BundlesList = () => {
       width: 120,
     },
   ];
+  const bundleItemColumns = [
+    {
+      field: "mailNo",
+      headerName: "Илгээмжийн дугаар",
+      width: 170,
+    },
+    {
+      field: "wgt",
+      headerName: "Жин",
+      width: 120,
+    },
+    {
+      field: "actions",
+      headerName: "Засах",
+      sortable: false,
+      type: "actions",
+      getActions: ({ row }) => [
+        <GridActionsCellItem
+          key={2}
+          icon={<DeleteIcon />}
+          sx={{ padding: "2px 6px" }}
+          label="Устгах"
+          disabled={row.prgsStatusCd === "11"}
+          onClick={() => {
+            handleDelete(row);
+          }}
+        />,
+      ],
+    },
+    {
+      field: "riskType",
+      headerName: "Эрсдлийн төлөв",
+      width: 180,
+    },
+  ];
   const [bundleBranch, setBundleBranch] = useState("");
   const [bundleNo, setBundleNo] = useState("");
   const [bundleWgt, setBundleWgt] = useState("");
-  const [bundleDate, setBundleDate] = useState("");
+  const [bundleDate, setBundleDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [bundleType, setBundleType] = useState("");
   const [innerNo, setInnerNo] = useState("");
   const [sumWgt, setSumWgt] = useState("");
@@ -129,7 +164,6 @@ const BundlesList = () => {
   const { username, isManager, isAdmin } = useAuth();
 
   const navigate = useNavigate();
-  const onNewBundleClicked = () => navigate("/dash/bundles/new");
 
   const [deleteBundle, { isSuccess: isDelSuccess, isError: isDelError, error: delerror }] = useDeleteBundleMutation();
 
@@ -195,32 +229,51 @@ const BundlesList = () => {
     }),
   });
 
-  const onSaveBundleClicked = async (data) => {
+  const onSaveBundleClicked = async () => {
     await addNewBundle({
-      data,
+      user: userid,
+      bundleNo,
+      bundleBranch,
+      bundleWgt,
+      bundleDate,
+      bundleType,
+      innerNo,
+      sumWgt,
+      sumCnt,
+      items: rowsBundleItems,
     });
   };
-  let idCounter = 0;
+  let sumwgt = 0;
   const onSaveBundleItemClicked = async (data) => {
     const selectedRowsData = selectionMail.map((id) => rowsMail.find((row) => row.id === id));
     console.log(selectedRowsData);
-    /*     await addNewBundleItem({
-      user: userid,
-    }); */
-    idCounter += 1;
+
     for (let i = 0; i < selectedRowsData.length; i++) {
-      setRowsBundleItems((prevRows) => [...prevRows, { id: selectedRowsData[i].mailId, mailId: selectedRowsData[i].mailId }]);
+      setRowsBundleItems((prevRows) => [
+        ...prevRows,
+        {
+          id: selectedRowsData[i].id,
+          mailId: selectedRowsData[i].id,
+          mailNo: selectedRowsData[i].mailId,
+          wgt: selectedRowsData[i].mailWgt,
+          riskType: selectedRowsData[i].riskType,
+          bundleNo: bundleNo,
+        },
+      ]);
+      sumwgt += selectedRowsData[i].mailWgt;
     }
+    setSumWgt(sumwgt);
+    setSumCnt(selectedRowsData.length);
     handleClosePackage();
     console.log("rowinserted", rowsBundleItems);
   };
   const [addNewBundle, { isLoading: isILoading, isSuccess: isISuccess, isError: isIErorr, error: Ierror }] = useAddNewBundleMutation();
-  const [addNewBundleItem, { isLoading: isBILoading, isSuccess: isBISuccess, isError: isBIErorr, error: BIerror }] = useAddNewBundleItemMutation();
+
   useEffect(() => {
     if (isISuccess) {
-      navigate("/dash/bundles");
+      handleClose();
     }
-  }, [isISuccess, navigate]);
+  }, [isISuccess]);
 
   const fileType = ["application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
   const handleFile = (e) => {
@@ -350,13 +403,15 @@ const BundlesList = () => {
                         format="YYYY-MM-DD"
                         onChange={(e) => setBundleDate(e.format("YYYY-MM-DD"))}
                         slotProps={{ textField: { size: "small" } }}
-                        sx={{ mr: 2 }}
+                        sx={{ mx: 2, mb: 1 }}
                       />
                     </LocalizationProvider>
+                    <CustomFormLabel name="Нийт жин" />
+                    <DisabledInput value={sumWgt} disabled={true} size="small" sx={{ mx: 2, mb: 1 }} />
                   </FormControl>
                 </Grid>
                 <Grid item xs={3}>
-                  <Stack>
+                  <FormControl>
                     <CustomFormLabel name="Богцны дугаар" />
                     <CustomInput
                       value={bundleNo}
@@ -371,7 +426,9 @@ const BundlesList = () => {
                         setBundleType(e.target.value);
                       }}
                     />
-                  </Stack>
+                    <CustomFormLabel name="Нийт шуудан" />
+                    <DisabledInput value={sumCnt} disabled={true} size="small" sx={{ mx: 2, mb: 1 }} />
+                  </FormControl>
                 </Grid>
                 <Grid item xs={5}>
                   <Stack>
@@ -397,18 +454,22 @@ const BundlesList = () => {
               </Grid>
             </Paper>
             <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2, mt: 1 }}>
-              <Button
-                sx={{
-                  bgcolor: "#6366F1",
-                  ":hover": { bgcolor: "#4338CA" },
-                }}
-                variant="contained"
-                endIcon={<SaveIcon />}
-                onClick={handleOpenPackage}
-                size="small"
-              >
-                Илгээмж нэмэх
-              </Button>
+              {bundleNo !== "" ? (
+                <Button
+                  sx={{
+                    bgcolor: "#6366F1",
+                    ":hover": { bgcolor: "#4338CA" },
+                  }}
+                  variant="contained"
+                  endIcon={<SaveIcon />}
+                  onClick={handleOpenPackage}
+                  size="small"
+                >
+                  Илгээмж нэмэх
+                </Button>
+              ) : (
+                <></>
+              )}
             </Stack>
             <div style={{ height: 400 }}>
               <DataGrid
@@ -417,7 +478,7 @@ const BundlesList = () => {
                 onRowSelectionModelChange={setSelection}
                 {...rowsBundleItems}
                 getRowId={(row) => row.mailId}
-                columns={columns}
+                columns={bundleItemColumns}
                 pageSize={pageSize}
                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                 rowsPerPageOptions={[10, 20, 30]}

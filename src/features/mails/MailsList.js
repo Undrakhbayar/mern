@@ -394,31 +394,22 @@ const MailsList = () => {
   };
   const generatePDF = () => {
 
-    var doc = new jsPDF("p", "pt");
+    var doc = new jsPDF({
+      orientation: "landscape",
+      unit: 'px',
+      format: [595.28, 841.89],
+    });
     const json = require("../../img/arial-normal.json");
     doc.addFileToVFS("utps.ttf", json.id);
     doc.addFont("utps.ttf", "utps", "normal");
     doc.setFont("utps");
     doc.setFontSize(14);
-    doc.text("UTPS Гаалийн хяналтын бүс", 60, 24);
-    doc.text("Гарах хуудас", 120, 45);
-    doc.text("UTPS Гаалийн хяналтын бүс", 350, 24);
-    doc.text("Гарах хуудас", 410, 45);
     doc.setFontSize(12);
     doc.setFontSize(12);
-    doc.text("Nº", 20, 33);
-    doc.text("Nº", 310, 33);
-    doc.text("1", 22, 75);
-    doc.text("Илгээмжийн", 40, 65);
-    doc.text("дугаар", 40, 80);
-    
-    doc.text("1", 312, 75);
-    doc.text("Илгээмжийн", 330, 65);
-    doc.text("дугаар", 330, 80);
     
     doc.text("2", 22, 115);
-    doc.text("Бараа", 40, 105);
-    doc.text("хүлээн авагч", 40, 120);
+    doc.text("Sender's Name", 40, 70);
+    doc.text("Business", 40, 80);
     doc.text("2", 312, 115);
     doc.text("Бараа", 330, 105);
     doc.text("хүлээн авагч", 330, 120);
@@ -457,12 +448,8 @@ const MailsList = () => {
     doc.text("Зөвшөөрсөн ГУАБ", 465, 285);
     doc.text("Тэмдэг", 495, 345);
 
-    doc.rect(15, 10, 280, 370);
-    doc.rect(305, 10, 280, 370);
-
-    doc.line(35, 10, 35, 380);
-    doc.line(35, 30, 295, 30);
-    doc.line(15, 50, 295, 50);
+    doc.line(15, 60, 830, 60);
+    doc.line(40, 72, 830, 72);
     doc.line(15, 90, 295, 90);
     doc.line(15, 130, 295, 130);
     doc.line(15, 160, 295, 160);
@@ -471,13 +458,8 @@ const MailsList = () => {
     doc.line(15, 260, 295, 260);
     doc.line(15, 300, 295, 300);
 
-    doc.line(120, 50, 120, 260);
     doc.line(160, 260, 160, 380);
 
-    doc.line(325, 10, 325, 380);
-    doc.line(325, 30, 585, 30);
-    doc.line(305, 50, 585, 50);
-    doc.line(305, 90, 585, 90);
     doc.line(305, 130, 585, 130);
     doc.line(305, 160, 585, 160);
     doc.line(305, 190, 585, 190);
@@ -487,13 +469,13 @@ const MailsList = () => {
 
     doc.line(410, 50, 410, 260);
     doc.line(450, 260, 450, 380);
-    window.open(doc.output("bloburl"), "new", "height=800,width=700");
+    window.open(doc.output("bloburl"), "new");
   };
   content = (
     <Box sx={{ height: 400, width: "100%" }}>
       <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 1 }}>
         <input type="file" onChange={handleFile} accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"></input>
-        <Button
+{/*         <Button
           variant="contained"
           startIcon={<SendIcon />}
           onClick={onSendMailsClicked}
@@ -504,7 +486,7 @@ const MailsList = () => {
           }}
         >
           Илгээх
-        </Button>
+        </Button> */}
         <Button
           variant="contained"
           startIcon={<SendIcon />}
