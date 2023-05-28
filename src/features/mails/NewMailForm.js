@@ -81,7 +81,10 @@ const NewMailForm = () => {
   const [transportTypes, setTransportTypes] = useState([]);
   const [countries, setCountries] = useState([]);
   const [areas, setAreas] = useState([]);
+  const [branches, setBranches] = useState([]);
 
+  const referenceUrl = REFERENCE_URL;
+  const canSave = [userId].every(Boolean) && !isLoading;
   useEffect(() => {
     if (isSuccess) {
       setHouseSeq("");
@@ -90,10 +93,9 @@ const NewMailForm = () => {
     }
   }, [isSuccess, navigate, data]);
 
-  const referenceUrl = REFERENCE_URL;
   useEffect(() => {
     const getReferences = async () => {
-      const res = await fetch(referenceUrl + "?reportType", {
+      const res = await fetch(referenceUrl + `?compreg=${compregister}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -101,24 +103,23 @@ const NewMailForm = () => {
       });
 
       const response = await res.json();
-      console.log(response);
 
       const reportTypes = response.filter(({ type }) => type === "reportType");
       const transportTypes = response.filter(({ type }) => type === "transportType");
       const countries = response.filter(({ type }) => type === "country");
       const areas = response.filter(({ type }) => type === "area");
+      const branches = response.filter(({ type }) => type === "branch");
 
-      console.log(transportTypes);
+      console.log(response);
 
       setReportTypes(reportTypes);
       setTransportTypes(transportTypes);
       setCountries(countries);
       setAreas(areas);
+      setBranches(branches);
     };
     getReferences();
   }, [referenceUrl]);
-
-  const canSave = [userId].every(Boolean) && !isLoading;
 
   const onSaveMailClicked = async (e) => {
     e.preventDefault();
@@ -260,7 +261,7 @@ const NewMailForm = () => {
                       size="small"
                       sx={{ mr: 2 }}
                       fullWidth={false}
-                      options={areas}
+                      options={branches}
                       getOptionLabel={(option) => option.description}
                       renderInput={(params) => <TextField variant="outlined" {...params} />}
                       onChange={(e, newValue) => {
