@@ -61,16 +61,6 @@ export const bundlesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [{ type: "Bundle", id: arg.id }],
     }),
-    sendBundle: builder.mutation({
-      query: (initialBundle) => ({
-        url: "/bundles/send",
-        method: "Post",
-        body: {
-          ...initialBundle,
-        },
-      }),
-      invalidatesTags: (result, error, arg) => [{ type: "Bundle", id: arg.id }],
-    }),
   }),
 });
 

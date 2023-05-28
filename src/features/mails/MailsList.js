@@ -4,7 +4,7 @@ import { useGetMailsQuery, useDeleteMailMutation, useUpdateMailMutation, useSend
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Stack, Link, Alert } from "@mui/material";
-import { DataGrid, gridClasses, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import { alpha, styled } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";

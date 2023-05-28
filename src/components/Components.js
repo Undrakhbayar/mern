@@ -44,7 +44,7 @@ const GreenRedSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const CustomInput = ({ style, label, value, inputProps, onChange, InputProps }) => {
-  return <TextField variant="outlined" size="small" sx={{ mr: 2 }} style={style} label={label} value={value} inputProps={inputProps} onChange={onChange} InputProps={InputProps}/>;
+  return <TextField variant="outlined" size="small" sx={{ mx: 2 }} style={style} label={label} value={value} inputProps={inputProps} onChange={onChange} InputProps={InputProps}/>;
 };
 const DisabledInput = styled(TextField)({
   "& .MuiInputBase-root.Mui-disabled": {
@@ -53,7 +53,7 @@ const DisabledInput = styled(TextField)({
 });
 const CustomFormLabel = ({ name }) => {
   return (
-    <FormLabel required sx={{ fontWeight: "600", fontSize: "14px", color: "text.primary", ml: 0.5, pb: 0.5, pt: 0.5 }}>
+    <FormLabel required sx={{ fontWeight: "600", fontSize: "14px", color: "text.primary", ml: 2, py: 0.5 }}>
       {name}
     </FormLabel>
   );

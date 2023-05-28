@@ -10,6 +10,7 @@ import MailsList from './features/mails/MailsList'
 import BundlesList from './features/bundles/BundlesList'
 import EditMail from './features/mails/EditMail'
 import NewMail from './features/mails/NewMail'
+import BranchesList from './features/branches/BranchesList'
 import Prefetch from './features/auth/Prefetch'
 import PersistLogin from './features/auth/PersistLogin'
 import RequireAuth from './features/auth/RequireAuth'
@@ -41,7 +42,11 @@ function App() {
                     <Route path="new" element={<NewUserForm />} />
                   </Route>
                 </Route>
-
+                <Route path="branches">
+                    <Route index element={<BranchesList />} />
+                    {/* <Route path=":id" element={<EditUser />} />
+                    <Route path="new" element={<NewUserForm />} /> */}
+                  </Route>
                 <Route path="mails">
                   <Route index element={<MailsList />} />
                   <Route path=":id" element={<EditMail />} />

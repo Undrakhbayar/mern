@@ -82,6 +82,7 @@ const EditMailForm = ({ mail, users }) => {
   const [blNo, setBlNo] = useState(mail.blNo);
   const [reportType, setReportType] = useState(mail.reportType);
   const [riskType, setRiskType] = useState(mail.riskType);
+  const [riskTypeBool, setRiskTypeBool] = useState(mail.riskType);
   const [netWgt, setNetWgt] = useState("");
   const [wgt, setWgt] = useState("");
   //const [wgtUnit, setWgtUnit] = useState("KG");
@@ -92,7 +93,7 @@ const EditMailForm = ({ mail, users }) => {
   const [transFareCurr, setTransFareCurr] = useState("");
   const [price1, setPrice1] = useState("");
   const [price1Curr, setPrice1Curr] = useState("");
-/*   const [price2, setPrice2] = useState("");
+  /*   const [price2, setPrice2] = useState("");
   const [price2Curr, setPrice2Curr] = useState("");
   const [price3, setPrice3] = useState("");
   const [price3Curr, setPrice3Curr] = useState("");
@@ -290,7 +291,7 @@ const EditMailForm = ({ mail, users }) => {
         transFareCurr,
         price1,
         price1Curr,
-/*         price2,
+        /*         price2,
         price2Curr,
         price3,
         price3Curr,
@@ -392,7 +393,7 @@ const EditMailForm = ({ mail, users }) => {
                         setReportType(e.target.textContent);
                       }}
                     />
-                    <CustomFormLabel name="Шуудангын төрөл" />
+                    <CustomFormLabel name="Тээврийн төрөл" />
                     <Autocomplete
                       size="small"
                       style={{
@@ -425,6 +426,7 @@ const EditMailForm = ({ mail, users }) => {
                       <FormControlLabel
                         control={
                           <GreenRedSwitch
+                            checked={riskType === "green" ? true : false}
                             onChange={(e) => {
                               e.target.checked ? setRiskType("green") : setRiskType("red");
                             }}
@@ -440,8 +442,8 @@ const EditMailForm = ({ mail, users }) => {
                         setIsDiplomat(e.target.value);
                       }}
                     >
-                      <FormControlLabel value="Y" control={<Radio />} label="Тийм" />
-                      <FormControlLabel value="N" control={<Radio />} label="Үгүй" />
+                      <FormControlLabel value="Y" control={<Radio checked={isDiplomat === "Y" ? true : false}/>} label="Тийм" />
+                      <FormControlLabel value="N" control={<Radio checked={isDiplomat === "N" ? true : false}/>} label="Үгүй" />
                     </RadioGroup>
                   </FormControl>
                 </Stack>

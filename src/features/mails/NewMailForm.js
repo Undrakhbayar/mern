@@ -50,6 +50,7 @@ const NewMailForm = () => {
   const [shipperReg, setShipperReg] = useState("");
   const [shipperAddr, setShipperAddr] = useState("");
   const [shipperTel, setShipperTel] = useState("");
+  const [shipperEmail, setShipperEmail] = useState("");
   const [consigneeCntryCd, setConsigneeCntryCd] = useState("");
   const [consigneeCntryNm, setConsigneeCntryNm] = useState("");
   const [consigneeNatinality, setConsigneeNatinality] = useState("");
@@ -57,17 +58,29 @@ const NewMailForm = () => {
   const [consigneeReg, setConsigneeReg] = useState("");
   const [consigneeAddr, setConsigneeAddr] = useState("");
   const [consigneeTel, setConsigneeTel] = useState("");
+  const [consigneeEmail, setConsigneeEmail] = useState("");
   const [compName] = useState(compname);
   const [compRegister] = useState(compregister);
   const [compAddr] = useState(compaddr);
   const [compTel] = useState(comptel);
   const [mailDate, setMailDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [area, setArea] = useState("");
+  const [branch, setBranch] = useState("");
+  const [consigneePayYn, setConsigneePayYn] = useState("");
+  const [mailType, setMailType] = useState("");
+  const [serviceType, setServiceType] = useState("");
+  const [mainPrice, setMainPrice] = useState("");
+  const [regPrice, setRegPrice] = useState("");
+  const [addPrice, setAddPrice] = useState("");
+  const [tax, setTax] = useState("");
+  const [addWgtPrice, setAddWgtPrice] = useState("");
+  const [sumPrice, setSumPrice] = useState("");
 
   const [userId, setUserId] = useState(userid);
   const [reportTypes, setReportTypes] = useState([]);
   const [transportTypes, setTransportTypes] = useState([]);
   const [countries, setCountries] = useState([]);
-  const [isDiplomats, setIsDiplomats] = useState([]);
+  const [areas, setAreas] = useState([]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -78,7 +91,6 @@ const NewMailForm = () => {
   }, [isSuccess, navigate, data]);
 
   const referenceUrl = REFERENCE_URL;
-  console.log(referenceUrl);
   useEffect(() => {
     const getReferences = async () => {
       const res = await fetch(referenceUrl + "?reportType", {
@@ -94,17 +106,17 @@ const NewMailForm = () => {
       const reportTypes = response.filter(({ type }) => type === "reportType");
       const transportTypes = response.filter(({ type }) => type === "transportType");
       const countries = response.filter(({ type }) => type === "country");
-      const isDiplomats = response.filter(({ type }) => type === "diplomat");
+      const areas = response.filter(({ type }) => type === "area");
 
       console.log(transportTypes);
 
       setReportTypes(reportTypes);
       setTransportTypes(transportTypes);
       setCountries(countries);
-      setIsDiplomats(isDiplomats);
+      setAreas(areas);
     };
     getReferences();
-  }, []);
+  }, [referenceUrl]);
 
   const canSave = [userId].every(Boolean) && !isLoading;
 
@@ -147,7 +159,7 @@ const NewMailForm = () => {
 
   const content = (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="xl">
+      <Container maxWidth="xxl">
         <Box component="form" onSubmit={onSaveMailClicked}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 1 }}>
             <Button
@@ -163,15 +175,15 @@ const NewMailForm = () => {
               Хадгалах
             </Button>
           </Stack>
-          <Paper sx={{ pl: 2, pb: 3 }}>
+          <Paper sx={{ px: 2, py: 3 }}>
             <Grid container columns={12}>
               <Grid item xs={12}>
-                <Typography variant="h6" m={2}>
+                <Typography variant="h6" color="#4338CA" sx={{ mb: 2, mx:2, pb: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 700 }}>
                   Үндсэн мэдээлэл
                 </Typography>
                 {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 {/*             <CustomInput
               style={{ width: 50 }}
               value={houseSeq}
@@ -184,7 +196,7 @@ const NewMailForm = () => {
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Илгээмжийн дугаар" />
-                    <DisabledInput disabled={true} size="small" sx={{ mr: 2 }} />
+                    <DisabledInput disabled={true} size="small" sx={{ mx: 2 }} />
                     <CustomFormLabel name="Ачаа хөдөлсөн огноо" />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
@@ -193,22 +205,19 @@ const NewMailForm = () => {
                         format="YYYY-MM-DD"
                         onChange={(e) => setMailDate(e.format("YYYY-MM-DD"))}
                         slotProps={{ textField: { size: "small" } }}
-                        sx={{ mr: 2 }}
+                        sx={{ mx: 2 }}
                       />
                     </LocalizationProvider>
                   </FormControl>
                 </Stack>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Маягтын төрөл" />
                     <Autocomplete
                       size="small"
-                      style={{
-                        display: "inline-flex",
-                        width: 175,
-                      }}
+                      sx={{ mx: 2 }}
                       fullWidth={false}
                       options={reportTypes.map((option) => option.value)}
                       renderInput={(params) => <TextField variant="outlined" {...params} />}
@@ -216,13 +225,10 @@ const NewMailForm = () => {
                         setReportType(e.target.textContent);
                       }}
                     />
-                    <CustomFormLabel name="Шуудангын төрөл" />
+                    <CustomFormLabel name="Тээврийн төрөл" />
                     <Autocomplete
                       size="small"
-                      style={{
-                        display: "inline-flex",
-                        width: 200,
-                      }}
+                      sx={{ mr: 2 }}
                       fullWidth={false}
                       options={transportTypes}
                       getOptionLabel={(option) => option.description}
@@ -235,7 +241,36 @@ const NewMailForm = () => {
                   </FormControl>
                 </Stack>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
+                <Stack>
+                  <FormControl>
+                    <CustomFormLabel name="Хамрах хүрээ" />
+                    <Autocomplete
+                      size="small"
+                      sx={{ mr: 2 }}
+                      fullWidth={false}
+                      options={areas.map((option) => option.value)}
+                      renderInput={(params) => <TextField variant="outlined" {...params} />}
+                      onChange={(e) => {
+                        setArea(e.target.textContent);
+                      }}
+                    />
+                    <CustomFormLabel name="Хүлээн авах салбар" />
+                    <Autocomplete
+                      size="small"
+                      sx={{ mr: 2 }}
+                      fullWidth={false}
+                      options={areas}
+                      getOptionLabel={(option) => option.description}
+                      renderInput={(params) => <TextField variant="outlined" {...params} />}
+                      onChange={(e, newValue) => {
+                        setBranch(newValue ? newValue.value : "");
+                      }}
+                    />
+                  </FormControl>
+                </Stack>
+              </Grid>
+              <Grid item xs={2}>
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Эрсдлийн төлөв" />
@@ -270,7 +305,7 @@ const NewMailForm = () => {
                 </Stack>
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="h6" m={2}>
+                <Typography variant="h6" color="#4338CA" sx={{ mb: 2, mt: 3, mx: 2, pb: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 700 }}>
                   Илгээгчийн мэдээлэл
                 </Typography>
                 <FormControl>
@@ -312,7 +347,6 @@ const NewMailForm = () => {
                     }}
                   />
                 </FormControl>
-
                 <FormControl>
                   <CustomFormLabel name="Улс хотын нэр" />
                   <CustomInput
@@ -335,10 +369,17 @@ const NewMailForm = () => {
                       setShipperTel(e.target.value);
                     }}
                   />
+                  <CustomFormLabel name="Имэйл" />
+                  <CustomInput
+                    value={shipperEmail}
+                    onChange={(e) => {
+                      setShipperEmail(e.target.value);
+                    }}
+                  />
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="h6" m={2}>
+                <Typography variant="h6" color="#4338CA" sx={{ mb: 2, mx:2, mt: 3, pb: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 700 }}>
                   Хүлээн авагчийн мэдээлэл
                 </Typography>
                 <FormControl>
@@ -400,6 +441,13 @@ const NewMailForm = () => {
                     value={consigneeTel}
                     onChange={(e) => {
                       setConsigneeTel(e.target.value);
+                    }}
+                  />
+                  <CustomFormLabel name="Имэйл" />
+                  <CustomInput
+                    value={consigneeEmail}
+                    onChange={(e) => {
+                      setConsigneeEmail(e.target.value);
                     }}
                   />
                 </FormControl>

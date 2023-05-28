@@ -8,6 +8,7 @@ import { alpha, styled } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MailIcon from "@mui/icons-material/Mail";
 import EditIcon from "@mui/icons-material/Edit";
+import gridDefaultLocaleText from "../../components/LocalTextConstants";
 const UsersList = () => {
   const columns = [
     {
@@ -50,7 +51,7 @@ const UsersList = () => {
   const [selection, setSelection] = useState([]);
 
   let rows = [];
-  
+
   const navigate = useNavigate();
   const onNewUserClicked = () => navigate("/dash/users/new");
 
@@ -62,29 +63,6 @@ const UsersList = () => {
     content = (
       <Box sx={{ height: 400, width: "100%" }}>
         <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
-{/*           <Button
-            variant="contained"
-            startIcon={<SendIcon />}
-            onClick={onSendPackageesClicked}
-            //color="success"
-            sx={{
-              bgcolor: "#6366F1",
-              ":hover": { bgcolor: "#4338CA" },
-            }}
-          >
-            Илгээх
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<DeleteIcon />}
-            onClick={onDeletePackageesClicked}
-            sx={{
-              bgcolor: "#6366F1",
-              ":hover": { bgcolor: "#4338CA" },
-            }}
-          >
-            Устгах
-          </Button> */}
           <Button
             variant="contained"
             endIcon={<MailIcon />}
@@ -98,19 +76,25 @@ const UsersList = () => {
           </Button>
         </Stack>
         <div style={{ height: 400 }}>
-          <DataGrid
-            sx={{ boxShadow: 2 }}
-            rows={rows}
-            onSelectionModelChange={setSelection}
-            {...rows}
-            columns={columns}
-            pageSize={pageSize}
-            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-            rowsPerPageOptions={[10, 20, 30]}
-            checkboxSelection
-            disableSelectionOnClick
-            experimentalFeatures={{ newEditingApi: true }}
-          />
+          <div style={{ height: 600 }}>
+            <DataGrid
+              sx={{ boxShadow: 2, bgcolor: "#fff" }}
+              rows={rows}
+              onRowSelectionModelChange={setSelection}
+              {...rows}
+              columns={columns}
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[10, 20, 30]}
+              checkboxSelection
+              disableSelectionOnClick
+              density="compact"
+              localeText={gridDefaultLocaleText}
+              components={{
+                Toolbar: GridToolbar,
+              }}
+            />
+          </div>
         </div>
       </Box>
     );

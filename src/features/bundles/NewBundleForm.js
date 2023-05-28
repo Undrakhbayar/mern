@@ -75,7 +75,7 @@ const NewBundleForm = () => {
       setUserId("");
       navigate(`/dash/bundles/${data}`);
     }
-  }, [isSuccess, navigate]);
+  }, [isSuccess, navigate, data]);
 
   const referenceUrl = REFERENCE_URL;
   console.log(referenceUrl);
@@ -404,135 +404,6 @@ const NewBundleForm = () => {
                   />
                 </FormControl>
               </Grid>
-              {/* <TextField
-                label="Улс хотын код"
-                size="small"
-                value={shipperCntryCd}
-                onChange={(e) => {
-                  setShipperCntryCd(e.target.value);
-                }}
-              />
-              <TextField
-                label="Улс хотын нэр"
-                size="small"
-                value={shipperCntryNm}
-                onChange={(e) => {
-                  setShipperCntryNm(e.target.value);
-                }}
-              />
-              <Autocomplete
-                size="small"
-                style={{
-                  display: "inline-flex",
-                }}
-                fullWidth={false}
-                options={countries.map((option) => `${option.value}-${option.description}`)}
-                renderInput={(params) => <TextField {...params} label="Харьяалал" />}
-                onChange={(e) => {
-                  console.log(e.target.textContent.split("-")[0]);
-                  setShipperNatinality(e.target.textContent.split("-")[0]);
-                }}
-              />
-              <TextField
-                label="Нэр"
-                size="small"
-                value={shipperNm}
-                onChange={(e) => {
-                  setShipperNm(e.target.value);
-                }}
-              />
-              <TextField
-                label="Регистр №"
-                size="small"
-                value={shipperReg}
-                onChange={(e) => {
-                  setShipperReg(e.target.value);
-                }}
-              />
-              <TextField
-                label="Утасны дугаар"
-                size="small"
-                value={shipperTel}
-                onChange={(e) => {
-                  setShipperTel(e.target.value);
-                }}
-              />
-              <TextField
-                label="Хаяг"
-                size="small"
-                style={{ width: 550 }}
-                value={shipperAddr}
-                onChange={(e) => {
-                  setShipperAddr(e.target.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <Typography variant="h6" m={2}>
-                Хүлээн авагчийн мэдээлэл
-              </Typography>
-              <TextField
-                label="Улс хотын код"
-                size="small"
-                value={consigneeCntryCd}
-                onChange={(e) => {
-                  setConsigneeCntryCd(e.target.value);
-                }}
-              />
-              <TextField
-                label="Улс хотын нэр"
-                size="small"
-                value={consigneeCntryNm}
-                onChange={(e) => {
-                  setConsigneeCntryNm(e.target.value);
-                }}
-              />
-              <Autocomplete
-                size="small"
-                style={{
-                  display: "inline-flex",
-                }}
-                fullWidth={false}
-                options={countries.map((option) => "[" + option.value + "] " + option.description)}
-                renderInput={(params) => <TextField {...params} label="Харьяалал" />}
-                onChange={(e) => {
-                  setConsigneeNatinality(e.target.textContent.substring(1, 3));
-                }}
-              />
-              <TextField
-                label="Нэр"
-                size="small"
-                value={consigneeNm}
-                onChange={(e) => {
-                  setConsigneeNm(e.target.value);
-                }}
-              />
-              <TextField
-                label="Регистр №"
-                size="small"
-                value={consigneeReg}
-                onChange={(e) => {
-                  setConsigneeReg(e.target.value);
-                }}
-              />
-              <TextField
-                label="Утасны дугаар"
-                size="small"
-                value={consigneeTel}
-                onChange={(e) => {
-                  setConsigneeTel(e.target.value);
-                }}
-              />
-              <TextField
-                variant="standard"
-                label="Хаяг"
-                size="small"
-                style={{ width: 550 }}
-                value={consigneeAddr}
-                onChange={(e) => {
-                  setConsigneeAddr(e.target.value);
-                }}
-              /> */}
             </Grid>
           </Paper>
         </Box>

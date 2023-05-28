@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { useGetBundlesQuery, useDeleteBundleMutation, useUpdateBundleMutation, useSendBundleMutation } from "./bundlesApiSlice";
+import { useGetBundlesQuery, useDeleteBundleMutation, useUpdateBundleMutation, useAddNewBundleMutation } from "./bundlesApiSlice";
+import { useGetBundleItemsQuery, useDeleteBundleItemMutation, useUpdateBundleItemMutation, useAddNewBundleItemMutation } from "./bundleItemsApiSlice";
 import { useGetMailsQuery } from "../mails/mailsApiSlice";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -13,12 +14,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, style, OrderStatus } from "../../components/Components";
 import gridDefaultLocaleText from "../../components/LocalTextConstants";
 import dayjs from "dayjs";
-import { useAddNewBundleMutation } from "./bundlesApiSlice";
 import { useGetUsersQuery } from "../users/usersApiSlice";
 import SaveIcon from "@mui/icons-material/Save";
 import * as XLSX from "xlsx";
 
 const BundlesList = () => {
+  const { userid } = useAuth();
   const columns = [
     {
       field: "mailBagNumber",
@@ -98,16 +99,26 @@ const BundlesList = () => {
   });
   const {
     data: mails,
-    isLoadingMails,
+    isLoading: isLoadingMails,
     isSuccess: isSuccessMails,
-    isErrorMails,
-    errorMails,
+    isError: isErrorMails,
+    error: errorMails,
   } = useGetMailsQuery("mailsList", {
     pollingInterval: 1000000,
     /*     refetchOnFocus: true,
     refetchOnMountOrArgChange: true, */
   });
-
+  const {
+    data: bundleItems,
+    isLoading: isLoadingBundleItems,
+    isSuccess: isSuccessBundleItems,
+    isError: isErrorBundleItems,
+    error: errorBundleItems,
+  } = useGetBundleItemsQuery("bundleItemsList", {
+    pollingInterval: 1000000,
+    /*     refetchOnFocus: true,
+    refetchOnMountOrArgChange: true, */
+  });
   let content;
 
   if (isError) {
@@ -121,7 +132,6 @@ const BundlesList = () => {
   const onNewBundleClicked = () => navigate("/dash/bundles/new");
 
   const [deleteBundle, { isSuccess: isDelSuccess, isError: isDelError, error: delerror }] = useDeleteBundleMutation();
-  const [sendBundle, { isSuccess: isSendSuccess, isError: isSendError, error: sendError }] = useSendBundleMutation();
 
   useEffect(() => {
     if (isDelSuccess) {
@@ -142,6 +152,8 @@ const BundlesList = () => {
   let rowsMail = [];
   const [pageSize, setPageSize] = useState(10);
   const [selection, setSelection] = useState([]);
+  const [selectionMail, setSelectionMail] = useState([]);
+  let [rowsBundleItems, setRowsBundleItems] = React.useState("");
 
   if (isSuccess) {
     const { entities } = bundles;
@@ -153,10 +165,9 @@ const BundlesList = () => {
       rows = unfiltered.filter(({ regusername }) => regusername === username);
     }
   }
-  console.log(isSuccessMails);
+
   if (isSuccessMails) {
     const { entities } = mails;
-    console.log(entities);
     unfilteredMails = Object.values(entities);
     if (isManager || isAdmin) {
       rowsMail = [...unfilteredMails];
@@ -165,6 +176,10 @@ const BundlesList = () => {
     }
   }
 
+  if (isSuccessBundleItems) {
+    const { entities } = bundleItems;
+    rowsBundleItems = Object.values(entities);
+  }
   const [prgsStatusCd, setPrgsStatusCd] = useState([]);
   const [updateBundle, { isLoadingU, isSuccessU, isErrorU, errorU }] = useUpdateBundleMutation();
 
@@ -185,10 +200,24 @@ const BundlesList = () => {
       data,
     });
   };
+  let idCounter = 0;
+  const onSaveBundleItemClicked = async (data) => {
+    const selectedRowsData = selectionMail.map((id) => rowsMail.find((row) => row.id === id));
+    console.log(selectedRowsData);
+    /*     await addNewBundleItem({
+      user: userid,
+    }); */
+    idCounter += 1;
+    for (let i = 0; i < selectedRowsData.length; i++) {
+      setRowsBundleItems((prevRows) => [...prevRows, { id: selectedRowsData[i].mailId, mailId: selectedRowsData[i].mailId }]);
+    }
+    handleClosePackage();
+    console.log("rowinserted", rowsBundleItems);
+  };
   const [addNewBundle, { isLoading: isILoading, isSuccess: isISuccess, isError: isIErorr, error: Ierror }] = useAddNewBundleMutation();
+  const [addNewBundleItem, { isLoading: isBILoading, isSuccess: isBISuccess, isError: isBIErorr, error: BIerror }] = useAddNewBundleItemMutation();
   useEffect(() => {
     if (isISuccess) {
-      console.log("here");
       navigate("/dash/bundles");
     }
   }, [isISuccess, navigate]);
@@ -206,7 +235,6 @@ const BundlesList = () => {
         //setExcelFileError(null);
         const bstr = e.target.result;
         if (bstr !== null) {
-          console.log(bstr);
           const workbook = XLSX.read(bstr, { type: "buffer" });
           const worksheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[worksheetName];
@@ -214,7 +242,6 @@ const BundlesList = () => {
           //for (let i = 1; i < data.length; i++) {
           data.shift();
           const finalData = data.map((v) => ({ ...v, user: users[0].id }));
-          console.log(finalData);
           onSaveBundleClicked(finalData);
           //}
         } else {
@@ -229,12 +256,13 @@ const BundlesList = () => {
   const [openPackage, setOpenPackage] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const handleOpenPackage = () => setOpenPackage(true);
+  const handleOpenPackage = () => {
+    setOpenPackage(true);
+  };
   const handleClosePackage = () => setOpenPackage(false);
   content = (
     <Box sx={{ height: 400, width: "100%" }}>
       <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 1 }}>
-        <input type="file" onChange={handleFile} accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"></input>
         <Button
           variant="contained"
           startIcon={<DeleteIcon />}
@@ -368,7 +396,7 @@ const BundlesList = () => {
                 </Grid>
               </Grid>
             </Paper>
-            <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
+            <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2, mt: 1 }}>
               <Button
                 sx={{
                   bgcolor: "#6366F1",
@@ -382,15 +410,46 @@ const BundlesList = () => {
                 Илгээмж нэмэх
               </Button>
             </Stack>
+            <div style={{ height: 400 }}>
+              <DataGrid
+                sx={{ boxShadow: 2, bgcolor: "#fff" }}
+                rows={rowsBundleItems}
+                onRowSelectionModelChange={setSelection}
+                {...rowsBundleItems}
+                getRowId={(row) => row.mailId}
+                columns={columns}
+                pageSize={pageSize}
+                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                rowsPerPageOptions={[10, 20, 30]}
+                checkboxSelection
+                disableSelectionOnClick
+                density="compact"
+                localeText={gridDefaultLocaleText}
+              />
+            </div>
           </Box>
         </Modal>
         <Modal open={openPackage} onClose={handleClosePackage}>
           <Box sx={style}>
+            <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mb: 2 }}>
+              <Button
+                sx={{
+                  bgcolor: "#6366F1",
+                  ":hover": { bgcolor: "#4338CA" },
+                }}
+                variant="contained"
+                endIcon={<SaveIcon />}
+                size="small"
+                onClick={onSaveBundleItemClicked}
+              >
+                Хадгалах
+              </Button>
+            </Stack>
             <div style={{ height: 600 }}>
               <DataGrid
                 sx={{ boxShadow: 2, bgcolor: "#fff" }}
                 rows={rowsMail}
-                onRowSelectionModelChange={setSelection}
+                onRowSelectionModelChange={setSelectionMail}
                 {...rowsMail}
                 columns={columns}
                 pageSize={pageSize}

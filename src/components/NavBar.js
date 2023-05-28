@@ -27,8 +27,9 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PostAdd from "@mui/icons-material/PostAdd";
 import LibraryBooks from "@mui/icons-material/LibraryBooks";
+import Apartment from "@mui/icons-material/Apartment";
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 export default function NavBar() {
   //const { isManager, isAdmin } = useAuth();
@@ -46,8 +47,14 @@ export default function NavBar() {
   useEffect(() => {
     if (pathname.includes("mail")) {
       setSelectedIndex(0);
-    } else {
+    } else if (pathname.includes("bundle")) {
       setSelectedIndex(1);
+    } else if (pathname.includes("outer")) {
+      setSelectedIndex(2);
+    } else if (pathname.includes("branch")) {
+      setSelectedIndex(3);
+    } else if (pathname.includes("user")) {
+      setSelectedIndex(4);
     }
   }, [pathname]);
 
@@ -65,6 +72,12 @@ export default function NavBar() {
         navigate("/dash/bundles");
         break;
       case 2:
+        navigate("/dash/outers");
+        break;
+      case 3:
+        navigate("/dash/branches");
+        break;
+      case 4:
         navigate("/dash/users");
         break;
       default:
@@ -90,24 +103,43 @@ export default function NavBar() {
     },
   });
 
-  const [openList, setOpenList] = React.useState(true);
+  const [openListMail, setOpenListMail] = React.useState(true);
+  const [openListUser, setOpenListUser] = React.useState(true);
 
-  const handleClickList = () => {
-    setOpenList(!openList);
+  const handleListMail = () => {
+    setOpenListMail(!openListMail);
+  };
+  const handleListUser = () => {
+    setOpenListUser(!openListUser);
   };
   let userMenu = null;
-  if (isAdmin) {
+  /*   if (isAdmin) {
     userMenu = (
-      <ListItem key={2} disablePadding>
-        <ListItemButton {...buttonProps(2)}>
+        <ListItemButton onClick={handleListUser}>
           <ListItemIcon>
             <PersonIcon style={{ color: "#9DA4AE" }} />
           </ListItemIcon>
-          <ListItemText primary="Хэрэглэгчийн бүртгэл" />
+          <ListItemText primary="Байгууллагын бүртгэл" />
         </ListItemButton>
-      </ListItem>
+        {openListUser ? <ExpandLess /> : <ExpandMore />}
+        <Collapse in={openListUser} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton {...buttonProps(2)} sx={{ pl: 4 }}>
+              <ListItemIcon>
+                <PostAdd style={{ color: "#9DA4AE" }} />
+              </ListItemIcon>
+              <ListItemText primary="Салбар" />
+            </ListItemButton>
+            <ListItemButton {...buttonProps(3)} sx={{ pl: 4 }}>
+              <ListItemIcon>
+                <LibraryBooks style={{ color: "#9DA4AE" }} />
+              </ListItemIcon>
+              <ListItemText primary="Хэрэглэгч" />
+            </ListItemButton>
+          </List>
+        </Collapse>
     );
-  }
+  } */
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -132,7 +164,6 @@ export default function NavBar() {
             }}
           >
             <MenuItem onClick={handleClose}>Хэрэглэгчийн мэдээлэл</MenuItem>
-            {/* <MenuItem onClick={handleClose}>My account</MenuItem> */}
             <MenuItem onClick={sendLogout}>Гарах</MenuItem>
           </Menu>
         </Toolbar>
@@ -172,14 +203,14 @@ export default function NavBar() {
             },
           }}
         >
-          <ListItemButton onClick={handleClickList}>
+          <ListItemButton onClick={handleListMail}>
             <ListItemIcon>
               <MailIcon style={{ color: "#9DA4AE" }} />
             </ListItemIcon>
             <ListItemText primary="Шуудангийн бүртгэл" />
-            {openList ? <ExpandLess /> : <ExpandMore />}
+            {openListMail ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
-          <Collapse in={openList} timeout="auto" unmountOnExit>
+          <Collapse in={openListMail} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItemButton {...buttonProps(0)} sx={{ pl: 4 }}>
                 <ListItemIcon>
@@ -193,9 +224,38 @@ export default function NavBar() {
                 </ListItemIcon>
                 <ListItemText primary="Богцлох" />
               </ListItemButton>
+              <ListItemButton {...buttonProps(2)} sx={{ pl: 4 }}>
+                <ListItemIcon>
+                  <LibraryBooks style={{ color: "#9DA4AE" }} />
+                </ListItemIcon>
+                <ListItemText primary="Гадуур дагавар бэлтгэх" />
+              </ListItemButton>
             </List>
           </Collapse>
-          {userMenu}
+          {/* {userMenu} */}
+          <ListItemButton onClick={handleListUser}>
+            <ListItemIcon>
+              <Apartment style={{ color: "#9DA4AE" }} />
+            </ListItemIcon>
+            <ListItemText primary="Байгууллагын бүртгэл" />
+            {openListUser ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openListUser} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton {...buttonProps(3)} sx={{ pl: 4 }}>
+                <ListItemIcon>
+                  <HomeIcon style={{ color: "#9DA4AE" }} />
+                </ListItemIcon>
+                <ListItemText primary="Салбар" />
+              </ListItemButton>
+              <ListItemButton {...buttonProps(4)} sx={{ pl: 4 }}>
+                <ListItemIcon>
+                  <PersonIcon style={{ color: "#9DA4AE" }} />
+                </ListItemIcon>
+                <ListItemText primary="Хэрэглэгч" />
+              </ListItemButton>
+            </List>
+          </Collapse>
         </List>
       </Drawer>
     </Box>
