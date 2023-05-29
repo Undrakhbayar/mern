@@ -121,7 +121,6 @@ const NewMailForm = () => {
       const mailTypes = response.filter(({ type }) => type === "mailType");
       const serviceTypes = response.filter(({ type }) => type === "serviceType");
 
-      console.log(response);
       setReportTypes(reportTypes);
       setTransportTypes(transportTypes);
       setCountries(countries);
@@ -129,7 +128,6 @@ const NewMailForm = () => {
       setBranches(branches);
       setMailTypes(mailTypes);
       setServiceTypes(serviceTypes);
-      console.log("trans", transportTypes);
     };
     getReferences();
   }, [referenceUrl, compregister]);
@@ -216,15 +214,6 @@ const NewMailForm = () => {
                 {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
               </Grid>
               <Grid item xs={2}>
-                {/*             <CustomInput
-              style={{ width: 50 }}
-              value={houseSeq}
-              label="№"
-              inputProps={{ maxLength: 3 }}
-              onChange={(e) => {
-                setHouseSeq(e.target.value);
-              }}
-            /> */}
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Илгээмжийн дугаар" />
@@ -258,7 +247,7 @@ const NewMailForm = () => {
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
                       fullWidth={false}
-                      options={reportTypes.map((option) => option.value)}
+                      options={reportTypes.map((option) => option.code)}
                       renderInput={(params) => <TextField variant="outlined" {...params} />}
                       onChange={(e) => {
                         setReportType(e.target.textContent);
@@ -270,7 +259,7 @@ const NewMailForm = () => {
                       sx={{ mx: 2, mb: 1 }}
                       fullWidth={false}
                       options={transportTypes}
-                      getOptionLabel={(option) => option.description}
+                      getOptionLabel={(option) => option.name}
                       renderInput={(params) => <TextField variant="outlined" {...params} />}
                       onChange={(e, newValue) => {
                         setTransportType(newValue ? newValue.value : "");
@@ -296,7 +285,7 @@ const NewMailForm = () => {
                       sx={{ mx: 2, mb: 1 }}
                       fullWidth={false}
                       options={areas}
-                      getOptionLabel={(option) => option.description}
+                      getOptionLabel={(option) => option.name}
                       //renderInput={(params) => <TextField variant="outlined" {...params} helperText={area === "" ? "123" : "234"} error={area === "" ? true : false}/>}
                       renderInput={(params) => <TextField variant="outlined" {...params} />}
                       onChange={(e, newValue) => {
@@ -310,7 +299,7 @@ const NewMailForm = () => {
                       sx={{ mx: 2, mb: 1 }}
                       fullWidth={false}
                       options={branches}
-                      getOptionLabel={(option) => option.description}
+                      getOptionLabel={(option) => option.name}
                       renderInput={(params) => <TextField variant="outlined" {...params} />}
                       onChange={(e, newValue) => {
                         setBranch(newValue ? newValue.value : "");
@@ -336,7 +325,7 @@ const NewMailForm = () => {
                       sx={{ mx: 2, mb: 1 }}
                       fullWidth={false}
                       options={mailTypes}
-                      getOptionLabel={(option) => option.description}
+                      getOptionLabel={(option) => option.name}
                       renderInput={(params) => <TextField variant="outlined" {...params} />}
                       onChange={(e, newValue) => {
                         setMailType(newValue ? newValue.value : "");
@@ -349,7 +338,7 @@ const NewMailForm = () => {
                       sx={{ mx: 2, mb: 1 }}
                       fullWidth={false}
                       options={serviceTypes}
-                      getOptionLabel={(option) => option.description}
+                      getOptionLabel={(option) => option.name}
                       renderInput={(params) => <TextField variant="outlined" {...params} />}
                       onChange={(e, newValue) => {
                         setServiceType(newValue ? newValue.value : "");
@@ -461,7 +450,7 @@ const NewMailForm = () => {
                     fullWidth={false}
                     sx={{ mx: 2, mb: 1 }}
                     options={countries}
-                    getOptionLabel={(option) => `${option.value}-${option.description}`}
+                    getOptionLabel={(option) => `${option.code}-${option.name}`}
                     renderInput={(params) => <TextField {...params} />}
                     onChange={(e, newValue) => {
                       setShipperNatinality(newValue ? newValue.value : "");
@@ -536,7 +525,7 @@ const NewMailForm = () => {
                     fullWidth={false}
                     sx={{ mx: 2, mb: 1 }}
                     options={countries}
-                    getOptionLabel={(option) => `${option.value} - ${option.description}`}
+                    getOptionLabel={(option) => `${option.code} - ${option.name}`}
                     renderInput={(params) => <TextField {...params} />}
                     onChange={(e, newValue) => {
                       setConsigneeNatinality(newValue ? newValue.value : "");
@@ -612,7 +601,7 @@ const NewMailForm = () => {
                   display: "inline-flex",
                 }}
                 fullWidth={false}
-                options={countries.map((option) => `${option.value}-${option.description}`)}
+                options={countries.map((option) => `${option.code}-${option.name}`)}
                 renderInput={(params) => <TextField {...params} label="Харьяалал" />}
                 onChange={(e) => {
                   console.log(e.target.textContent.split("-")[0]);
@@ -679,7 +668,7 @@ const NewMailForm = () => {
                   display: "inline-flex",
                 }}
                 fullWidth={false}
-                options={countries.map((option) => "[" + option.value + "] " + option.description)}
+                options={countries.map((option) => "[" + option.code + "] " + option.name)}
                 renderInput={(params) => <TextField {...params} label="Харьяалал" />}
                 onChange={(e) => {
                   setConsigneeNatinality(e.target.textContent.substring(1, 3));

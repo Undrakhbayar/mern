@@ -30,6 +30,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, style } from "../../components/Components";
 import dayjs from "dayjs";
+import { REFERENCE_URL } from "../../config/common";
 
 const EditMailForm = ({ mail, users }) => {
   const navigate = useNavigate();
@@ -142,8 +143,12 @@ const EditMailForm = ({ mail, users }) => {
   const [reportTypes, setReportTypes] = useState([]);
   const [transportTypes, setTransportTypes] = useState([]);
   const [countries, setCountries] = useState([]);
-  const [isDiplomats, setIsDiplomats] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [mailTypes, setMailTypes] = useState([]);
+  const [serviceTypes, setServiceTypes] = useState([]);
 
+  const referenceUrl = REFERENCE_URL;
   const [updateMail, { isLoading, isSuccess, isError, error }] = useUpdateMailMutation();
   const [addNewMail, { isLoading: isLoadingA, isSuccess: isSuccessA, isError: isErrorA, error: errorA }] = useAddNewMailMutation();
   const [addNewItem, { isLoading: isLoadingItem, isSuccess: isSuccessItem, isError: isErrorItem, error: errorItem }] = useAddNewItemMutation();
@@ -167,11 +172,10 @@ const EditMailForm = ({ mail, users }) => {
   }, [isSuccessItem]);
 
   console.log(localStorage.getItem("path"));
-  const referenceUrl = "http://localhost:3500/references";
-  //const referenceUrl = "https://mern-api-lcmj.onrender.com/references";
+
   useEffect(() => {
     const getReferences = async () => {
-      const res = await fetch(referenceUrl + "?reportType", {
+      const res = await fetch(referenceUrl + `?compreg=${mail.compRegister}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -183,15 +187,22 @@ const EditMailForm = ({ mail, users }) => {
       const reportTypes = response.filter(({ type }) => type === "reportType");
       const transportTypes = response.filter(({ type }) => type === "transportType");
       const countries = response.filter(({ type }) => type === "country");
-      const isDiplomats = response.filter(({ type }) => type === "diplomat");
+      const areas = response.filter(({ type }) => type === "area");
+      const branches = response.filter(({ type }) => type === "branch");
+      const mailTypes = response.filter(({ type }) => type === "mailType");
+      const serviceTypes = response.filter(({ type }) => type === "serviceType");
 
       setReportTypes(reportTypes);
       setTransportTypes(transportTypes);
       setCountries(countries);
-      setIsDiplomats(isDiplomats);
+      setAreas(areas);
+      setBranches(branches);
+      setMailTypes(mailTypes);
+      setServiceTypes(serviceTypes);
+      console.log(areas);
     };
     getReferences();
-  }, []);
+  }, [referenceUrl, mail.compRegister]);
 
   const canSave = [userId].every(Boolean) && !isLoading && !isLoadingA && !isLoadingItem;
 
@@ -354,16 +365,16 @@ const EditMailForm = ({ mail, users }) => {
               Жагсаалт
             </Button>
           </Stack>
-          <Paper sx={{ pl: 2, pb: 3 }}>
+          <Paper sx={{ pl: 2, py: 3 }}>
             <Grid container columns={12}>
               <Grid item xs={12}>
-                <Typography variant="h6" m={2}>
+                <Typography variant="h6" color="#4338CA" sx={{ mb: 2, mx: 2, pb: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 700 }}>
                   Үндсэн мэдээлэл
                 </Typography>
                 {isError ? <Alert severity="error">{error?.data?.message}</Alert> : <></>}
                 {isErrorA ? <Alert severity="error">{errorA?.data?.message}</Alert> : <></>}
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={2}>
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Илгээмжийн дугаар" />
@@ -381,22 +392,19 @@ const EditMailForm = ({ mail, users }) => {
                         value={dayjs(mailDate)}
                         onChange={(e) => setMailDate(e.format("YYYY-MM-DD"))}
                         slotProps={{ textField: { size: "small" } }}
-                        sx={{ mr: 2 }}
+                        sx={{ mx: 2, mb: 1 }}
                       />
                     </LocalizationProvider>
                   </FormControl>
                 </Stack>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Маягтын төрөл" />
                     <Autocomplete
                       size="small"
-                      style={{
-                        display: "inline-flex",
-                        width: 175,
-                      }}
+                      sx={{ mx: 2, mb: 1 }}
                       fullWidth={false}
                       value={reportType}
                       options={reportTypes.map((option) => option.value)}
@@ -408,10 +416,7 @@ const EditMailForm = ({ mail, users }) => {
                     <CustomFormLabel name="Тээврийн төрөл" />
                     <Autocomplete
                       size="small"
-                      style={{
-                        display: "inline-flex",
-                        width: 200,
-                      }}
+                      sx={{ mx: 2, mb: 1 }}
                       fullWidth={false}
                       options={transportTypes}
                       value={transportTypeObject}
@@ -424,9 +429,57 @@ const EditMailForm = ({ mail, users }) => {
                       }}
                     />
                   </FormControl>
+                  <CustomFormLabel name="Нэмэлт үйлчилгээний үнэ" />
+                    <CustomInput
+                      value={addPrice}
+                      onChange={(e) => {
+                        setAddPrice(e.target.value);
+                      }}
+                    />
                 </Stack>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
+                <Stack>
+                  <FormControl>
+                    <CustomFormLabel name="Хамрах хүрээ" required />
+                    <Autocomplete
+                      size="small"
+                      sx={{ mx: 2, mb: 1 }}
+                      fullWidth={false}
+                      options={areas}
+                      value={areaObject}
+                      freeSolo
+                      getOptionLabel={(option) => option.description}
+                      renderInput={(params) => <TextField variant="outlined" {...params} />}
+                      onChange={(e, newValue) => {
+                        setArea(newValue ? newValue.value : "");
+                        setAreaNm(newValue ? newValue.description : "");
+                      }}
+                    />
+                    <CustomFormLabel name="Хүлээн авах салбар" />
+                    <Autocomplete
+                      size="small"
+                      sx={{ mx: 2, mb: 1 }}
+                      fullWidth={false}
+                      options={branches}
+                      getOptionLabel={(option) => option.description}
+                      renderInput={(params) => <TextField variant="outlined" {...params} />}
+                      onChange={(e, newValue) => {
+                        setBranch(newValue ? newValue.value : "");
+                        setBranchNm(newValue ? newValue.description : "");
+                      }}
+                    />
+                    <CustomFormLabel name="Татвар" />
+                    <CustomInput
+                      value={tax}
+                      onChange={(e) => {
+                        setTax(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                </Stack>
+              </Grid>
+              <Grid item xs={2}>
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Эрсдлийн төлөв" />
@@ -454,8 +507,8 @@ const EditMailForm = ({ mail, users }) => {
                         setIsDiplomat(e.target.value);
                       }}
                     >
-                      <FormControlLabel value="Y" control={<Radio checked={isDiplomat === "Y" ? true : false}/>} label="Тийм" />
-                      <FormControlLabel value="N" control={<Radio checked={isDiplomat === "N" ? true : false}/>} label="Үгүй" />
+                      <FormControlLabel value="Y" control={<Radio checked={isDiplomat === "Y" ? true : false} />} label="Тийм" />
+                      <FormControlLabel value="N" control={<Radio checked={isDiplomat === "N" ? true : false} />} label="Үгүй" />
                     </RadioGroup>
                   </FormControl>
                 </Stack>
