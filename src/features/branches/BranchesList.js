@@ -49,7 +49,7 @@ const BranchesList = () => {
       width: 300,
     },
   ];
-
+  const [editYn, setEditYn] = useState(false);
   const [compRegister] = useState(compregister);
   const [branchCode, setBranchCode] = useState("");
   const [branchName, setBranchName] = useState("");
@@ -76,8 +76,8 @@ const BranchesList = () => {
     setBranchCurrObject({ type: "currency", code: params.branchCurr, name: params.branchCurrNm });
     setBranchCountryObject({ type: "country", code: params.branchCountry, name: params.branchCountryNm });
     setBranchCode(params.branchCode);
+    setEditYn(true);
     console.log(branchCurrObject);
-    
   };
   const handleClose = () => setOpen(false);
   const [pageSize, setPageSize] = useState(10);
@@ -258,10 +258,9 @@ const BranchesList = () => {
                           <TextField
                             variant="outlined"
                             {...params}
-                            
-                            {...register("branchCurr")}
-                            error={errors.branchCurr ? true : false}
-                            helperText={errors.branchCurr ? errors.branchCurr.message : ""}
+                            { ...register("branchCurr") }
+                            error={editYn ? null : errors.branchCurr ? true : false}
+                            helperText={editYn ? null : errors.branchCurr ? errors.branchCurr.message : ""}
                           />
                         )}
                         onChange={(e, newValue) => {
@@ -283,9 +282,9 @@ const BranchesList = () => {
                           <TextField
                             variant="outlined"
                             {...params}
-                            {...register("branchCountry")}
-                            error={errors.branchCountry ? true : false}
-                            helperText={errors.branchCountry ? errors.branchCountry.message : ""}
+                            { ...register("branchCountry") }
+                            error={editYn ? null : errors.branchCountry ? true : false}
+                            helperText={editYn ? null : errors.branchCountry ? errors.branchCountry.message : ""}
                           />
                         )}
                         onChange={(e, newValue) => {

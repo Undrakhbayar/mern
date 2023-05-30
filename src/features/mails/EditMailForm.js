@@ -22,6 +22,8 @@ import {
   Modal,
   ThemeProvider,
   Container,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import SaveIcon from "@mui/icons-material/Save";
@@ -84,46 +86,45 @@ const EditMailForm = ({ mail, users }) => {
   const [reportType, setReportType] = useState(mail.reportType);
   const [riskType, setRiskType] = useState(mail.riskType);
   const [transportType, setTransportType] = useState(mail.transportType);
-  const [transportTypeObject] = useState({ type: "transportType", value: mail.transportType, description: mail.transportTypeNm });
   const [transportTypeNm, setTransportTypeNm] = useState(mail.transportTypeNm);
   const [isDiplomat, setIsDiplomat] = useState(mail.isDiplomat);
   const [shipperCntryCd, setShipperCntryCd] = useState(mail.shipperCntryCd);
   const [shipperCntryNm, setShipperCntryNm] = useState(mail.shipperCntryNm);
   const [shipperNatinality, setShipperNatinality] = useState(mail.shipperNatinality);
   const [shipperNatinalityNm, setShipperNatinalityNm] = useState("");
-  const [shipperNatinalityObject] = useState({ type: "country", value: mail.shipperNatinality, description: mail.shipperNatinalityNm });
+  const [shipperNatinalityObject] = useState({ type: "country", code: mail.shipperNatinality, name: mail.shipperNatinalityNm });
   const [shipperNm, setShipperNm] = useState(mail.shipperNm);
   const [shipperReg, setShipperReg] = useState(mail.shipperReg);
   const [shipperAddr, setShipperAddr] = useState(mail.shipperAddr);
   const [shipperTel, setShipperTel] = useState(mail.shipperTel);
+  const [shipperEmail, setShipperEmail] = useState(mail.shipperEmail);
   const [consigneeCntryCd, setConsigneeCntryCd] = useState(mail.consigneeCntryCd);
   const [consigneeCntryNm, setConsigneeCntryNm] = useState(mail.consigneeCntryNm);
   const [consigneeNatinality, setConsigneeNatinality] = useState(mail.consigneeNatinality);
   const [consigneeNatinalityNm, setConsigneeNatinalityNm] = useState("");
-  const [consigneeNatinalityObject] = useState({ type: "country", value: mail.consigneeNatinality, description: mail.consigneeNatinalityNm });
+  const [consigneeNatinalityObject] = useState({ type: "country", code: mail.consigneeNatinality, name: mail.consigneeNatinalityNm });
   const [consigneeNm, setConsigneeNm] = useState(mail.consigneeNm);
   const [consigneeReg, setConsigneeReg] = useState(mail.consigneeReg);
   const [consigneeAddr, setConsigneeAddr] = useState(mail.consigneeAddr);
   const [consigneeTel, setConsigneeTel] = useState(mail.consigneeTel);
+  const [consigneeEmail, setConsigneeEmail] = useState(mail.consigneeEmail);
   const [mailDate, setMailDate] = useState(mail.mailDate);
-  const [area, setArea] = useState("");
-  const [areaNm, setAreaNm] = useState("");
-  const [areaObject] = useState({ type: "area", value: mail.area, description: mail.areaNm });
-  const [branch, setBranch] = useState("");
-  const [branchNm, setBranchNm] = useState("");
-  const [branchObject] = useState({ type: "branch", value: mail.branch, description: mail.branchNm });
-  const [consigneePayYn, setConsigneePayYn] = useState("N");
-  const [mailType, setMailType] = useState("");
-  const [mailTypeNm, setMailTypeNm] = useState("");
-  const [serviceType, setServiceType] = useState("");
-  const [serviceTypeNm, setServiceTypeNm] = useState("");
-  const [mailWgt, setMailWgt] = useState("");
-  const [mainPrice, setMainPrice] = useState("");
-  const [regPrice, setRegPrice] = useState("");
-  const [addPrice, setAddPrice] = useState("");
-  const [tax, setTax] = useState("");
-  const [addWgtPrice, setAddWgtPrice] = useState("");
-  const [sumPrice, setSumPrice] = useState("");
+  const [area, setArea] = useState(mail.area);
+  const [areaNm, setAreaNm] = useState(mail.areaNm);
+  const [branch, setBranch] = useState(mail.branch);
+  const [branchNm, setBranchNm] = useState(mail.branchNm);
+  const [consigneePayYn, setConsigneePayYn] = useState(mail.consigneePayYn);
+  const [mailType, setMailType] = useState(mail.mailType);
+  const [mailTypeNm, setMailTypeNm] = useState(mail.mailTypeNm);
+  const [serviceType, setServiceType] = useState(mail.serviceType);
+  const [serviceTypeNm, setServiceTypeNm] = useState(mail.serviceTypeNm);
+  const [mailWgt, setMailWgt] = useState(mail.mailWgt);
+  const [mainPrice, setMainPrice] = useState(mail.mainPrice);
+  const [regPrice, setRegPrice] = useState(mail.regPrice);
+  const [addPrice, setAddPrice] = useState(mail.addPrice);
+  const [tax, setTax] = useState(mail.tax);
+  const [addWgtPrice, setAddWgtPrice] = useState(mail.addWgtPrice);
+  const [sumPrice, setSumPrice] = useState(mail.sumPrice);
 
   const [netWgt, setNetWgt] = useState("");
   const [wgt, setWgt] = useState("");
@@ -395,6 +396,13 @@ const EditMailForm = ({ mail, users }) => {
                         sx={{ mx: 2, mb: 1 }}
                       />
                     </LocalizationProvider>
+                    <CustomFormLabel name="Бүртгэлийн үнэ" />
+                    <CustomInput
+                      value={regPrice}
+                      onChange={(e) => {
+                        setRegPrice(e.target.value);
+                      }}
+                    />
                   </FormControl>
                 </Stack>
               </Grid>
@@ -402,78 +410,167 @@ const EditMailForm = ({ mail, users }) => {
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Маягтын төрөл" />
-                    <Autocomplete
+                    <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      fullWidth={false}
                       value={reportType}
-                      options={reportTypes.map((option) => option.value)}
-                      renderInput={(params) => <TextField variant="outlined" {...params} />}
                       onChange={(e) => {
-                        setReportType(e.target.textContent);
+                        setReportType(e.target.value);
                       }}
-                    />
+                    >
+                      {reportTypes.map((option, index) => (
+                        <MenuItem key={index} value={option.code}>
+                          {option.code}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
                     <CustomFormLabel name="Тээврийн төрөл" />
-                    <Autocomplete
+                    <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      fullWidth={false}
-                      options={transportTypes}
-                      value={transportTypeObject}
-                      freeSolo
-                      getOptionLabel={(option) => option.description}
-                      renderInput={(params) => <TextField variant="outlined" {...params} />}
-                      onChange={(e, newValue) => {
-                        setTransportType(newValue ? newValue.value : "");
-                        setTransportTypeNm(newValue ? newValue.description : "");
+                      value={transportType}
+                      onChange={(e, child) => {
+                        setTransportType(e.target.value);
+                        setTransportTypeNm(child.props.children);
                       }}
-                    />
+                    >
+                      {transportTypes.map((option, index) => (
+                        <MenuItem key={index} value={option.code}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </FormControl>
                   <CustomFormLabel name="Нэмэлт үйлчилгээний үнэ" />
-                    <CustomInput
-                      value={addPrice}
-                      onChange={(e) => {
-                        setAddPrice(e.target.value);
-                      }}
-                    />
+                  <CustomInput
+                    value={addPrice}
+                    onChange={(e) => {
+                      setAddPrice(e.target.value);
+                    }}
+                  />
                 </Stack>
               </Grid>
               <Grid item xs={2}>
                 <Stack>
                   <FormControl>
                     <CustomFormLabel name="Хамрах хүрээ" required />
-                    <Autocomplete
+                    <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      fullWidth={false}
-                      options={areas}
-                      value={areaObject}
-                      freeSolo
-                      getOptionLabel={(option) => option.description}
-                      renderInput={(params) => <TextField variant="outlined" {...params} />}
-                      onChange={(e, newValue) => {
-                        setArea(newValue ? newValue.value : "");
-                        setAreaNm(newValue ? newValue.description : "");
+                      value={area}
+                      onChange={(e, child) => {
+                        setArea(e.target.value);
+                        setAreaNm(child.props.children);
                       }}
-                    />
+                    >
+                      {areas.map((option, index) => (
+                        <MenuItem key={index} value={option.code}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
                     <CustomFormLabel name="Хүлээн авах салбар" />
-                    <Autocomplete
+                    <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      fullWidth={false}
-                      options={branches}
-                      getOptionLabel={(option) => option.description}
-                      renderInput={(params) => <TextField variant="outlined" {...params} />}
-                      onChange={(e, newValue) => {
-                        setBranch(newValue ? newValue.value : "");
-                        setBranchNm(newValue ? newValue.description : "");
+                      value={branch}
+                      onChange={(e, child) => {
+                        setBranch(e.target.value);
+                        setBranchNm(child.props.children);
                       }}
-                    />
+                    >
+                      {branches.map((option, index) => (
+                        <MenuItem key={index} value={option.code}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
                     <CustomFormLabel name="Татвар" />
                     <CustomInput
                       value={tax}
                       onChange={(e) => {
                         setTax(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                </Stack>
+              </Grid>
+              <Grid item xs={2}>
+                <Stack>
+                  <FormControl>
+                    <CustomFormLabel name="Шуудангийн төрөл" />
+                    <Select
+                      size="small"
+                      sx={{ mx: 2, mb: 1 }}
+                      value={mailType}
+                      onChange={(e, child) => {
+                        setMailType(e.target.value);
+                        setMailTypeNm(child.props.children);
+                      }}
+                    >
+                      {mailTypes.map((option, index) => (
+                        <MenuItem key={index} value={option.code}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <CustomFormLabel name="Үйлчилгээний төрөл" />
+                    <Select
+                      size="small"
+                      sx={{ mx: 2, mb: 1 }}
+                      value={serviceType}
+                      onChange={(e, child) => {
+                        setServiceType(e.target.value);
+                        setServiceTypeNm(child.props.children);
+                      }}
+                    >
+                      {serviceTypes.map((option, index) => (
+                        <MenuItem key={index} value={option.code}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <CustomFormLabel name="Илүү жингийн үнэ" />
+                    <CustomInput
+                      value={addWgtPrice}
+                      onChange={(e) => {
+                        setAddWgtPrice(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                </Stack>
+              </Grid>
+              <Grid item xs={2}>
+                <Stack>
+                  <FormControl>
+                    <CustomFormLabel name="Жин" />
+                    <CustomInput
+                      value={mailWgt}
+                      onChange={(e) => {
+                        setMailWgt(e.target.value);
+                      }}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="start">KG</InputAdornment>,
+                      }}
+                    />
+                    <CustomFormLabel name="Үндсэн үнэ" />
+                    <CustomInput
+                      value={mainPrice}
+                      onChange={(e) => {
+                        setMainPrice(e.target.value);
+                      }}
+                    />
+                    <CustomFormLabel name="Нийт үнэ" />
+                    <CustomInput
+                      value={sumPrice}
+                      onChange={(e) => {
+                        setSumPrice(e.target.value);
                       }}
                     />
                   </FormControl>
@@ -491,6 +588,7 @@ const EditMailForm = ({ mail, users }) => {
                       <FormControlLabel
                         control={
                           <GreenRedSwitch
+                            sx={{ mx: 2, mb: 1 }}
                             checked={riskType === "green" ? true : false}
                             onChange={(e) => {
                               e.target.checked ? setRiskType("green") : setRiskType("red");
@@ -502,7 +600,7 @@ const EditMailForm = ({ mail, users }) => {
                     <CustomFormLabel name="Дипломат эсэх" />
                     <RadioGroup
                       row
-                      aria-labelledby="demo-row-radio-buttons-group-label"
+                      sx={{ mx: 2, mb: 1 }}
                       onChange={(e) => {
                         setIsDiplomat(e.target.value);
                       }}
@@ -510,11 +608,23 @@ const EditMailForm = ({ mail, users }) => {
                       <FormControlLabel value="Y" control={<Radio checked={isDiplomat === "Y" ? true : false} />} label="Тийм" />
                       <FormControlLabel value="N" control={<Radio checked={isDiplomat === "N" ? true : false} />} label="Үгүй" />
                     </RadioGroup>
+                    <CustomFormLabel name="Хүлээн авагч төлөх" />
+                    <RadioGroup
+                      row
+                      defaultValue="N"
+                      sx={{ mx: 2, mb: 1 }}
+                      onChange={(e) => {
+                        setConsigneePayYn(e.target.value);
+                      }}
+                    >
+                      <FormControlLabel value="Y" control={<Radio checked={consigneePayYn === "Y" ? true : false} />} label="Тийм" />
+                      <FormControlLabel value="N" control={<Radio checked={consigneePayYn === "Y" ? true : false} />} label="Үгүй" />
+                    </RadioGroup>
                   </FormControl>
                 </Stack>
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="h6" m={2}>
+                <Typography variant="h6" color="#4338CA" sx={{ mb: 2, mt: 3, mx: 2, pb: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 700 }}>
                   Илгээгчийн мэдээлэл
                 </Typography>
                 <FormControl>
@@ -528,16 +638,16 @@ const EditMailForm = ({ mail, users }) => {
                   <CustomFormLabel name="Харьяалал" />
                   <Autocomplete
                     size="small"
-                    style={{
-                      display: "inline-flex",
-                    }}
                     fullWidth={false}
-                    sx={{ mr: 2 }}
-                    options={countries.map((option) => `${option.value}-${option.description}`)}
+                    sx={{ mx: 2, mb: 1 }}
+                    options={countries}
+                    value={shipperNatinalityObject}
+                    getOptionLabel={(option) => `${option.code}-${option.name}`}
+                    isOptionEqualToValue={(option, value) => option.code === value.code}
                     renderInput={(params) => <TextField {...params} />}
-                    onChange={(e) => {
-                      console.log(e.target.textContent.split("-")[0]);
-                      setShipperNatinality(e.target.textContent.split("-")[0]);
+                    onChange={(e, newValue) => {
+                      setShipperNatinality(newValue ? newValue.code : "");
+                      setShipperNatinalityNm(newValue ? newValue.name : "");
                     }}
                   />
                   <CustomFormLabel name="Регистр №" />
@@ -579,10 +689,17 @@ const EditMailForm = ({ mail, users }) => {
                       setShipperTel(e.target.value);
                     }}
                   />
+                  <CustomFormLabel name="Имэйл" />
+                  <CustomInput
+                    value={shipperEmail}
+                    onChange={(e) => {
+                      setShipperEmail(e.target.value);
+                    }}
+                  />
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="h6" m={2}>
+                <Typography variant="h6" color="#4338CA" sx={{ mb: 2, mx: 2, mt: 3, pb: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 700 }}>
                   Хүлээн авагчийн мэдээлэл
                 </Typography>
                 <FormControl>
@@ -596,16 +713,15 @@ const EditMailForm = ({ mail, users }) => {
                   <CustomFormLabel name="Харьяалал" />
                   <Autocomplete
                     size="small"
-                    style={{
-                      display: "inline-flex",
-                    }}
                     fullWidth={false}
-                    sx={{ mr: 2 }}
-                    options={countries.map((option) => `${option.value}-${option.description}`)}
+                    sx={{ mx: 2, mb: 1 }}
+                    options={countries}
+                    value={consigneeNatinalityObject}
+                    getOptionLabel={(option) => `${option.code} - ${option.name}`}
                     renderInput={(params) => <TextField {...params} />}
-                    onChange={(e) => {
-                      console.log(e.target.textContent.split("-")[0]);
-                      setConsigneeNatinality(e.target.textContent.split("-")[0]);
+                    onChange={(e, newValue) => {
+                      setConsigneeNatinality(newValue ? newValue.code : "");
+                      setConsigneeNatinalityNm(newValue ? newValue.name : "");
                     }}
                   />
                   <CustomFormLabel name="Регистр №" />
@@ -644,6 +760,13 @@ const EditMailForm = ({ mail, users }) => {
                     value={consigneeTel}
                     onChange={(e) => {
                       setConsigneeTel(e.target.value);
+                    }}
+                  />
+                  <CustomFormLabel name="Имэйл" />
+                  <CustomInput
+                    value={consigneeEmail}
+                    onChange={(e) => {
+                      setConsigneeEmail(e.target.value);
                     }}
                   />
                 </FormControl>
