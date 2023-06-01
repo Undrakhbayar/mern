@@ -49,11 +49,6 @@ const EditMailForm = ({ mail, users }) => {
   });
   const columns = [
     {
-      field: "houseSeq",
-      headerName: "№",
-      width: 60,
-    },
-    {
       field: "goodsNm",
       headerName: "Барааны нэр",
       width: 150,
@@ -79,16 +74,15 @@ const EditMailForm = ({ mail, users }) => {
     rows = Object.values(entities);
   }
 
-  const [houseSeq, setHouseSeq] = useState(mail.houseSeq);
-  const [mailId, setMailId] = useState(mail.mailId);
-  const [mailBagNumber, setMailBagNumber] = useState(mail.mailBagNumber);
-  const [blNo, setBlNo] = useState(mail.blNo);
-  const [reportType, setReportType] = useState(mail.reportType);
-  const [riskType, setRiskType] = useState(mail.riskType);
-  const [transportType, setTransportType] = useState(mail.transportType);
-  const [transportTypeNm, setTransportTypeNm] = useState(mail.transportTypeNm);
-  const [isDiplomat, setIsDiplomat] = useState(mail.isDiplomat);
-  const [shipperCntryCd, setShipperCntryCd] = useState(mail.shipperCntryCd);
+  const [mailId, setMailId] = useState(mail.mailId ? mail.mailId : "");
+  const [mailBagNumber] = useState(mail.mailBagNumber ? mail.mailBagNumber : "");
+  const [blNo] = useState(mail.blNo);
+  const [reportType, setReportType] = useState(mail.reportType?mail.reportType:"");
+  const [riskType, setRiskType] = useState(mail.riskType?mail.riskType:"");
+  const [transportType, setTransportType] = useState(mail.transportType?mail.transportType:"");
+  const [transportTypeNm, setTransportTypeNm] = useState(mail.transportTypeNm?mail.transportTypeNm:"");
+  const [isDiplomat, setIsDiplomat] = useState(mail.isDiplomat?mail.isDiplomat:"");
+  const [shipperCntryCd, setShipperCntryCd] = useState(mail.shipperCntryCd?mail.shipperCntryCd:"");
   const [shipperCntryNm, setShipperCntryNm] = useState(mail.shipperCntryNm);
   const [shipperNatinality, setShipperNatinality] = useState(mail.shipperNatinality);
   const [shipperNatinalityNm, setShipperNatinalityNm] = useState("");
@@ -213,7 +207,6 @@ const EditMailForm = ({ mail, users }) => {
       if (localStorage.getItem("path") === "copy") {
         await addNewMail({
           user: userId,
-          houseSeq,
           mailId,
           mailBagNumber,
           blNo,
@@ -255,7 +248,6 @@ const EditMailForm = ({ mail, users }) => {
           id: mail.id,
           user: userId,
           prgsStatusCd: "10",
-          houseSeq,
           mailId,
           mailBagNumber,
           blNo,
@@ -304,7 +296,6 @@ const EditMailForm = ({ mail, users }) => {
     if (canSave) {
       await addNewItem({
         mailId: mail.id,
-        houseSeq,
         netWgt,
         wgt,
         //wgtUnit,
@@ -1018,7 +1009,6 @@ const EditMailForm = ({ mail, users }) => {
               experimentalFeatures={{ newEditingApi: true }}
               density="compact"
               getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
-              initialState={{ pinnedColumns: { left: ["houseSeq"], right: ["actions"] } }}
             />
           </div>
         </Box>
