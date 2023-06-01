@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useRef } from "react";
 import { useGetBranchesQuery, useAddNewBranchMutation } from "./branchesApiSlice";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,7 @@ import gridDefaultLocaleText from "../../components/LocalTextConstants";
 import { CustomInput, CustomFormLabel, style, theme } from "../../components/Components";
 import useAuth from "../../hooks/useAuth";
 import { REFERENCE_URL } from "../../config/common";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
@@ -65,6 +65,8 @@ const BranchesList = () => {
   const [branchCountryObject, setBranchCountryObject] = useState(null);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
+  const inputRef = useRef();
+
   const handleOpenEdit = (params) => {
     console.log(params);
     setOpen(true);
@@ -77,8 +79,19 @@ const BranchesList = () => {
     setBranchCountryObject({ type: "country", code: params.branchCountry, name: params.branchCountryNm });
     setBranchCode(params.branchCode);
     setEditYn(true);
-    console.log(branchCurrObject);
+
+    /*     if (inputRef.current) {
+      const event = new Event('input', { bubbles: true });
+      inputRef.current.dispatchEvent(event);
+    } */
   };
+  /*   useEffect(() => {
+    if (branchCurr !== '') {
+      console.log('onChange triggered: ', branchCurr);
+      // ...additional logic here...
+    }
+  }, [branchCurr]);
+ */
   const handleClose = () => setOpen(false);
   const [pageSize, setPageSize] = useState(10);
   let content;
@@ -89,13 +102,14 @@ const BranchesList = () => {
     branchCode: Yup.string().required("Салбарын код оруулна уу"),
     branchName: Yup.string().required("Салбарын нэр оруулна уу"),
     branchAddr: Yup.string().required("Салбарын хаяг оруулна уу"),
-    branchCurr: Yup.string().required("Салбарын тооцох нэгж сонгоно уу"),
+    branchCurr: Yup.object().required("Салбарын хаяг оруулна уу"),
     branchCountry: Yup.string().required("Салбар байрших улс сонгоно уу"),
   });
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -104,6 +118,7 @@ const BranchesList = () => {
   const onSubmit = (data) => {
     onSaveBranchClicked();
   };
+
   const {
     data: branches,
     isLoading,
@@ -246,7 +261,7 @@ const BranchesList = () => {
                   <Grid item xs={6}>
                     <Stack>
                       <CustomFormLabel name="Салбарын тооцох нэгж" required />
-                      <Autocomplete
+                      {/*                       <Autocomplete
                         size="small"
                         sx={{ mx: 2, mb: 1 }}
                         fullWidth={false}
@@ -258,9 +273,9 @@ const BranchesList = () => {
                           <TextField
                             variant="outlined"
                             {...params}
-                            { ...register("branchCurr") }
-                            error={editYn ? null : errors.branchCurr ? true : false}
-                            helperText={editYn ? null : errors.branchCurr ? errors.branchCurr.message : ""}
+                            {...register("branchCurr")}
+                            error={!!errors.branchCurr}
+                            helperText={errors.branchCurr ? errors.branchCurr.message : ""}
                           />
                         )}
                         onChange={(e, newValue) => {
@@ -268,6 +283,33 @@ const BranchesList = () => {
                           setBranchCurrNm(newValue ? newValue.name : "");
                           setBranchCurrObject(newValue ? newValue : null);
                         }}
+                      /> */}
+                      <Controller
+                        name="branchCurr"
+                        control={control}
+                        defaultValue={branchCurrObject}
+                        render={({ field }) => (
+                          <Autocomplete
+                            size="small"
+                            sx={{ mx: 2, mb: 1 }}
+                            fullWidth={false}
+                            options={currencies}
+                            getOptionLabel={(option) => `${option.code} - ${option.name}`}
+                            isOptionEqualToValue={(option, value) => option.code === value.code}
+                            renderInput={(params) => (
+                              <TextField {...params} error={!!errors.branchCurr} helperText={errors.branchCurr ? errors.branchCurr.message : ""} />
+                            )}
+                            {...field}
+                            onChange={(e, data) => {
+                              console.log(field);
+                              field.onChange(data);
+                              setBranchCurr(data ? data.code : "");
+                              setBranchCurrNm(data ? data.name : "");
+                              setBranchCurrObject(data ? data : null);
+                            }}
+                            value={field.value}
+                          />
+                        )}
                       />
                       <CustomFormLabel name="Салбар байрших улс" required />
                       <Autocomplete
@@ -282,7 +324,7 @@ const BranchesList = () => {
                           <TextField
                             variant="outlined"
                             {...params}
-                            { ...register("branchCountry") }
+                            {...register("branchCountry")}
                             error={editYn ? null : errors.branchCountry ? true : false}
                             helperText={editYn ? null : errors.branchCountry ? errors.branchCountry.message : ""}
                           />

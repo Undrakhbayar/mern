@@ -77,48 +77,48 @@ const EditMailForm = ({ mail, users }) => {
   const [mailId, setMailId] = useState(mail.mailId ? mail.mailId : "");
   const [mailBagNumber] = useState(mail.mailBagNumber ? mail.mailBagNumber : "");
   const [blNo] = useState(mail.blNo);
-  const [reportType, setReportType] = useState(mail.reportType?mail.reportType:"");
-  const [riskType, setRiskType] = useState(mail.riskType?mail.riskType:"");
-  const [transportType, setTransportType] = useState(mail.transportType?mail.transportType:"");
-  const [transportTypeNm, setTransportTypeNm] = useState(mail.transportTypeNm?mail.transportTypeNm:"");
-  const [isDiplomat, setIsDiplomat] = useState(mail.isDiplomat?mail.isDiplomat:"");
-  const [shipperCntryCd, setShipperCntryCd] = useState(mail.shipperCntryCd?mail.shipperCntryCd:"");
-  const [shipperCntryNm, setShipperCntryNm] = useState(mail.shipperCntryNm);
-  const [shipperNatinality, setShipperNatinality] = useState(mail.shipperNatinality);
-  const [shipperNatinalityNm, setShipperNatinalityNm] = useState("");
+  const [reportType, setReportType] = useState(mail.reportType ? mail.reportType : "");
+  const [riskType, setRiskType] = useState(mail.riskType ? mail.riskType : "");
+  const [transportType, setTransportType] = useState(mail.transportType ? mail.transportType : "");
+  const [transportTypeNm, setTransportTypeNm] = useState(mail.transportTypeNm ? mail.transportTypeNm : "");
+  const [isDiplomat, setIsDiplomat] = useState(mail.isDiplomat ? mail.isDiplomat : "");
+  const [shipperCntryCd, setShipperCntryCd] = useState(mail.shipperCntryCd ? mail.shipperCntryCd : "");
+  const [shipperCntryNm, setShipperCntryNm] = useState(mail.shipperCntryNm ? mail.shipperCntryNm : "");
+  const [shipperNatinality, setShipperNatinality] = useState(mail.shipperNatinality ? mail.shipperNatinality : "");
+  const [shipperNatinalityNm, setShipperNatinalityNm] = useState(mail.shipperNatinalityNm ? mail.shipperNatinalityNm : "");
   const [shipperNatinalityObject] = useState({ type: "country", code: mail.shipperNatinality, name: mail.shipperNatinalityNm });
-  const [shipperNm, setShipperNm] = useState(mail.shipperNm);
-  const [shipperReg, setShipperReg] = useState(mail.shipperReg);
-  const [shipperAddr, setShipperAddr] = useState(mail.shipperAddr);
-  const [shipperTel, setShipperTel] = useState(mail.shipperTel);
-  const [shipperEmail, setShipperEmail] = useState(mail.shipperEmail);
-  const [consigneeCntryCd, setConsigneeCntryCd] = useState(mail.consigneeCntryCd);
-  const [consigneeCntryNm, setConsigneeCntryNm] = useState(mail.consigneeCntryNm);
-  const [consigneeNatinality, setConsigneeNatinality] = useState(mail.consigneeNatinality);
-  const [consigneeNatinalityNm, setConsigneeNatinalityNm] = useState("");
+  const [shipperNm, setShipperNm] = useState(mail.shipperNm ? mail.shipperNm : "");
+  const [shipperReg, setShipperReg] = useState(mail.shipperReg ? mail.shipperReg : "");
+  const [shipperAddr, setShipperAddr] = useState(mail.shipperAddr ? mail.shipperAddr : "");
+  const [shipperTel, setShipperTel] = useState(mail.shipperTel ? mail.shipperTel : "");
+  const [shipperEmail, setShipperEmail] = useState(mail.shipperEmail ? mail.shipperEmail : "");
+  const [consigneeCntryCd, setConsigneeCntryCd] = useState(mail.consigneeCntryCd ? mail.consigneeCntryCd : "");
+  const [consigneeCntryNm, setConsigneeCntryNm] = useState(mail.consigneeCntryNm ? mail.consigneeCntryNm : "");
+  const [consigneeNatinality, setConsigneeNatinality] = useState(mail.consigneeNatinality ? mail.consigneeCntryNm : "");
+  const [consigneeNatinalityNm, setConsigneeNatinalityNm] = useState(mail.consigneeNatinalityNm ? mail.consigneeNatinalityNm : "");
   const [consigneeNatinalityObject] = useState({ type: "country", code: mail.consigneeNatinality, name: mail.consigneeNatinalityNm });
-  const [consigneeNm, setConsigneeNm] = useState(mail.consigneeNm);
-  const [consigneeReg, setConsigneeReg] = useState(mail.consigneeReg);
-  const [consigneeAddr, setConsigneeAddr] = useState(mail.consigneeAddr);
-  const [consigneeTel, setConsigneeTel] = useState(mail.consigneeTel);
-  const [consigneeEmail, setConsigneeEmail] = useState(mail.consigneeEmail);
-  const [mailDate, setMailDate] = useState(mail.mailDate);
-  const [area, setArea] = useState(mail.area);
-  const [areaNm, setAreaNm] = useState(mail.areaNm);
-  const [branch, setBranch] = useState(mail.branch);
-  const [branchNm, setBranchNm] = useState(mail.branchNm);
-  const [consigneePayYn, setConsigneePayYn] = useState(mail.consigneePayYn);
-  const [mailType, setMailType] = useState(mail.mailType);
-  const [mailTypeNm, setMailTypeNm] = useState(mail.mailTypeNm);
-  const [serviceType, setServiceType] = useState(mail.serviceType);
-  const [serviceTypeNm, setServiceTypeNm] = useState(mail.serviceTypeNm);
-  const [mailWgt, setMailWgt] = useState(mail.mailWgt);
-  const [mainPrice, setMainPrice] = useState(mail.mainPrice);
-  const [regPrice, setRegPrice] = useState(mail.regPrice);
-  const [addPrice, setAddPrice] = useState(mail.addPrice);
-  const [tax, setTax] = useState(mail.tax);
-  const [addWgtPrice, setAddWgtPrice] = useState(mail.addWgtPrice);
-  const [sumPrice, setSumPrice] = useState(mail.sumPrice);
+  const [consigneeNm, setConsigneeNm] = useState(mail.consigneeNm ? mail.consigneeNm : "");
+  const [consigneeReg, setConsigneeReg] = useState(mail.consigneeReg ? mail.consigneeReg : "");
+  const [consigneeAddr, setConsigneeAddr] = useState(mail.consigneeAddr ? mail.consigneeAddr : "");
+  const [consigneeTel, setConsigneeTel] = useState(mail.consigneeTel ? mail.consigneeTel : "");
+  const [consigneeEmail, setConsigneeEmail] = useState(mail.consigneeEmail ? mail.consigneeEmail : "");
+  const [mailDate, setMailDate] = useState(mail.mailDate ? mail.mailDate : "");
+  const [area, setArea] = useState(mail.area ? mail.area : "");
+  const [areaNm, setAreaNm] = useState(mail.areaNm ? mail.areaNm : "");
+  const [branch, setBranch] = useState(mail.branch ? mail.branch : "");
+  const [branchNm, setBranchNm] = useState(mail.branchNm ? mail.branchNm : "");
+  const [consigneePayYn, setConsigneePayYn] = useState(mail.consigneePayYn ? mail.consigneePayYn : "");
+  const [mailType, setMailType] = useState(mail.mailType ? mail.mailType : "");
+  const [mailTypeNm, setMailTypeNm] = useState(mail.mailTypeNm ? mail.mailTypeNm : "");
+  const [serviceType, setServiceType] = useState(mail.serviceType ? mail.serviceType : "");
+  const [serviceTypeNm, setServiceTypeNm] = useState(mail.serviceTypeNm ? mail.serviceTypeNm : "");
+  const [mailWgt, setMailWgt] = useState(mail.mailWgt ? mail.mailWgt : "");
+  const [mainPrice, setMainPrice] = useState(mail.mainPrice ? mail.mainPrice : "");
+  const [regPrice, setRegPrice] = useState(mail.regPrice ? mail.regPrice : "");
+  const [addPrice, setAddPrice] = useState(mail.addPrice ? mail.addPrice : "");
+  const [tax, setTax] = useState(mail.tax ? mail.tax : "");
+  const [addWgtPrice, setAddWgtPrice] = useState(mail.addWgtPrice ? mail.addWgtPrice : "");
+  const [sumPrice, setSumPrice] = useState(mail.sumPrice ? mail.sumPrice : "");
 
   const [netWgt, setNetWgt] = useState("");
   const [wgt, setWgt] = useState("");
@@ -166,7 +166,7 @@ const EditMailForm = ({ mail, users }) => {
     }
   }, [isSuccessItem]);
 
-  console.log(localStorage.getItem("path"));
+  //console.log(localStorage.getItem("path"));
 
   useEffect(() => {
     const getReferences = async () => {
@@ -249,40 +249,48 @@ const EditMailForm = ({ mail, users }) => {
           user: userId,
           prgsStatusCd: "10",
           mailId,
-          mailBagNumber,
-          blNo,
           reportType,
           riskType,
-          netWgt,
-          wgt,
-          //wgtUnit,
-          qty,
-          qtyUnit,
-          dangGoodsCode,
-          transFare,
-          transFareCurr,
+          //transFare,
+          //transFareCurr,
           transportType,
           transportTypeNm,
           isDiplomat,
-          hsCode,
-          goodsNm,
           shipperCntryCd,
           shipperCntryNm,
           shipperNatinality,
+          shipperNatinalityNm,
           shipperNm,
           shipperReg,
           shipperAddr,
           shipperTel,
+          shipperEmail,
           consigneeCntryCd,
           consigneeCntryNm,
           consigneeNatinality,
+          consigneeNatinalityNm,
           consigneeNm,
           consigneeReg,
           consigneeAddr,
           consigneeTel,
+          consigneeEmail,
           mailDate,
-          ecommerceType,
-          ecommerceLink,
+          area,
+          areaNm,
+          branch,
+          branchNm,
+          consigneePayYn,
+          mailType,
+          mailTypeNm,
+          serviceType,
+          serviceTypeNm,
+          mailWgt,
+          mainPrice,
+          regPrice,
+          addPrice,
+          tax,
+          addWgtPrice,
+          sumPrice,
         });
       }
     }
@@ -404,7 +412,7 @@ const EditMailForm = ({ mail, users }) => {
                     <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      value={reportType}
+                      value={reportTypes.length === 0 ? "" : reportType}
                       onChange={(e) => {
                         setReportType(e.target.value);
                       }}
@@ -421,7 +429,7 @@ const EditMailForm = ({ mail, users }) => {
                     <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      value={transportType}
+                      value={transportTypes.length === 0 ? "" : transportType}
                       onChange={(e, child) => {
                         setTransportType(e.target.value);
                         setTransportTypeNm(child.props.children);
@@ -450,7 +458,7 @@ const EditMailForm = ({ mail, users }) => {
                     <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      value={area}
+                      value={areas.length === 0 ? "" : area}
                       onChange={(e, child) => {
                         setArea(e.target.value);
                         setAreaNm(child.props.children);
@@ -468,7 +476,7 @@ const EditMailForm = ({ mail, users }) => {
                     <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      value={branch}
+                      value={branches.length === 0 ? "" : branch}
                       onChange={(e, child) => {
                         setBranch(e.target.value);
                         setBranchNm(child.props.children);
@@ -497,7 +505,7 @@ const EditMailForm = ({ mail, users }) => {
                     <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      value={mailType}
+                      value={mailTypes.length === 0 ? "" : mailType}
                       onChange={(e, child) => {
                         setMailType(e.target.value);
                         setMailTypeNm(child.props.children);
@@ -515,7 +523,7 @@ const EditMailForm = ({ mail, users }) => {
                     <Select
                       size="small"
                       sx={{ mx: 2, mb: 1 }}
-                      value={serviceType}
+                      value={serviceTypes.length === 0 ? "" : serviceType}
                       onChange={(e, child) => {
                         setServiceType(e.target.value);
                         setServiceTypeNm(child.props.children);
@@ -609,7 +617,7 @@ const EditMailForm = ({ mail, users }) => {
                       }}
                     >
                       <FormControlLabel value="Y" control={<Radio checked={consigneePayYn === "Y" ? true : false} />} label="Тийм" />
-                      <FormControlLabel value="N" control={<Radio checked={consigneePayYn === "Y" ? true : false} />} label="Үгүй" />
+                      <FormControlLabel value="N" control={<Radio checked={consigneePayYn === "N" ? true : false} />} label="Үгүй" />
                     </RadioGroup>
                   </FormControl>
                 </Stack>
@@ -632,7 +640,7 @@ const EditMailForm = ({ mail, users }) => {
                     fullWidth={false}
                     sx={{ mx: 2, mb: 1 }}
                     options={countries}
-                    value={shipperNatinalityObject}
+                    defaultValue={shipperNatinalityObject}
                     getOptionLabel={(option) => `${option.code}-${option.name}`}
                     isOptionEqualToValue={(option, value) => option.code === value.code}
                     renderInput={(params) => <TextField {...params} />}
@@ -707,8 +715,9 @@ const EditMailForm = ({ mail, users }) => {
                     fullWidth={false}
                     sx={{ mx: 2, mb: 1 }}
                     options={countries}
-                    value={consigneeNatinalityObject}
+                    defaultValue={consigneeNatinalityObject}
                     getOptionLabel={(option) => `${option.code} - ${option.name}`}
+                    isOptionEqualToValue={(option, value) => option.code === value.code}
                     renderInput={(params) => <TextField {...params} />}
                     onChange={(e, newValue) => {
                       setConsigneeNatinality(newValue ? newValue.code : "");
@@ -899,78 +908,6 @@ const EditMailForm = ({ mail, users }) => {
                             }}
                           />
                         </Stack>
-                        {/*                    <TextField
-                      label="Үнэ 2"
-                      style={{ width: 125 }}
-                      size="small"
-                      value={price2}
-                      onChange={(e) => {
-                        setPrice2(e.target.value);
-                      }}
-                    />
-                    <TextField
-                      label="Үнэ 2 валют"
-                      style={{ width: 125 }}
-                      size="small"
-                      value={price2Curr}
-                      onChange={(e) => {
-                        setPrice2Curr(e.target.value);
-                      }}
-                    />
-                    <TextField
-                      label="Үнэ 3"
-                      style={{ width: 125 }}
-                      size="small"
-                      value={price3}
-                      onChange={(e) => {
-                        setPrice3(e.target.value);
-                      }}
-                    />
-                    <TextField
-                      label="Үнэ 3 валют"
-                      style={{ width: 125 }}
-                      size="small"
-                      value={price3Curr}
-                      onChange={(e) => {
-                        setPrice3Curr(e.target.value);
-                      }}
-                    />
-                    <TextField
-                      label="Үнэ 4"
-                      style={{ width: 125 }}
-                      size="small"
-                      value={price4}
-                      onChange={(e) => {
-                        setPrice4(e.target.value);
-                      }}
-                    />
-                    <TextField
-                      label="Үнэ 4 валют"
-                      style={{ width: 125 }}
-                      size="small"
-                      value={price4Curr}
-                      onChange={(e) => {
-                        setPrice4Curr(e.target.value);
-                      }}
-                    />
-                    <TextField
-                      label="Үнэ 5"
-                      style={{ width: 125 }}
-                      size="small"
-                      value={price5}
-                      onChange={(e) => {
-                        setPrice5(e.target.value);
-                      }}
-                    />
-                    <TextField
-                      label="Үнэ 5 валют"
-                      style={{ width: 125 }}
-                      size="small"
-                      value={price5Curr}
-                      onChange={(e) => {
-                        setPrice5Curr(e.target.value);
-                      }}
-                    /> */}
                       </Grid>
                     </Grid>
                   </Paper>

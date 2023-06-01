@@ -7,7 +7,7 @@ import { CircularProgress } from "@mui/material";
 import useTitle from "../../hooks/useTitle";
 
 const EditMail = () => {
-  useTitle("techMails: Edit Mail");
+  useTitle("ePost");
 
   const { id } = useParams();
 
