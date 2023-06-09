@@ -1,17 +1,32 @@
-import React, { useRef } from "react";
-import { useGetBranchesQuery, useAddNewBranchMutation } from "./branchesApiSlice";
+import React from "react";
+import { useGetBranchesQuery, useAddNewBranchMutation, useUpdateBranchMutation } from "./branchesApiSlice";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Paper, Grid, Button, Stack, Typography, FormControl, Modal, Autocomplete, TextField, Alert, ThemeProvider, Link } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Button,
+  Stack,
+  Typography,
+  FormControl,
+  Autocomplete,
+  TextField,
+  Alert,
+  ThemeProvider,
+  Dialog,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import SaveIcon from "@mui/icons-material/Save";
+import DownloadIcon from "@mui/icons-material/Download";
+import AddIcon from "@mui/icons-material/Add";
 import gridDefaultLocaleText from "../../components/LocalTextConstants";
-import { CustomInput, CustomFormLabel, style, theme } from "../../components/Components";
+import { CustomFormLabel, theme } from "../../components/Components";
 import useAuth from "../../hooks/useAuth";
 import { REFERENCE_URL } from "../../config/common";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+import * as XLSX from "xlsx";
 
 const BranchesList = () => {
   const { userid, compregister } = useAuth();
@@ -25,23 +40,21 @@ const BranchesList = () => {
       field: "branchName",
       headerName: "Салбарын нэр",
       width: 250,
-      renderCell: (params) => {
-        return (
-          <Link style={{ cursor: "pointer" }} underline="none" onClick={() => handleOpenEdit(params.row)}>
-            {params.row.branchName}
-          </Link>
-        );
+      cellClassName: () => {
+        return "custom-cell";
       },
     },
     {
       field: "branchCurr",
       headerName: "Салбарын тооцох нэгж",
-      width: 200,
+      width: 300,
+      valueGetter: (params) => `${params.row.branchCurr.code} - ${params.row.branchCurr.name}`,
     },
     {
-      field: "branchCountryNm",
+      field: "branchCountry",
       headerName: "Салбар байрших улс",
-      width: 200,
+      width: 300,
+      valueGetter: (params) => `${params.row.branchCountry.code} - ${params.row.branchCountry.name}`,
     },
     {
       field: "branchAddr",
@@ -49,71 +62,69 @@ const BranchesList = () => {
       width: 300,
     },
   ];
-  const [editYn, setEditYn] = useState(false);
   const [compRegister] = useState(compregister);
   const [branchCode, setBranchCode] = useState("");
   const [branchName, setBranchName] = useState("");
   const [branchCurr, setBranchCurr] = useState("");
-  const [branchCurrNm, setBranchCurrNm] = useState("");
   const [branchCountry, setBranchCountry] = useState("");
-  const [branchCountryNm, setBranchCountryNm] = useState("");
   const [branchAddr, setBranchAddr] = useState("");
 
   const [countries, setCountries] = useState([]);
   const [currencies, setCurrencies] = useState([]);
-  const [branchCurrObject, setBranchCurrObject] = useState(null);
-  const [branchCountryObject, setBranchCountryObject] = useState(null);
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const inputRef = useRef();
-
-  const handleOpenEdit = (params) => {
-    console.log(params);
-    setOpen(true);
-    setBranchCode(params.branchCode);
-    setBranchName(params.branchName);
-    setBranchAddr(params.branchAddr);
-    setBranchCurr(params.branchCurr);
-    setBranchCurrNm(params.branchCurrNm);
-    setBranchCurrObject({ type: "currency", code: params.branchCurr, name: params.branchCurrNm });
-    setBranchCountryObject({ type: "country", code: params.branchCountry, name: params.branchCountryNm });
-    setBranchCode(params.branchCode);
-    setEditYn(true);
-
-    /*     if (inputRef.current) {
-      const event = new Event('input', { bubbles: true });
-      inputRef.current.dispatchEvent(event);
-    } */
-  };
-  /*   useEffect(() => {
-    if (branchCurr !== '') {
-      console.log('onChange triggered: ', branchCurr);
-      // ...additional logic here...
-    }
-  }, [branchCurr]);
- */
-  const handleClose = () => setOpen(false);
-  const [pageSize, setPageSize] = useState(10);
+  const [editYn, setEditYn] = useState("");
   let content;
   let rows = [];
   const referenceUrl = REFERENCE_URL;
+  const [open, setOpen] = React.useState(false);
+  const [pageSize, setPageSize] = useState(10);
 
   const validationSchema = Yup.object().shape({
     branchCode: Yup.string().required("Салбарын код оруулна уу"),
     branchName: Yup.string().required("Салбарын нэр оруулна уу"),
     branchAddr: Yup.string().required("Салбарын хаяг оруулна уу"),
-    branchCurr: Yup.object().required("Салбарын хаяг оруулна уу"),
-    branchCountry: Yup.string().required("Салбар байрших улс сонгоно уу"),
+    branchCurr: Yup.object().required("Салбарын тооцох нэгж сонгоно уу"),
+    branchCountry: Yup.object().required("Салбар байрших улс сонгоно уу"),
   });
-
   const {
-    register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
+    defaultValues: {
+      branchCode: "",
+      branchName: "",
+      branchAddr: "",
+    },
   });
+  const handleOpen = (params) => {
+    setEditYn("N");
+  };
+  useEffect(() => {
+    if (editYn === "N" || editYn === "Y") {
+      console.log(editYn);
+      setOpen(true);
+    }
+  }, [editYn]);
+  const handleClose = () => setOpen(false);
+
+  const downloadExcel = (data) => {
+    const edited = data.map((row) => ({
+      name: row.branchCountry.code + " - " + row.branchCountry.name,
+      birthday: row.branchCode,
+    }));
+    console.log(edited);
+    const worksheet = XLSX.utils.json_to_sheet(edited);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.utils.sheet_add_aoa(worksheet, [["Name", "Birthday"]], { origin: "A1" });
+    XLSX.writeFile(workbook, "DataSheet.xlsx");
+  };
+  const handleCellClick = (params) => {
+    setEditYn("Y");
+    reset(params.row);
+  };
 
   const onSubmit = (data) => {
     onSaveBranchClicked();
@@ -132,23 +143,34 @@ const BranchesList = () => {
   });
 
   const [addNewBranch, { isLoading: isILoading, isSuccess: isISuccess, isError: isIErorr, error: Ierror }] = useAddNewBranchMutation();
+  const [updateBranch, { isLoading: isULoading, isSuccess: isUSuccess, isError: isUErorr, error: Uerror }] = useUpdateBranchMutation();
 
   const onSaveBranchClicked = async () => {
-    await addNewBranch({
-      user: userid,
-      compRegister,
-      branchCode,
-      branchName,
-      branchCurr,
-      branchCurrNm,
-      branchCountry,
-      branchCountryNm,
-      branchAddr,
-    });
+    if (editYn === "N") {
+      await addNewBranch({
+        user: userid,
+        compRegister,
+        branchCode,
+        branchName,
+        branchCurr,
+        branchCountry,
+        branchAddr,
+      });
+    } else {
+      await updateBranch({
+        user: userid,
+        compRegister,
+        branchCode,
+        branchName,
+        branchCurr,
+        branchCountry,
+        branchAddr,
+      });
+    }
   };
-  if (isLoading || isILoading) content = <p>Loading...</p>;
+  if (isLoading || isILoading || isULoading) content = <p>Loading...</p>;
 
-  if (isError || isIErorr) {
+  if (isError || isIErorr || isUErorr) {
     content = <p className="errmsg">{error?.data?.message}</p>;
   }
 
@@ -158,10 +180,10 @@ const BranchesList = () => {
   }
 
   useEffect(() => {
-    if (isISuccess) {
+    if (isISuccess || isUSuccess) {
       handleClose();
     }
-  }, [isISuccess]);
+  }, [isISuccess, isUSuccess]);
 
   useEffect(() => {
     const getReferences = async () => {
@@ -174,10 +196,11 @@ const BranchesList = () => {
 
       const response = await res.json();
 
-      const countries = response.filter(({ type }) => type === "country");
-      const currencies = response.filter(({ type }) => type === "currency");
-      console.log(countries);
-      console.log(currencies);
+      let countries = response.filter(({ type }) => type === "country");
+      let currencies = response.filter(({ type }) => type === "currency");
+
+      countries = countries.map(({ type, ...rest }) => rest);
+      currencies = currencies.map(({ type, ...rest }) => rest);
       setCountries(countries);
       setCurrencies(currencies);
     };
@@ -194,7 +217,19 @@ const BranchesList = () => {
               ":hover": { bgcolor: "#4338CA" },
             }}
             variant="contained"
-            endIcon={<SaveIcon />}
+            endIcon={<DownloadIcon />}
+            onClick={() => downloadExcel(rows)}
+            size="small"
+          >
+            Excel
+          </Button>
+          <Button
+            sx={{
+              bgcolor: "#6366F1",
+              ":hover": { bgcolor: "#4338CA" },
+            }}
+            variant="contained"
+            endIcon={<AddIcon />}
             onClick={handleOpen}
             size="small"
           >
@@ -208,6 +243,7 @@ const BranchesList = () => {
             {...rows}
             columns={columns}
             pageSize={pageSize}
+            onCellClick={handleCellClick}
             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
             rowsPerPageOptions={[10, 20, 30]}
             disableSelectionOnClick
@@ -217,161 +253,171 @@ const BranchesList = () => {
             components={{
               Toolbar: GridToolbar,
             }}
+            componentsProps={{
+              toolbar: {
+                csvOptions: { disableToolbarButton: true },
+                printOptions: { disableToolbarButton: true },
+                showQuickFilter: true,
+                quickFilterProps: { debounceMs: 250 },
+              },
+            }}
+            loading={isLoading}
           />
         </div>
-        <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ m: 1 }}>
-          <Modal open={open} onClose={handleClose}>
-            <Box sx={style}>
-              <Paper variant="outlined" sx={{ pb: 1, mb: 1 }}>
-                <Grid container columns={12}>
-                  <Grid item xs={12}>
-                    <Typography variant="h6" color="#4338CA" sx={{ mb: 2, mx: 2, py: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 700 }}>
-                      Салбарын мэдээлэл
-                    </Typography>
-                    {isIErorr ? <Alert severity="error">{Ierror?.data?.message}</Alert> : <></>}
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControl>
-                      <CustomFormLabel name="Салбарын код" required />
-                      <TextField
-                        value={branchCode}
-                        {...register("branchCode")}
-                        size="small"
-                        sx={{ mx: 2, mb: 1 }}
-                        error={errors.branchCode ? true : false}
-                        helperText={errors.branchCode ? errors.branchCode.message : ""}
-                        onChange={(e) => {
-                          setBranchCode(e.target.value);
-                        }}
-                      />
-                      <CustomFormLabel name="Салбарын нэр" required={true} />
-                      <TextField
-                        value={branchName}
-                        {...register("branchName")}
-                        size="small"
-                        sx={{ mx: 2, mb: 1 }}
-                        error={errors.branchName ? true : false}
-                        helperText={errors.branchName ? errors.branchName.message : ""}
-                        onChange={(e) => {
-                          setBranchName(e.target.value);
-                        }}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Stack>
-                      <CustomFormLabel name="Салбарын тооцох нэгж" required />
-                      {/*                       <Autocomplete
-                        size="small"
-                        sx={{ mx: 2, mb: 1 }}
-                        fullWidth={false}
-                        value={branchCurrObject}
-                        options={currencies}
-                        getOptionLabel={(option) => `${option.code} - ${option.name}`}
-                        isOptionEqualToValue={(option, value) => option.code === value.code}
-                        renderInput={(params) => (
-                          <TextField
-                            variant="outlined"
-                            {...params}
-                            {...register("branchCurr")}
-                            error={!!errors.branchCurr}
-                            helperText={errors.branchCurr ? errors.branchCurr.message : ""}
-                          />
-                        )}
-                        onChange={(e, newValue) => {
-                          setBranchCurr(newValue ? newValue.code : "");
-                          setBranchCurrNm(newValue ? newValue.name : "");
-                          setBranchCurrObject(newValue ? newValue : null);
-                        }}
-                      /> */}
-                      <Controller
-                        name="branchCurr"
-                        control={control}
-                        defaultValue={branchCurrObject}
-                        render={({ field }) => (
-                          <Autocomplete
-                            size="small"
-                            sx={{ mx: 2, mb: 1 }}
-                            fullWidth={false}
-                            options={currencies}
-                            getOptionLabel={(option) => `${option.code} - ${option.name}`}
-                            isOptionEqualToValue={(option, value) => option.code === value.code}
-                            renderInput={(params) => (
-                              <TextField {...params} error={!!errors.branchCurr} helperText={errors.branchCurr ? errors.branchCurr.message : ""} />
-                            )}
-                            {...field}
-                            onChange={(e, data) => {
-                              console.log(field);
-                              field.onChange(data);
-                              setBranchCurr(data ? data.code : "");
-                              setBranchCurrNm(data ? data.name : "");
-                              setBranchCurrObject(data ? data : null);
-                            }}
-                            value={field.value}
-                          />
-                        )}
-                      />
-                      <CustomFormLabel name="Салбар байрших улс" required />
-                      <Autocomplete
-                        size="small"
-                        sx={{ mx: 2 }}
-                        fullWidth={false}
-                        value={branchCountryObject}
-                        options={countries}
-                        getOptionLabel={(option) => `${option.code} - ${option.name}`}
-                        isOptionEqualToValue={(option, value) => option.code === value.code}
-                        renderInput={(params) => (
-                          <TextField
-                            variant="outlined"
-                            {...params}
-                            {...register("branchCountry")}
-                            error={editYn ? null : errors.branchCountry ? true : false}
-                            helperText={editYn ? null : errors.branchCountry ? errors.branchCountry.message : ""}
-                          />
-                        )}
-                        onChange={(e, newValue) => {
-                          setBranchCountry(newValue ? newValue.code : "");
-                          setBranchCountryNm(newValue ? newValue.name : "");
-                          setBranchCountryObject(newValue ? newValue : null);
-                        }}
-                      />
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Stack>
-                      <CustomFormLabel name="Хаяг" required />
-                      <TextField
-                        value={branchAddr}
-                        {...register("branchAddr")}
-                        size="small"
-                        sx={{ mx: 2, mb: 1 }}
-                        error={errors.branchAddr ? true : false}
-                        helperText={errors.branchAddr ? errors.branchAddr.message : ""}
-                        onChange={(e) => {
-                          setBranchAddr(e.target.value);
-                        }}
-                      />
-                    </Stack>
-                  </Grid>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogContent>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Grid container columns={12}>
+                <Grid item xs={12}>
+                  <Typography variant="h6" color="#4338CA" sx={{ mb: 2, mx: 2, py: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 600 }}>
+                    Салбарын мэдээлэл
+                  </Typography>
+                  {isIErorr ? <Alert severity="error">{Ierror?.data?.message}</Alert> : <></>}
+                  {isUErorr ? <Alert severity="error">{Uerror?.data?.message}</Alert> : <></>}
                 </Grid>
-              </Paper>
-              <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Grid item xs={6}>
+                  <FormControl>
+                    <CustomFormLabel name="Салбарын код" required />
+                    <Controller
+                      name="branchCode"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          size="small"
+                          sx={{ mx: 2, mb: 1 }}
+                          error={errors.branchCode ? true : false}
+                          helperText={errors.branchCode ? errors.branchCode.message : ""}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setBranchCode(e.target.value);
+                          }}
+                        />
+                      )}
+                    />
+                    <CustomFormLabel name="Салбарын нэр" required />
+                    <Controller
+                      name="branchName"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          size="small"
+                          sx={{ mx: 2, mb: 1 }}
+                          error={errors.branchName ? true : false}
+                          helperText={errors.branchName ? errors.branchName.message : ""}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setBranchName(e.target.value);
+                          }}
+                        />
+                      )}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={6}>
+                  <Stack>
+                    <CustomFormLabel name="Салбарын тооцох нэгж" required />
+                    <Controller
+                      name="branchCurr"
+                      control={control}
+                      defaultValue={null}
+                      render={({ field }) => (
+                        <Autocomplete
+                          size="small"
+                          sx={{ mx: 2, mb: 1 }}
+                          options={currencies}
+                          getOptionLabel={(option) => `${option.code} - ${option.name}`}
+                          isOptionEqualToValue={(option, value) => option.code === value.code}
+                          renderInput={(params) => (
+                            <TextField {...params} error={!!errors.branchCurr} helperText={errors.branchCurr ? errors.branchCurr.message : ""} />
+                          )}
+                          {...field}
+                          onChange={(e, value) => {
+                            field.onChange(value);
+                            setBranchCurr(value);
+                          }}
+                          value={field.value}
+                        />
+                      )}
+                    />
+                    <CustomFormLabel name="Салбар байрших улс" required />
+                    <Controller
+                      name="branchCountry"
+                      control={control}
+                      defaultValue={null}
+                      render={({ field }) => (
+                        <Autocomplete
+                          size="small"
+                          sx={{ mx: 2, mb: 1 }}
+                          options={countries}
+                          getOptionLabel={(option) => `${option.code} - ${option.name}`}
+                          isOptionEqualToValue={(option, value) => option.code === value.code}
+                          renderInput={(params) => (
+                            <TextField {...params} error={!!errors.branchCountry} helperText={errors.branchCountry ? errors.branchCountry.message : ""} />
+                          )}
+                          {...field}
+                          onChange={(e, data) => {
+                            console.log(data);
+                            field.onChange(data);
+                            setBranchCountry(data);
+                          }}
+                          value={field.value}
+                        />
+                      )}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack>
+                    <CustomFormLabel name="Хаяг" required />
+                    <Controller
+                      name="branchAddr"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          size="small"
+                          sx={{ mx: 2, mb: 1 }}
+                          error={errors.branchAddr ? true : false}
+                          helperText={errors.branchAddr ? errors.branchAddr.message : ""}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setBranchAddr(e.target.value);
+                          }}
+                        />
+                      )}
+                    />
+                  </Stack>
+                </Grid>
+              </Grid>
+              <DialogActions>
                 <Button
                   sx={{
                     bgcolor: "#6366F1",
                     ":hover": { bgcolor: "#4338CA" },
                   }}
                   variant="contained"
-                  endIcon={<SaveIcon />}
                   size="small"
-                  onClick={handleSubmit(onSubmit)}
+                  onClick={handleClose}
+                >
+                  Хаах
+                </Button>
+                <Button
+                  sx={{
+                    bgcolor: "#6366F1",
+                    ":hover": { bgcolor: "#4338CA" },
+                  }}
+                  variant="contained"
+                  size="small"
+                  type="submit"
                 >
                   Хадгалах
                 </Button>
-              </Stack>
-            </Box>
-          </Modal>
-        </Stack>
+              </DialogActions>
+            </form>
+          </DialogContent>
+        </Dialog>
       </Box>
     </ThemeProvider>
   );

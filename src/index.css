@@ -23,3 +23,8 @@ body {
 .MuiFormLabel-root.Mui-focused {
   color: rgba(0, 0, 0, 0.87) !important;
 }
+.custom-cell {
+  /* Add your custom styles here */
+  color: #1976d2;
+  cursor: pointer;
+}
