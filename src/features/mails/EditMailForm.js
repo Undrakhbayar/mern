@@ -32,7 +32,6 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, style } from "../../components/Components";
 import dayjs from "dayjs";
-import { REFERENCE_URL } from "../../config/common";
 
 const EditMailForm = ({ mail, users }) => {
   const navigate = useNavigate();
@@ -143,7 +142,6 @@ const EditMailForm = ({ mail, users }) => {
   const [mailTypes, setMailTypes] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
 
-  const referenceUrl = REFERENCE_URL;
   const [updateMail, { isLoading, isSuccess, isError, error }] = useUpdateMailMutation();
   const [addNewMail, { isLoading: isLoadingA, isSuccess: isSuccessA, isError: isErrorA, error: errorA }] = useAddNewMailMutation();
   const [addNewItem, { isLoading: isLoadingItem, isSuccess: isSuccessItem, isError: isErrorItem, error: errorItem }] = useAddNewItemMutation();
@@ -170,7 +168,7 @@ const EditMailForm = ({ mail, users }) => {
 
   useEffect(() => {
     const getReferences = async () => {
-      const res = await fetch(referenceUrl + `?compreg=${mail.compRegister}`, {
+      const res = await fetch(process.env.REACT_APP_REFERENCE_URL + `?compreg=${mail.compRegister}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -197,7 +195,7 @@ const EditMailForm = ({ mail, users }) => {
       console.log(areas);
     };
     getReferences();
-  }, [referenceUrl, mail.compRegister]);
+  }, [mail.compRegister]);
 
   const canSave = [userId].every(Boolean) && !isLoading && !isLoadingA && !isLoadingItem;
 

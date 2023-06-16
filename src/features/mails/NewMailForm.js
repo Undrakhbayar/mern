@@ -29,7 +29,6 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GreenRedSwitch, CustomInput, CustomFormLabel, theme, DisabledInput } from "../../components/Components";
-import { REFERENCE_URL } from "../../config/common";
 import useAuth from "../../hooks/useAuth";
 
 const NewMailForm = () => {
@@ -98,7 +97,6 @@ const NewMailForm = () => {
   const [mailTypes, setMailTypes] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
 
-  const referenceUrl = REFERENCE_URL;
   const canSave = [userId].every(Boolean) && !isLoading;
   useEffect(() => {
     if (isSuccess) {
@@ -110,7 +108,7 @@ const NewMailForm = () => {
 
   useEffect(() => {
     const getReferences = async () => {
-      const res = await fetch(referenceUrl + `?compreg=${compregister}`, {
+      const res = await fetch(process.env.REACT_APP_REFERENCE_URL + `?compreg=${compregister}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +135,7 @@ const NewMailForm = () => {
       console.log(branches);
     };
     getReferences();
-  }, [referenceUrl, compregister]);
+  }, [compregister]);
 
   const onSaveMailClicked = async (e) => {
     e.preventDefault();
