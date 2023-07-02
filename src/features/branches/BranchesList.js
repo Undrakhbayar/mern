@@ -32,7 +32,6 @@ import * as Yup from "yup";
 import * as XLSX from "xlsx";
 
 const BranchesList = () => {
-  const { userid, compregister } = useAuth();
   const columns = [
     {
       field: "branchCode",
@@ -67,6 +66,7 @@ const BranchesList = () => {
     {
       field: "actions",
       headerName: "Засах / Устгах",
+      colspan: 2,
       sortable: false,
       width: 200,
       type: "actions",
@@ -85,13 +85,15 @@ const BranchesList = () => {
           icon={<DeleteIcon />}
           sx={{ padding: "2px 6px", color: "error.main" }}
           label="Устгах"
-          onClick={() => {
+          onClick={(event) => {
+            event.stopPropagation();
             askDeleteConfirmation(row);
           }}
         />,
       ],
     },
   ];
+  const { userid, compregister } = useAuth();
   const [countries, setCountries] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [mode, setMode] = useState(null);
@@ -132,9 +134,7 @@ const BranchesList = () => {
   };
 
   const handleClose = () => setOpen(false);
-  /*   const handleDelete = async (id) => {
-    await deleteBranch({ id: [id] });
-  }; */
+
   const askDeleteConfirmation = (row) => {
     setRowToDelete(row);
     setOpenConfirm(true);
@@ -161,7 +161,9 @@ const BranchesList = () => {
     XLSX.utils.sheet_add_aoa(worksheet, [["Name", "Birthday"]], { origin: "A1" });
     XLSX.writeFile(workbook, "DataSheet.xlsx");
   };
+
   const handleCellClick = (params) => {
+    console.log(params);
     if (params.field === "branchName" || params.field === "actions") {
       setMode("edit");
       setValue("branchCode", params.row.branchCode);
@@ -313,7 +315,7 @@ const BranchesList = () => {
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container columns={12}>
                   <Grid item xs={12}>
-                    <DialogTitle color="#4338CA" sx={{ mb: 2, mx: 2, py: 1, borderBottom: 2, borderColor: "#4338CA", fontWeight: 600 }}>
+                    <DialogTitle color="#4338CA" sx={{ mb: 2, mx: 2, py: 1, pl: 0, borderBottom: 2, borderColor: "#4338CA", fontWeight: 600 }}>
                       {mode === "add" ? "Салбарын мэдээлэл нэмэх" : "Салбарын мэдээлэл засах"}
                     </DialogTitle>
                     {isIErorr ? <Alert severity="error">{Ierror?.data?.message}</Alert> : <></>}
@@ -449,13 +451,13 @@ const BranchesList = () => {
             </DialogContent>
           </Dialog>
           <Dialog open={openConfirm} onClose={handleCancel}>
-            <DialogTitle>Are you sure you want to delete this record?</DialogTitle>
+            <DialogTitle>Устгах уу?</DialogTitle>
             <DialogActions>
               <Button onClick={handleCancel} color="primary">
-                Cancel
+                Үгүй
               </Button>
               <Button onClick={handleDelete} color="primary" autoFocus>
-                Delete
+                Тийм
               </Button>
             </DialogActions>
           </Dialog>
